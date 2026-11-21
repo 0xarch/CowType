@@ -170,13 +170,13 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "b166c40e4bfbbb4f490dda1c6b9e7c782c593fb2f5dcbd97de3e8ef40e445918",
-      "bytes": 536
+      "sha256": "d16b0fc2c894df4ddec5d7199e6ff3adf1831d1a81514271d6f3d1af10487b18",
+      "bytes": 562
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "b7222b40b69aa1a169389f5cd2282a177b38bb7d5ea1e2b71f41ec429aaddb4f",
-      "bytes": 1557
+      "sha256": "7b45b9ff02752fe7d8fbb19d287794dd4dc0d7560b420c4866f22a6a84ccea33",
+      "bytes": 1535
     },
     {
       "path": "src-data-tools/README.md",
