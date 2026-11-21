@@ -14,7 +14,9 @@ dependencies)
       ;;
     opensuse*)
       zypper --non-interactive refresh
-      zypper --non-interactive install --no-recommends gcc-c++ make cmake ninja rust cargo libime-devel boost-devel libopenssl-devel rsvg-convert fcitx5 fcitx5-devel python3 python3-gobject python3-gobject-Gdk gtk4-tools typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 rpm-build git pkgconf-pkg-config dbus-1 findutils file ca-certificates
+      # Minimal containers have no fonts with --no-recommends. Pango needs
+      # a real text font to render the headless GTK settings smoke test.
+      zypper --non-interactive install --no-recommends gcc-c++ make cmake ninja rust cargo libime-devel boost-devel libopenssl-devel rsvg-convert fcitx5 fcitx5-devel python3 python3-gobject python3-gobject-Gdk gtk4-tools typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 dejavu-fonts rpm-build git pkgconf-pkg-config dbus-1 findutils file ca-certificates
       ;;
     debian*|ubuntu*|deepin*)
       export DEBIAN_FRONTEND=noninteractive
