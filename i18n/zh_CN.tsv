@@ -30,11 +30,8 @@ group.privacy	学习与隐私
 group.voice	语音输入
 group.words	附加词库
 hint.always_resident	CowType 加载时即准备模型，约占用 0.9 GB 内存。需同时启用语音输入。
-hint.fcitx	在 Fcitx5 中添加牛打字·拼音或牛打字·五笔86。更改会自动保存。
-hint.hotkey	功能键支持点按切换或长按录音；Alt/AltGr 可单独开启长按。组合键正常传递；Esc 或失焦取消。
+hint.fcitx	在 Fcitx5 中添加牛打字·拼音或牛打字·五笔86。
 hint.initials	例如 kn → 可能
-hint.learning	只保存在本机。仅确认选词会学习；五笔保持码表顺序。
-hint.libime	使用 libime 分词与选词，词频来自雾凇词库。#remove
 hint.model	模型由用户下载，安装包不含权重。继续使用原有模型目录。
 hint.modifier_hold	按住 300 毫秒开始录音，松开停止；短按仍可切换。
 hint.remember_mode	切换回 CowType 时保留当前输入框的中英文状态；关闭后每次使用中文。

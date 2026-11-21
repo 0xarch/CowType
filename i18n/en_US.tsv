@@ -30,11 +30,8 @@ group.privacy	Learning and Privacy
 group.voice	Voice Input
 group.words	Additional Dictionaries
 hint.always_resident	Prepare the model when CowType loads, using about 0.9 GB of memory without opening the microphone. Voice input must also be enabled.
-hint.fcitx	Add CowType Pinyin or CowType Wubi 86 in Fcitx5. Changes are saved automatically.
-hint.hotkey	Function keys support tap to toggle or hold to record. Alt/AltGr hold can be enabled separately. Chords pass through; Escape or focus loss cancels.
+hint.fcitx	Add CowType Pinyin or CowType Wubi 86 in Fcitx5.
 hint.initials	For example, kn → 可能
-hint.learning	Stored on this device. Only confirmed selections are learned; Wubi keeps dictionary order.
-hint.libime	libime segments pinyin and generates candidates using Ice word frequencies.
 hint.model	Models are downloaded explicitly and are not included in the package. Your existing model folder is preserved.
 hint.modifier_hold	Hold for 300 ms to record, then release to stop. Tap to toggle. Key combinations cancel recording.
 hint.remember_mode	Keep this input field’s language mode when switching back to CowType. When disabled, start in Chinese.

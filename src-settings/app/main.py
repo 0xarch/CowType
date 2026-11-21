@@ -127,9 +127,9 @@ def main():
                 self.values = config.DEFAULTS.copy()
                 self.load_error = tr('error.load', error=str(error))
             general = self.group('input', 'group.appearance')
-            pinyin = self.group('input', 'group.pinyin', tr('hint.libime'))
-            privacy = self.group('input', 'group.privacy', tr('hint.learning'))
-            keys = self.group('keys', 'page.keys', tr('hint.hotkey'))
+            pinyin = self.group('input', 'group.pinyin')
+            privacy = self.group('input', 'group.privacy')
+            keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
             groups = {'Punctuation': general, 'Horizontal': general, 'ShiftToggle': keys, 'RememberMode': keys,
                 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
