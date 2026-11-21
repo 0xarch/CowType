@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#include <fcitx-config/configuration.h>
 #include <fcitx/addonfactory.h>
 #include <fcitx/inputcontext.h>
 #include <fcitx/inputcontextmanager.h>
@@ -51,6 +52,11 @@ int main(int argc, char **argv) {
             Field a(instance.inputContextManager()), b(instance.inputContextManager());
             a.setCapabilityFlags(CapabilityFlag::Preedit);
             InputMethodEntry pinyin("cowtype", "CowType", "zh_CN", "cowtype");
+            const auto *config = engine->getConfigForInputMethod(pinyin); CHECK(config);
+            RawConfig description; config->dumpDescription(description);
+            const auto external = description.get("CowtypeSettingsLauncher/Settings/External");
+            CHECK(external && external->value() == "cowtype-config");
+            CHECK(engine->getConfigForInputMethod(InputMethodEntry("cowtype-wubi", "CowType Wubi", "zh_CN", "cowtype")) == config);
             InputContextEvent activate(&a, EventType::InputContextInputMethodActivated); engine->activate(pinyin, activate);
             type(engine, pinyin, a, "shan");
             for (unsigned i=0; i<100 && !a.inputPanel().candidateList(); ++i) {

@@ -8,6 +8,7 @@ action.continue	下载
 action.delete	清除
 action.download	下载并准备
 action.fcitx	打开 Fcitx5 配置
+action.settings	打开 CowType 设置
 action.words.install	启用万象
 action.words.remove	移除万象
 action.words.source	来源与许可

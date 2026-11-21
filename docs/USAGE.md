@@ -12,6 +12,8 @@
 
 ## 设置与语音
 
+在 Fcitx5 设置工具中打开 CowType 拼音或五笔的配置，可通过“打开 CowType 设置”按钮启动设置程序。
+
 设置有输入、按键、语音、互译、词库五页，偏好即时保存，并通知 Fcitx5 重载。互译目前未实现。语音默认关闭，需要用户准备兼容的双图 Paraformer ONNX 模型及系统 ONNX Runtime；麦克风通过 parecord 使用 PulseAudio/PipeWire-Pulse。模型准备会联网、安装隔离环境依赖并导出，请先阅读 [准备工具](../src-voice/paraformer/README.md)。
 
 语音键可选功能键或修饰键。修饰键短按切换开始/结束；启用长按录音时，按住 300 ms 开始，释放结束。组合键、失焦或取消会停止当前会话；录音结果不应上屏到其他输入框。系统是否传递 Alt/AltGr 等事件取决于桌面和 Fcitx5 前端。

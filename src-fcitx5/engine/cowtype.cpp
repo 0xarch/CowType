@@ -6,6 +6,7 @@
 #include "voice.h"
 #include "level.h"
 #include "libime.h"
+#include <fcitx-config/configuration.h>
 #include <fcitx/addonfactory.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/candidatelist.h>
@@ -35,6 +36,11 @@ using namespace fcitx;
 std::string environment(const char *name, const std::string &fallback) {
     const char *value = std::getenv(name); return value && *value ? value : fallback;
 }
+class SettingsLauncher final : public Configuration {
+public:
+    const char *typeName() const override { return "CowtypeSettingsLauncher"; }
+    ExternalOption settings{this, "Settings", ct_tr("action.settings"), "cowtype-config"};
+};
 struct State : InputContextProperty {
     SessionPtr session{cowtype2_session_new(nullptr), cowtype2_session_free};
     unsigned generation = 0;
@@ -113,6 +119,7 @@ public:
         reloadConfig();
         ctDiagnostic("event=addon_ready version=0.1.0-dev.6.3 elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
     }
+    const Configuration *getConfig() const override { return &settingsLauncher_; }
     void reloadConfig() override {
         const auto began=now(CLOCK_MONOTONIC);
         if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}voice_.cancelAll();
@@ -381,6 +388,7 @@ private:
     }
     uint64_t initializedAt_=[]{const auto began=now(CLOCK_MONOTONIC);ctDiagnostic("event=addon_start version=0.1.0-dev.6.3");return began;}();
     std::unique_ptr<Cowtype2Runtime,decltype(&cowtype2_runtime_free)> runtime_{cowtype2_runtime_new(),cowtype2_runtime_free};
+    SettingsLauncher settingsLauncher_;
     unsigned configGeneration_=0;
     Instance *instance_;
     FactoryFor<State> factory_;

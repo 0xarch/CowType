@@ -8,6 +8,7 @@ action.continue	Download
 action.delete	Clear
 action.download	Download and Prepare…
 action.fcitx	Open Fcitx5 Configuration
+action.settings	Open CowType Preferences
 action.words.install	Download and Enable Wanxiang
 action.words.remove	Remove Wanxiang
 action.words.source	Source and License

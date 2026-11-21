@@ -150,8 +150,8 @@
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "e621d856bdab6930b7d6c0f5cea30abd107b4c36c7fd46aee5f05770bf27f5e5",
-      "bytes": 3079
+      "sha256": "361883a7bfdd0c9889523698431846fa7dbe472c2791bc262bf2be12ec0adf51",
+      "bytes": 3212
     },
     {
       "path": "i18n/README.md",
@@ -160,13 +160,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "00b167a2b8b14bf6eec8016a939ccf31e99819782f4b36d39b76f5f92579697b",
-      "bytes": 8767
+      "sha256": "9708a191b0808b14d1a0fa7cda270fbff595480374d26df3e47ae091025613e8",
+      "bytes": 8808
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "5b4cb0b3f146ed2aec8be06f5c60d8a9cdadbb3f114a5f1024e3cfac04301cf9",
-      "bytes": 7558
+      "sha256": "c9cbc0b423e30e6e9eefbad573dedb440514c98d350fc0bd98625e4fbfc19122",
+      "bytes": 7596
     },
     {
       "path": "packaging/README.md",
@@ -225,8 +225,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "fd44003ef79b3e1d2a8fde34997f20fd62dac7069de7541356a89637bb85f17b",
-      "bytes": 25852
+      "sha256": "4539d4210d6f682d20571f95ec3d94539ca4f6c7657a09cc7d8b669cf75426d4",
+      "bytes": 26251
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -560,8 +560,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "9865d26ec92774b53c539570d4a135bccfa57221782981432eedd393227dbe53",
-      "bytes": 18958
+      "sha256": "e906d55a65e4469c83960f0f9ffa39fd5e90e13fac8352bbd8f019f9d454e815",
+      "bytes": 19458
     },
     {
       "path": "tests/native/isolated.py",
