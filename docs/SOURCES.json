@@ -867,7 +867,7 @@
       "packaging/debian/control.in",
       "packaging/rpm/cowtype.spec.in"
     ],
-    "implementation": "Original CowType native packaging and CI. Architectural reference only: per-distribution containers, shared verified data artifacts, package installation checks and tag-gated release. No copied WowType implementation.",
+    "implementation": "Original CowType native packaging and CI. Architectural reference only: per-distribution containers, shared verified data artifacts, package installation checks and tag-gated release. Extended with original openSUSE zypper/RPM dependency mapping and installed-settings verification; Deepin and Leap trials retain the existing Fcitx5 minimum. No copied WowType implementation.",
     "reference": {
       "repository": "https://github.com/Gloridust/WowType",
       "revision": "ebbe4c88d52f7ca6ddf27c4b062f913b79ad269b",

@@ -25,8 +25,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "5794dbc139097307e4e45557d89bd6b000e22aad71460f274b20b8b3db05d257",
-      "bytes": 3572
+      "sha256": "5004f62c83b739403edc249c9df500c4661fe3e019051c84de1c131ce452f89a",
+      "bytes": 3788
     },
     {
       "path": "CMakeLists.txt",
@@ -103,8 +103,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "302df478e407007d54d8a2502539a04293fd22edff437ebaac7d294b0bde05a2",
-      "bytes": 7448
+      "sha256": "8963b8a0e1e9cfc959c484e78135ecc3ee5ac4431fcf92faff1244f1b0d6f02e",
+      "bytes": 8532
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -123,8 +123,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "4bea583706e3c5c2abafb9d261043942d3fe04bb93f98f1597aaa9c881d4f078",
-      "bytes": 39226
+      "sha256": "854926ae37a79dfd4af180d8debf0bab517d63643262b0a56ad3582ae3ea664f",
+      "bytes": 39384
     },
     {
       "path": "docs/USAGE.md",
@@ -148,8 +148,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "03f68c5edb74ab0c0525dc9f7948d5997e09267a6a137081b642da98413d70e7",
-      "bytes": 2451
+      "sha256": "10f3f2f0a248eb7366a782c90336775f371faac3799b2ec18a348e57b9e3c748",
+      "bytes": 3088
     },
     {
       "path": "packaging/arch/PKGBUILD.in",

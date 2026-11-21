@@ -87,7 +87,27 @@ PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 
 ## 多发行版与 GitHub Actions
 
-Arch、Fedora、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
+Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
+
+## openSUSE Tumbleweed
+
+已支持 x86_64 原生 RPM；使用 Tumbleweed 当前官方软件源，不能将其视作 Leap 或 Fedora 的兼容包。源码构建可先安装依赖：
+
+```sh
+sudo zypper refresh
+sudo zypper install --no-recommends gcc-c++ make cmake ninja rust cargo libime-devel boost-devel \
+  libopenssl-devel rsvg-convert fcitx5 fcitx5-devel python3 python3-gobject python3-gobject-Gdk \
+  gtk4-tools typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 dejavu-fonts rpm-build git pkgconf-pkg-config \
+  dbus-1 findutils file ca-certificates
+```
+
+按上文准备固定版本的词库、Cargo vendor 并更新源码清单后，可用普通用户生成生产包：
+
+```sh
+python3 tooling/package_linux.py --source . --format rpm --distro opensusetumbleweed --libdir lib64 --output dist
+```
+
+生成的包可用 `sudo zypper install ./dist/cowtype-*.opensusetumbleweed.x86_64.rpm` 安装。Fcitx5 插件安装到 `/usr/lib64/fcitx5`。Python 通用包名由 Tumbleweed 的对应版本包提供，打包工具为 GTK/libadwaita 显式声明 typelib 运行依赖。
 
 ## Ubuntu
 

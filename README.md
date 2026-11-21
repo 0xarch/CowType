@@ -73,11 +73,16 @@ GitHub Actions 已验证以下 Linux x86_64 目标的构建、安装包和插件
 |---|---|
 | Arch Linux | `.pkg.tar.zst` |
 | Fedora 45 | `.rpm` |
+| openSUSE Tumbleweed | `.rpm` |
 | Debian unstable | `.deb` |
 
-在 [Releases](https://github.com/0xarch/CowType/releases) 下载对应的发布包，或 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载（下载 Actions 产物需要登录 GitHub）定期主线构建。注：主线构建不保证总是新于发布包。
+在 [Releases](https://github.com/0xarch/CowType/releases) 下载对应的发布包，
+或在 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载（下载 Actions 产物需要登录 GitHub）定期主线构建。
+注：主线构建不保证总是新于发布包。
 
-请使用本发行版的软件包管理器安装对应的包。Debian unstable 为滚动目标，其 Deb 包不保证兼容 Debian 稳定版或 Ubuntu。
+发布包均经过实际测试，确保基本功能正常。主线构建可能在部分情况下存在问题。
+
+请使用本发行版的软件包管理器安装对应的包。Debian unstable 和 openSUSE Tumbleweed 都是滚动目标，安装包面向各自的原生依赖；Deb 包不保证兼容 Debian 稳定版或 Ubuntu，Tumbleweed 的 RPM 不保证兼容 Leap 或 Fedora。
 
 由于 Ubuntu 26.04 的 Fcitx5 版本过于老旧，Ubuntu 目前不在自动构建范围内，版本要求与自行构建方式见[Ubuntu 构建说明](docs/BUILD.md#ubuntu)。
 
