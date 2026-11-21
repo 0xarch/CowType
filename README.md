@@ -22,12 +22,10 @@ CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。主体受 
 6. 可开启基于 Unicode CLDR 的表情和符号关键词匹配
 7. 更顺手的长词组-词组-单字排列方式
 
-尚不支持 WowType 的互译功能。
+尚不支持 WowType 的互译功能和云拼音输入。
 
 拼音优先使用本机 Fcitx/libime 系统词库，以雾凇补充；需要更多词汇时，可在设置里下载万象文本词库。
 支持默认关闭的本地统计语言模型和词库预编译缓存，详见[词库说明](docs/DICTIONARIES.md)。五笔使用五笔词库。
-
-尚不不支持云拼音。
 
 ## 语音输入
 
@@ -40,7 +38,7 @@ CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。主体受 
 
 ## GUI 设置
 
-打开 CowType 设置，即可调整输入、按键、语音和词库选项。
+打开 CowType 设置或运行 `cowtype-config` 即可调整输入、按键、语音和词库选项。
 
 - 用 F6 或单按 Shift 切换中英文。
 - 用数字键选词，PageUp/PageDown 翻页；也可开启方括号、减号和等号翻页。
@@ -50,24 +48,37 @@ CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。主体受 
 
 ## 开始使用
 
-目前支持在 Arch Linux x86_64 上打包。先安装依赖，再下载项目并运行根目录脚本：
+### 下载构建产物
+
+GitHub Actions 已验证以下 Linux x86_64 目标的构建、安装包和插件测试：
+
+| 发行版 | 安装包 |
+|---|---|
+| Arch Linux | `.pkg.tar.zst` |
+| Fedora 45 | `.rpm` |
+| Debian unstable | `.deb` |
+
+在 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载对应发行版的安装包（下载 Actions 产物需要登录 GitHub）。正式发布的资产见 [Releases](https://github.com/0xarch/CowType/releases)，以该版本实际提供的文件为准。
+
+请使用本发行版的软件包管理器安装对应的包。Debian unstable 为滚动目标，其 Deb 包不保证兼容 Debian 稳定版或 Ubuntu；Ubuntu 目前不在自动构建范围内，版本要求与自行构建方式见[Ubuntu 构建说明](docs/BUILD.md#ubuntu)。
+
+### Arch Linux 从源码构建
+
+先安装依赖，再下载项目并运行根目录脚本：
 
 ```sh
-sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost gtk4 libadwaita python python-gobject
+sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost openssl librsvg gtk4 libadwaita python python-gobject
 git clone https://github.com/0xarch/CowType.git
 cd CowType
+bash build-arch.sh --check
 bash build-arch.sh
 ```
 
-脚本会下载默认词库和编译依赖，完成生产编译后，将安装包放在 `dist/`。请用普通用户运行，首次构建需要网络；不会下载语音模型或自动安装软件。
+脚本下载并校验默认词库和编译依赖，完成生产构建后将安装包放在 `dist/`。请用普通用户运行，首次构建需要网络；不会下载语音模型或自动安装软件。生产构建不编译或运行开发测试，开发者可按[构建与打包说明](docs/BUILD.md)单独运行完整测试。
 
-成功后，按实际生成的文件名安装。
+成功后按实际生成的包名使用 `sudo pacman -U` 安装。Fedora、Debian 的原生打包流程和自动发布规则见[打包说明](packaging/README.md)；其他环境的依赖、手动构建与高级选项见[构建文档](docs/BUILD.md)。
 
-常见问题和手动构建步骤和高级控制见[构建与打包说明](docs/BUILD.md)。
-
-安装完成后需重新启动 Fcitx5 以加载插件。
-
-打开应用菜单中的 **CowType 设置**，或运行 `cowtype-config` 调整偏好。
+安装或升级完成后需重新启动 Fcitx5 以加载插件。打开应用菜单中的 **CowType 设置**，或运行 `cowtype-config` 调整偏好。
 
 ## 参与
 

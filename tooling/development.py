@@ -78,8 +78,16 @@ def verify_links(paths, root):
 
 
 def snapshot(paths, root):
-    return [{'path': p.relative_to(root).as_posix(), 'sha256': sha(p), 'bytes': p.stat().st_size}
-            for p in paths]
+    rows = []
+    for path in paths:
+        relative = path.relative_to(root).as_posix()
+        row = {'path': relative}
+        # The root README is editable without refreshing content hashes. Keep
+        # its presence, Markdown links and inclusion in source archives checked.
+        if relative != 'README.md':
+            row.update(sha256=sha(path), bytes=path.stat().st_size)
+        rows.append(row)
+    return rows
 
 
 def main():

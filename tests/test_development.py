@@ -59,6 +59,26 @@ class DevelopmentInventoryTests(unittest.TestCase):
             self.assertNotEqual(first, second)
             self.assertEqual(second[0]['sha256'], development.sha(source))
 
+    def test_readme_edits_keep_archive_inventory_without_content_hashes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            readme = root / 'README.md'
+            source = root / 'Cargo.toml'
+            readme.write_text('# First README\n')
+            source.write_text('original source')
+            first = development.snapshot(development.inventory(root), root)
+            readme.write_text('# Updated README with a different size\n')
+            second = development.snapshot(development.inventory(root), root)
+            self.assertEqual(first, second)
+            self.assertIn(readme, development.inventory(root))
+            self.assertEqual(next(row for row in second if row['path'] == 'README.md'),
+                             {'path': 'README.md'})
+            source.write_text('changed source')
+            self.assertNotEqual(second, development.snapshot(development.inventory(root), root))
+            readme.write_text('[broken](missing.md)\n')
+            with self.assertRaisesRegex(ValueError, 'Broken/escaping Markdown link'):
+                development.verify_links(development.inventory(root), root)
+
     def test_new_component_directory_is_supported(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

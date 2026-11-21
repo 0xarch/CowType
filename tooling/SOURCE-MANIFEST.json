@@ -74,9 +74,7 @@
       "bytes": 2033
     },
     {
-      "path": "README.md",
-      "sha256": "6d7f238a68bd27c85b3e63158293ca75fb4ea82a58c00e5819f78b1fa74fbcc3",
-      "bytes": 3885
+      "path": "README.md"
     },
     {
       "path": "STRUCTURES.md",
@@ -105,8 +103,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "da0ce21fc97f51c45efb8908b69a12bd826f4b11c5f3b963211192f8b0b5e7f5",
-      "bytes": 6393
+      "sha256": "a6b0069106eb032a28807816a261c419d2631970770676ac6beebb3a42cfcf30",
+      "bytes": 6530
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -630,8 +628,8 @@
     },
     {
       "path": "tests/test_development.py",
-      "sha256": "a864a5c20b47e76c90b30694052d815df74ace7da093035bb7f498e4f78835f9",
-      "bytes": 3205
+      "sha256": "478b4d85463b266032573b03eab3d7b18c8505f916d1e28548077bf4be35dc5c",
+      "bytes": 4394
     },
     {
       "path": "tests/test_dictionaries.py",
@@ -665,8 +663,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "c494749d14b4394051612a10bf0b4d3106c199b24d2548d964231885746fc585",
-      "bytes": 475
+      "sha256": "bd658520a89fdd8416b6280b89b6f34bb01027d17db0c314a649a1a6dcdff5af",
+      "bytes": 582
     },
     {
       "path": "tooling/ci-linux.sh",
@@ -680,8 +678,8 @@
     },
     {
       "path": "tooling/development.py",
-      "sha256": "c2afabdd19914d8e3d868f6230b6296a712f05a6df562c7b61dc4b06d059953e",
-      "bytes": 4866
+      "sha256": "f48c87f22a07ef2260eda8de34478c2365bc846224d12789f031fb0bcddc3175",
+      "bytes": 5167
     },
     {
       "path": "tooling/icons.cmake",
