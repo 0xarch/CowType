@@ -1,23 +1,23 @@
-about.comments	A Chinese input method for Linux. Dictionary authors and licenses are preserved.
+about.comments	A Chinese input method for Linux.
 action.cancel	Cancel
 action.cancel.download	Cancel download and preparation
 action.check	Validate Model
-action.choose	Choose Folder…
-action.clear	Clear Learning History…
+action.choose	Choose Folder
+action.clear	Clear Learning History
 action.continue	Download
 action.delete	Clear
-action.download	Download and Prepare…
+action.download	Download and Prepare
 action.fcitx	Open Fcitx5 Configuration
 action.settings	Open CowType Preferences
-action.words.install	Download and Enable Wanxiang
+action.words.install	Enable Wanxiang
 action.words.remove	Remove Wanxiang
 action.words.source	Source and License
 app.about	About CowType
 app.name	CowType
 app.title	CowType Preferences
-dialog.clear.body	Delete candidate preferences on this device. Dictionaries and custom phrases are preserved.
+dialog.clear.body	Delete candidate preferences on this device.
 dialog.clear.title	Clear Learning History?
-dialog.download.body	Connect to ModelScope (Hugging Face as fallback) and Python package sources to download about 880 MB of official Paraformer weights plus tools, then export the model. Model license: Apache-2.0.
+dialog.download.body	Connect to ModelScope or Hugging Face and Python package sources to download about 880 MB of Paraformer weights and the tool environment, then export the model.
 dialog.download.title	Download Speech Model?
 error.dependencies	CowType Preferences requires Libadwaita, GTK4, and Python GObject.
 error.load	Could not load settings. The original file will not be overwritten: {error}
@@ -30,16 +30,16 @@ group.pinyin	Pinyin
 group.privacy	Learning and Privacy
 group.voice	Voice Input
 group.words	Additional Dictionaries
-hint.always_resident	Prepare the model when CowType loads, using about 0.9 GB of memory without opening the microphone. Voice input must also be enabled.
+hint.always_resident	Prepare the model when CowType loads, using about 0.9 GB of memory. Voice input must also be enabled.
 hint.fcitx	Add CowType Pinyin or CowType Wubi 86 in Fcitx5.
 hint.initials	For example, kn → 可能
-hint.model	Models are downloaded explicitly and are not included in the package. Your existing model folder is preserved.
-hint.modifier_hold	Hold for 300 ms to record, then release to stop. Tap to toggle. Key combinations cancel recording.
+hint.model	Models are downloaded by the user; weights are not included in the package. Continue using the existing model folder.
+hint.modifier_hold	Hold for 300 ms to start recording, then release to stop. Tap to toggle.
 hint.remember_mode	Keep this field’s language mode when returning to CowType; otherwise start in Chinese.
-hint.resident	Keeps about 0.9 GB of memory after first use. No recording while idle.
-hint.translate	Translation is not connected. No network requests are sent.
-hint.words	Ice Pinyin (GPL-3.0-only) and Wubi 86 (LGPL-3.0-only) are included. Wanxiang is an optional CC-BY-4.0 text dictionary.
-hint.words.source	Pinned revision {revision}; about {size} MiB from GitHub. Grammar models are not downloaded.
+hint.resident	Keeps about 0.9 GB of memory after first use.
+hint.translate	No translation backend is connected yet.
+hint.words	Rime Ice Pinyin and Wubi 86 are included by default.
+hint.words.source	Pinned revision {revision}; download size is about {size} MiB.
 hotkey.Alt_L	Left Alt
 hotkey.Alt_R	Right Alt
 hotkey.Control_R	Right Ctrl
@@ -56,13 +56,13 @@ message.2b0bac73ff4a	Could not read recorded audio
 message.348ea84c6046	English
 message.37a87a9cf26d	Model source manifest is missing file digests
 message.3a1b85f91ecc	Voice input is active in another field
-message.50698e404b8c	Finishing recording…
+message.50698e404b8c	Finishing recording and submitting the remaining audio…
 message.518a5c4b7dd3	Invalid resident voice control protocol
 message.599d9125c1b0	Refusing to write through a symbolic link: 
 message.5adaeff16361	Could not set the recording pipe to nonblocking mode
 message.5b95106f776a	Expected at most 120 seconds of 16 kHz mono S16LE PCM
 message.5c7e93923246	Voice process exited; no result was committed
-message.5f53e12c4429	Unsupported model source; use the supplied preparation tool
+message.5f53e12c4429	Unsupported model source; use the supplied official preparation tool
 message.6d29fedd26ae	Recording stop timed out; incomplete result was discarded
 message.71cea6a7bc11	Starting local voice input…
 message.72726d8818f6	Chinese
@@ -72,9 +72,9 @@ message.8c1f2492bb4b	Could not start parecord; install libpulse and check the au
 message.8eb75ca37861	Could not read the voice channel
 message.90b0f30f9ed4	Missing or invalid SOURCE.json; export the model using the supplied preparation tool
 message.95c892b2b067	Candidate count must be between 3 and 9
-message.97f37ac9ae4a	Unsupported two-graph export
+message.97f37ac9ae4a	Not a supported official two-graph export
 message.9bcf5a1e4f0b	Invalid voice text encoding
-message.9f30c9b3ac26	No speech was recognized
+message.9f30c9b3ac26	No text was recognized
 message.a02910fcb9c1	--serve does not accept single-run diagnostic arguments
 message.a3f8ce85d454	Learning data cannot be read; saving is disabled to preserve the original file
 message.a68c094df355	Recording poll failed
@@ -94,7 +94,7 @@ message.e3bbd74cca85	Invalid voice protocol
 message.e6575bb6801f	Voice backend failed; check ONNX Runtime and model versions
 message.f1e43bff56c4	Could not start cowtype-voice; check the installation
 message.f84fffe2c588	Could not open the recording pipe
-message.fae536a183cb	Finish the current composition before starting voice input
+message.fae536a183cb	Finish the current Pinyin composition before starting voice input
 message.fd6955acd5d1	Unknown voice argument
 message.ff19b914000e	Model source manifest is too large
 message.ffc05e0f887f	Settings must contain a single CowType section
@@ -108,20 +108,20 @@ page.words	Dictionaries
 setting.Completion	Pinyin Completion
 setting.Correction	Pinyin Spelling Correction
 setting.Horizontal	Horizontal Candidates
-setting.Initials	Pinyin Initials
+setting.Initials	Mix Pinyin Initials and Full Spellings
 setting.Learning	Learn Candidate Preferences
 setting.PageBrackets	Page with [ and ]
 setting.PageMinusEqual	Page with - and =
 setting.PageSize	Candidates per Page
 setting.Punctuation	Chinese Punctuation
 setting.RememberMode	Remember Language Mode
-setting.Sentence	Sentence Segmentation
+setting.Sentence	Long Sentence Segmentation
 setting.ShowPinyin	Show Pinyin beside Candidates
-setting.Voice	Local Voice Input
+setting.Voice	Enable Local Voice Input
 setting.VoiceAlwaysResident	Always keep the instance ready
 setting.VoiceHotkey	Voice Shortcut
-setting.VoiceModifierHold	Hold Modifier Shortcut to Record
-setting.VoiceResident	Keep Speech Model in Memory
+setting.VoiceModifierHold	Hold Alt Shortcut to Record
+setting.VoiceResident	Keep Speech Model Instance
 status.cleared	Learning history reset requested.
 status.model.cancelled	Model operation canceled.
 status.model.done	Operation completed. Validate the model before enabling voice input.
@@ -144,7 +144,7 @@ voice.paraformer.limit	A voice utterance cannot exceed 120 seconds
 voice.paraformer.lock	Paraformer model state lock is unavailable
 voice.paraformer.manual	Download models separately; use --model-url for the official source and --dir for the ONNX export directory
 voice.paraformer.pointer	Model file is empty or a Git LFS pointer; download the actual file first
-voice.paraformer.runtime	Cannot load system ONNX Runtime (1.22 or newer required; set ORT_DYLIB_PATH to select the library)
+voice.paraformer.runtime	Cannot load system ONNX Runtime (1.22 or newer required)
 voice.paraformer.shape	Invalid ONNX output shape or value; model, tokens and cache configuration may not match
 setting.StatisticalModel	Local statistical language model
 hint.statistical_model	Off by default. Uses the installed libime Chinese model; never downloads a model.
@@ -152,13 +152,13 @@ warning.dictionary_optional	An optional dictionary or local statistical model is
 setting.Emoji	Emoji and symbol suggestions
 hint.emoji	Match complete Chinese or English keywords using Unicode CLDR. Off by default.
 setting.ModeHotkey	Switch Chinese / English
-setting.InternalCodeHotkey	GB18030-2022 internal code
-hint.shortcuts	All features share the same keys. Duplicate or overlapping modifier bindings are rejected.
+setting.InternalCodeHotkey	GB18030-2022 internal code input
+hint.shortcuts	Duplicate or overlapping modifier bindings are rejected.
 hotkey.disabled	Disabled
 error.shortcut.unsupported	Unsupported feature shortcut
 error.shortcut.conflict	Shortcut conflict: choose different, non-overlapping keys for each feature.
-gb18030.mode	GB18030-2022
-gb18030.hint	GB18030-2022: 4 or 8 hex digits; arrows to select, Space/Enter to commit, Escape to exit
+gb18030.mode	GB18030-2022 internal code
+gb18030.hint	GB18030-2022: 4 or 8 hex digits; Up/Down to select, Space/Enter to commit, Esc to exit
 gb18030.invalid	Invalid or unassigned GB18030 code
 gb18030.unavailable	The system GB18030 converter does not support the required 2022 mappings.
 hotkey.None	Disabled

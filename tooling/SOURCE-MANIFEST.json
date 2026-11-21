@@ -138,13 +138,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "2ab60ef21634f1924f9d7ef6d9b0b4374e02c524c9bfa52fabbe35f1d712baf1",
-      "bytes": 10544
+      "sha256": "fcbfe7736b9746fa3fc0a31d75aa51ac4d76f8541336c57074d7fff689e54bcd",
+      "bytes": 10238
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "988ad3c9c65aa71dcc446301075201e060c878e7dd5882bdf88765acb753449a",
-      "bytes": 9271
+      "sha256": "d28c3672f01a94886b088b9f0234235f52b1b1051e7f58bea35e8d23e5b5cc6c",
+      "bytes": 9226
     },
     {
       "path": "packaging/README.md",
