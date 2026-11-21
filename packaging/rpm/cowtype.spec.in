@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+Name: cowtype
+Version: @VERSION@
+Release: 1.@DISTRO@
+Summary: CowType Pinyin and Wubi input method for Fcitx5
+License: GPL-3.0-or-later AND GPL-3.0-only AND LGPL-3.0-only AND MIT AND Apache-2.0 AND Unicode-3.0
+URL: https://github.com/0xarch/CowType
+Requires: fcitx5 >= 5.1.23
+Requires: python3, python3-gobject, gtk4 >= 4.10, libadwaita >= 1.5
+Recommends: google-noto-color-emoji-fonts
+Suggests: pulseaudio-utils
+%global debug_package %{nil}
+%description
+Offline Pinyin/Wubi dictionaries, optional CLDR symbols and local voice input.
+No voice or statistical model bundled. Built in the target Fedora container.
+%install
+mkdir -p %{buildroot}
+cp -a @STAGE@/. %{buildroot}/
+%files
+%{_bindir}/cowtype*
+/usr/@LIBDIR@/fcitx5/libcowtype-fcitx5.so
+/usr/@LIBDIR@/cowtype/
+%{_datadir}/cowtype/
+%{_datadir}/fcitx5/addon/cowtype.conf
+%{_datadir}/fcitx5/inputmethod/cowtype*.conf
+%{_datadir}/icons/hicolor/*/apps/cowtype.*
+%{_datadir}/applications/io.github._0xarch.CowType.Config.desktop
+%{_datadir}/licenses/cowtype/
+%{_datadir}/doc/cowtype/

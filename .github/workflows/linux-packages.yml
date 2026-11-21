@@ -1,0 +1,105 @@
+name: Linux packages
+on:
+  push:
+    branches: [dev, main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: linux-packages-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+jobs:
+  source:
+    name: Verify and prepare shared source
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test core and data tools
+        run: |
+          python3 tooling/development.py
+          cargo fmt --check
+          cargo fmt --check --manifest-path src-voice/Cargo.toml
+          CARGO_TARGET_DIR="$PWD/target" cargo test --locked --features native-ffi
+          CARGO_TARGET_DIR="$PWD/target" cargo test --locked --manifest-path src-voice/Cargo.toml
+          python3 -m unittest discover -s tests -p 'test_*.py'
+          python3 -m unittest discover -s src-voice/paraformer/tests -p 'test_*.py'
+          python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
+      - name: Prepare pinned offline inputs
+        run: |
+          python3 src-data-tools/dictionaries/manage.py build-default --source-cache build/review --output build/data
+          cargo vendor --locked --versioned-dirs --manifest-path src-voice/Cargo.toml build/voice-vendor
+          python3 tooling/package_arch.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prepared-source
+          path: |
+            dist/cowtype-*-source.tar.gz
+            dist/PKGBUILD
+          if-no-files-found: error
+  packages:
+    name: Package ${{ matrix.distro }}
+    needs: source
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {distro: arch, image: 'archlinux:latest', format: arch}
+          - {distro: fedora45, image: 'fedora:45', format: rpm}
+          - {distro: debianunstable, image: 'debian:unstable', format: deb}
+          - {distro: ubuntu26.04, image: 'ubuntu:26.04', format: deb}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tooling/ci-linux.sh dependencies '${{ matrix.distro }}'
+      - uses: actions/download-artifact@v4
+        with:
+          name: prepared-source
+          path: dist
+      - run: bash tooling/ci-linux.sh build '${{ matrix.distro }}' '${{ matrix.format }}'
+      - run: bash tooling/ci-linux.sh verify '${{ matrix.distro }}'
+        env:
+          COWTYPE_VOICE_HELPER: ${{ github.workspace }}/tests/native/fake-voice.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.distro }}-x86_64
+          path: dist/packages/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: diagnostics-${{ matrix.distro }}
+          path: |
+            build/ci-test/Testing/Temporary/LastTest.log
+            build/ci-ldd.txt
+  release:
+    name: Publish tag packages
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [source, packages]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: package-*
+          path: dist/release
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: prepared-source
+          path: dist/release
+      - name: Validate version and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tooling/release_notes.py "$GITHUB_REF_NAME" > build-release-notes.md
+          (cd dist/release && sha256sum -- * > SHA256SUMS)
+          gh release create "$GITHUB_REF_NAME" dist/release/* --verify-tag --title "CowType ${GITHUB_REF_NAME#v}" --notes-file build-release-notes.md

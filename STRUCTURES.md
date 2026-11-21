@@ -14,7 +14,8 @@
 | i18n/ | en_US.tsv、zh_CN.tsv 统一界面文案 |
 | tests/ | Rust/Python 单元和集成测试、合成词典、原生 Fcitx5/C ABI 探针 |
 | tooling/ | 文案编译、源码清单检查和 Arch 源码打包工具 |
-| packaging/ | 发行版包模板；当前提供 Arch PKGBUILD.in |
+| packaging/ | Arch、Debian 和 RPM 原生包模板 |
+| .github/workflows/ | Linux 容器构建、测试、原生包与标签发布 |
 | docs/ | 使用、构建、版权与来源说明 |
 | LICENSES/ | 第三方许可文本；各组件还保留各自上游通知 |
 

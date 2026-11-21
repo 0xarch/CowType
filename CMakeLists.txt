@@ -7,9 +7,16 @@ find_package(Fcitx5Core 5.1.23 REQUIRED)
 find_package(Threads REQUIRED)
 find_package(LibIMEPinyin 1.1.7 REQUIRED)
 find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+# libime follows the target distribution's library layout (lib/lib64/multiarch).
+find_file(COWTYPE_LIBIME_MODEL_FILE zh_CN.lm
+    PATHS "${CMAKE_INSTALL_FULL_LIBDIR}/libime" /usr/lib/libime /usr/lib64/libime
+    PATH_SUFFIXES "${CMAKE_LIBRARY_ARCHITECTURE}/libime")
+if(NOT COWTYPE_LIBIME_MODEL_FILE)
+    set(COWTYPE_LIBIME_MODEL_FILE "${CMAKE_INSTALL_FULL_LIBDIR}/libime/zh_CN.lm")
+endif()
 add_library(cowtype-pinyin INTERFACE)
 target_link_libraries(cowtype-pinyin INTERFACE LibIME::Pinyin OpenSSL::Crypto)
-target_compile_definitions(cowtype-pinyin INTERFACE COWTYPE_LIBIME_VERSION="${LibIMEPinyin_VERSION}")
+target_compile_definitions(cowtype-pinyin INTERFACE COWTYPE_LIBIME_VERSION="${LibIMEPinyin_VERSION}" COWTYPE_LIBIME_MODEL_FILE="${COWTYPE_LIBIME_MODEL_FILE}")
 find_program(CARGO_EXECUTABLE cargo REQUIRED)
 find_package(Python3 3.9 COMPONENTS Interpreter REQUIRED)
 set(CMAKE_CXX_STANDARD 20)

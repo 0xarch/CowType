@@ -9,6 +9,11 @@
       "bytes": 139
     },
     {
+      "path": ".github/workflows/linux-packages.yml",
+      "sha256": "53a60e33cb794206abfc9843e69465ba2ec10264253d71c5de370285c47ea5a4",
+      "bytes": 3878
+    },
+    {
       "path": ".gitignore",
       "sha256": "c4e451d920c63e73d27b2c12b0eb65c4b503a48cd8662e80bb405fac99d739d0",
       "bytes": 383
@@ -25,8 +30,8 @@
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "f39b1d3410eabf1a46600b4dbc8d7334c14f482bfa663faf01b0d0d986f42a16",
-      "bytes": 13216
+      "sha256": "5a64d5d5c703054f1c7ee1d5214ff994053e08e2b76b23ce39b823832c4f0d44",
+      "bytes": 13663
     },
     {
       "path": "Cargo.lock",
@@ -75,8 +80,8 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "24fbe0a6b1270900b7e28a4f213a88ef7c30c072f56d479d5f78044ba7e6470e",
-      "bytes": 1878
+      "sha256": "8759caa25abc60ff6f48787796c458ecd21db15328d31e74a1864d97b0371ad8",
+      "bytes": 1945
     },
     {
       "path": "assets/icons/README.md",
@@ -100,8 +105,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "983ff496c1208666ddff31840e61817e0fb0e2ccc7835661b2b35259062f5dd4",
-      "bytes": 5078
+      "sha256": "bb362d283a91f50a73d8055fd3cc47f3edfbf6c006eebce96bb7bf446ecb681a",
+      "bytes": 5300
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -120,8 +125,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "d69d494895db42447e139292c78087eed477a995c6f28982cfd2396e0ff1e34b",
-      "bytes": 35815
+      "sha256": "dd49c17ad95a424da18800fb4702950efd8347a07e7ce6939430a59008e4353f",
+      "bytes": 36722
     },
     {
       "path": "docs/USAGE.md",
@@ -145,13 +150,23 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "d16b0fc2c894df4ddec5d7199e6ff3adf1831d1a81514271d6f3d1af10487b18",
-      "bytes": 562
+      "sha256": "ba4c37e5bff6cb95c2d168a80678fa4018c98598767afd9644c6d2e58c137dca",
+      "bytes": 1981
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
       "sha256": "023e6372c61e2b36bb46e9e7bdd0087070d305977d8eaafbf60087d301745bd3",
       "bytes": 1541
+    },
+    {
+      "path": "packaging/debian/control.in",
+      "sha256": "c1e10b4fe356e59bd42606f138ffc022b52a305656ecbec070ad3ab316047e63",
+      "bytes": 614
+    },
+    {
+      "path": "packaging/rpm/cowtype.spec.in",
+      "sha256": "cf3fa159d3183eb533d6b8b50f5c523bfc5b42dad247eb982964c3ad38d4c352",
+      "bytes": 1076
     },
     {
       "path": "src-data-tools/README.md",
@@ -245,8 +260,8 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "8032c0fb4b90584595bc0c2806a0f3fc7dda1ad37ba9c72fbb45289f9c2cf8e9",
-      "bytes": 7022
+      "sha256": "988a7a61cadc2a75db2ec9d8cf4bd58ab149762c82b53bdb520121aa14ebab94",
+      "bytes": 7123
     },
     {
       "path": "src-fcitx5/engine/voice.h",
@@ -654,6 +669,11 @@
       "bytes": 475
     },
     {
+      "path": "tooling/ci-linux.sh",
+      "sha256": "08d2be4d0d755cd4d3ef2d6df5e7ce0113c0eb148ea335cca3d17333158454ba",
+      "bytes": 3708
+    },
+    {
       "path": "tooling/compile_i18n.py",
       "sha256": "eb0836039830130e5c9652724ef3847e3d0a5abb732734b40f5f6b7efefd968e",
       "bytes": 1039
@@ -672,6 +692,16 @@
       "path": "tooling/package_arch.py",
       "sha256": "ae4770876e73c5458ffc3ca318baa3ba3efa4df96649b548021d7da480be6824",
       "bytes": 5404
+    },
+    {
+      "path": "tooling/package_linux.py",
+      "sha256": "d311873cd66f8ed8234f013f5a17adcdb50451e6eee5ca31842d0f11dc139499",
+      "bytes": 4042
+    },
+    {
+      "path": "tooling/release_notes.py",
+      "sha256": "8cd0702de14f2d727df6161362c42abc1788d3cba8d5796dae78e2c16d389938",
+      "bytes": 691
     }
   ]
 }

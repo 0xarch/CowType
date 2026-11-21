@@ -18,6 +18,9 @@
 #include <sstream>
 #include <stdexcept>
 
+#ifndef COWTYPE_LIBIME_MODEL_FILE
+#define COWTYPE_LIBIME_MODEL_FILE "/usr/lib/libime/zh_CN.lm"
+#endif
 class LibimeDecoder {
     std::mutex mutex_;
     std::unique_ptr<libime::PinyinIME> ime_;
@@ -31,7 +34,7 @@ public:
         const char *value = std::getenv(name); return value ? value : fallback;
     }
     static std::string systemPath() { return installed("COWTYPE_SYSTEM_PINYIN_DICT", "/usr/share/libime/sc.dict"); }
-    static std::string modelPath() { return installed("COWTYPE_STATISTICAL_MODEL_FILE", "/usr/lib/libime/zh_CN.lm"); }
+    static std::string modelPath() { return installed("COWTYPE_STATISTICAL_MODEL_FILE", COWTYPE_LIBIME_MODEL_FILE); }
     LibimeDecoder(const std::string &path, const std::string &optional)
         : LibimeDecoder(cowtype::PinyinSources{path, optional, "", "", ""}, false) {}
     LibimeDecoder(const cowtype::PinyinSources &sources, bool statisticalModel) {

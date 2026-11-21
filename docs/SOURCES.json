@@ -857,5 +857,27 @@
     "reference": "https://docs.rs/ort/2.0.0-rc.12/ort/",
     "validation": "Locally selected existing model, isolated temporary XDG paths and synthetic PCM only. No microphone or personal recordings; no accuracy claims.",
     "new_dependencies": []
+  },
+  "linux_packaging_2026_11_21": {
+    "paths": [
+      ".github/workflows/linux-packages.yml",
+      "tooling/ci-linux.sh",
+      "tooling/package_linux.py",
+      "tooling/release_notes.py",
+      "packaging/debian/control.in",
+      "packaging/rpm/cowtype.spec.in"
+    ],
+    "implementation": "Original CowType native packaging and CI. Architectural reference only: per-distribution containers, shared verified data artifacts, package installation checks and tag-gated release. No copied WowType implementation.",
+    "reference": {
+      "repository": "https://github.com/Gloridust/WowType",
+      "revision": "ebbe4c88d52f7ca6ddf27c4b062f913b79ad269b",
+      "paths": [
+        ".github/workflows/ci.yml",
+        "scripts/package-deb.sh",
+        "scripts/package-rpm.sh",
+        "scripts/package-arch.sh"
+      ]
+    },
+    "models": "No voice or statistical models downloaded or distributed."
   }
 }

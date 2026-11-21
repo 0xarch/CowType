@@ -84,3 +84,7 @@ PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 ```
 
 源码清单在 tooling/SOURCE-MANIFEST.json，可随正常代码修改更新，不再绑定阶段性快照或冻结组件。它仍排除用户日志、模型、Git 元数据及构建目录，并验证文件摘要和文档链接。Arch 源码归档另行校验词库的锁定输入/输出和 build/voice-vendor 依赖摘要。发行包不包含模型。
+
+## 多发行版与 GitHub Actions
+
+Arch、Fedora、Debian/Ubuntu 容器构建与打包入口见[打包说明](../packaging/README.md)。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
