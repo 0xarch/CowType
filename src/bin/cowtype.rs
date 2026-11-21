@@ -21,10 +21,7 @@ fn main() {
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     if args == ["--version"] {
-        println!(
-            "cowtype {} (Linux input method)",
-            env!("CARGO_PKG_VERSION")
-        );
+        println!("cowtype {} (Linux input method)", env!("CARGO_PKG_VERSION"));
         return Ok(());
     }
     if args.first().is_some_and(|s| s == "--help") {
