@@ -153,7 +153,7 @@ setting.Emoji	表情与符号候选
 hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词，默认关闭。
 setting.ModeHotkey	切换中英文
 setting.InternalCodeHotkey	GB18030-2022 内码输入
-hint.shortcuts	四项功能使用相同的快捷键范围；相同或重叠的修饰键分配会被拒绝。
+hint.shortcuts	相同或重叠的修饰键分配会被拒绝。
 hotkey.disabled	禁用
 error.shortcut.unsupported	不支持的功能快捷键
 error.shortcut.conflict	快捷键冲突：各功能须使用不同且不重叠的按键。
