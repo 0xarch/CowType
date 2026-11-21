@@ -12,6 +12,8 @@ arch/PKGBUILD.in 是源码归档使用的模板。脚本生成带真实 SHA-256 
 
 所有构建产物先上传到 Actions artifacts；v* 标签与 Cargo.toml 版本一致、所有任务成功后，汇总原生包、离线源码、PKGBUILD 和 SHA256SUMS 到 Release。更新内容来自 CHANGELOG.md。普通分支与手动运行不会发布 Release；已有 Release 不会被自动覆盖。
 
-架构上参考同级 WowType 的容器矩阵、共享数据 artifact、原生包安装校验和标签发布设计；脚本为 CowType 独立编写，未复制其打包实现。首轮不包含旧发行版、ARM64、Nix 或 macOS。
+架构上参考 WowType 的容器矩阵、共享数据 artifact、原生包安装校验和标签发布设计；脚本为 CowType 独立编写，未复制其打包实现。首轮不包含旧发行版、ARM64、Nix 或 macOS。
 
 Ubuntu 暂不提供自动构建包：26.04 官方仓库的 Fcitx5 为 5.1.19，不满足当前 >= 5.1.23 要求。原因及自行构建要求见[构建说明](../docs/BUILD.md#ubuntu)。
+
+Deepin 23、25 和 openSUSE Leap 16.0 已尝试官方容器构建，Fcitx5 分别为 5.1.11、5.1.12、5.1.13，均因低于最低要求而移出自动构建矩阵，暂不列入支持范围。镜像、试构建记录和自行构建要求见[构建说明](../docs/BUILD.md#deepin-和-opensuse-leap)。

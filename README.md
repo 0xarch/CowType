@@ -81,6 +81,8 @@ GitHub Actions 已验证以下 Linux x86_64 目标的构建、安装包和插件
 
 由于 Ubuntu 26.04 的 Fcitx5 版本过于老旧，Ubuntu 目前不在自动构建范围内，版本要求与自行构建方式见[Ubuntu 构建说明](docs/BUILD.md#ubuntu)。
 
+Deepin 23、25 和 openSUSE Leap 16.0 的官方容器也因 Fcitx5 版本不足暂不提供预编译包，实测版本与自行构建要求见[构建说明](docs/BUILD.md#deepin-和-opensuse-leap)。
+
 ### Arch Linux
 
 除了预编译包以外， Arch Linux 用户可以直接从本仓库构建最新代码。

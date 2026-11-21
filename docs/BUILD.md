@@ -96,3 +96,15 @@ Ubuntu 暂不列入自动构建支持范围。2026-11-21 的 GitHub Actions 实�
 需要在 Ubuntu 自行构建的用户，应自行准备满足版本要求的 Fcitx5 运行库及开发包，确保它们的版本与安装路径一致，并满足 libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、OpenSSL、Boost、librsvg、Rust/Cargo（语音依赖要求 Rust >= 1.88）等条件。Debian 系的 libime 开发包拆分为 `libimecore-dev` 与 `libimepinyin-dev`，并没有本项目可用的统一 `libime-dev` 包。
 
 准备依赖后，按上面的通用 CMake 开发步骤构建并运行测试，指定适合本机 Fcitx5 的 `CMAKE_INSTALL_LIBDIR`。不要仅修改最低版本检查来绕过配置失败；本项目不自动添加软件源或替换系统 Fcitx5。Ubuntu 的依赖升级、原生打包和桌面兼容性由使用者自行处理。
+
+## Deepin 和 openSUSE Leap
+
+2026-11-22 的 [GitHub Actions 容器试构建](https://github.com/0xarch/CowType/actions/runs/44924899805) 中，以下官方镜像都在 CMake 的 Fcitx5 最低版本检查处失败，因此暂不提供自动构建包：
+
+| 发行版 | 容器镜像 | 实际 Fcitx5 版本 | CowType 最低要求 |
+|---|---|---|---|
+| Deepin 23 | `linuxdeepin/deepin:23` | 5.1.11 | 5.1.23 |
+| Deepin 25 | `linuxdeepin/deepin:25` | 5.1.12 | 5.1.23 |
+| openSUSE Leap 16.0 | `registry.opensuse.org/opensuse/leap:16.0` | 5.1.13 | 5.1.23 |
+
+这些版本记录对应本次试构建，不代表后续软件源永远不变。自行构建需要先准备满足要求且版本一致的 Fcitx5 运行库和开发包，并核对 libime、GTK、libadwaita 及 Rust 等其他依赖；不要降低版本检查来绕过失败。Debian unstable 的 Deb 包或其他发行版的 RPM 不应视作这些系统的兼容包。
