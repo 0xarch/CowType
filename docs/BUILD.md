@@ -14,7 +14,7 @@ bash build-arch.sh
 ```
 
 请用普通用户运行脚本。
-脚本先检查依赖，再准备默认雾凇、五笔词库和 Rust 编译依赖，最后调用 makepkg 编译、测试和打包。
+脚本先检查依赖，再准备默认雾凇、五笔词库和 Rust 编译依赖，最后调用 makepkg 编译和打包。生产构建不编译或运行测试；开发验证请使用下方的独立测试命令。
 首次准备需要访问 GitHub 和 crates.io；后续会复用下载缓存。
 可先用 `bash build-arch.sh --check` 检查环境，此命令不下载或编译。
 
@@ -28,7 +28,7 @@ bash build-arch.sh
 - **Rust 提示没有默认工具链**：如果使用 rustup，先运行 `rustup default stable`。
 - **下载失败**：检查到 GitHub、crates.io 的网络连接，再重新运行；不需要清空整个构建目录。脚本会显示失败阶段。
 - **源码清单不匹配**：未修改源码时请重新下载完整项目。开发者确认自己的改动后，按下文更新清单；脚本不会自动认可源码变化。
-- **编译或测试失败**：保留末尾错误和失败阶段，提交 Issue 时附上系统与依赖版本。打包成功不代表已经验收真实麦克风或桌面输入体验。
+- **编译失败**：保留末尾错误和失败阶段，提交 Issue 时附上系统与依赖版本。打包成功不代表已经验收真实麦克风或桌面输入体验。
 
 ## 开发：单独构建与测试
 
@@ -56,7 +56,7 @@ python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
 
 ```sh
 python3 src-data-tools/dictionaries/manage.py build-default --source-cache build/review --output build/data
-cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
+cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_TESTING=ON
 cmake --build build/native -j2
 ctest --test-dir build/native --output-on-failure
 ```

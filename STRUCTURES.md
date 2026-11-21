@@ -2,7 +2,7 @@
 
 | 路径 | 用途 |
 |---|---|
-| build-arch.sh | Arch x86_64 一键准备、测试与打包入口；安装包输出到 dist/ |
+| build-arch.sh | Arch x86_64 一键准备、生产构建与打包入口；安装包输出到 dist/ |
 | src/ | Rust 本体：词典、候选、组句、会话、学习、配置、i18n、C ABI 和 CLI |
 | src-fcitx5/ | C++ Fcitx5 插件、libime 适配、候选显示、热键、配置和诊断；include/cowtype2.h 定义 ABI |
 | src-settings/ | Python GTK4/libadwaita 设置程序、配置读写、启动器、桌面入口和文案读取 |

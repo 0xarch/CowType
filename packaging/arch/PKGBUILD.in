@@ -22,22 +22,9 @@ build() {
   export RUSTFLAGS="-C target-cpu=x86-64 --remap-path-prefix=$srcdir=/usr/src/cowtype"
   cmake -S "$srcdir/cowtype-$pkgver" -B "$srcdir/native" -G Ninja \
     -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_TESTING=ON \
+    -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF \
     -DBOOST_ROOT="${COWTYPE_BOOST_ROOT:-/usr}"
   cmake --build "$srcdir/native" -j2
-}
-
-check() {
-  cd "$srcdir/cowtype-$pkgver"
-  CARGO_TARGET_DIR="$srcdir/native/rust-target" cargo test --offline --locked --features native-ffi
-  CARGO_TARGET_DIR="$srcdir/native/voice-target" cargo test --offline --locked --manifest-path src-voice/Cargo.toml \
-    --config 'source.crates-io.replace-with="vendored-sources"' \
-    --config "source.vendored-sources.directory='$srcdir/cowtype-$pkgver/build/voice-vendor'"
-  python3 -m unittest discover -s src-voice/paraformer/tests -p 'test_*.py'
-  python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
-  python3 -m unittest discover -s tests -p 'test_*.py' 
-  python3 tooling/development.py
-  ctest --test-dir "$srcdir/native" --output-on-failure
 }
 
 package() {

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(CowType VERSION 0.1.0 LANGUAGES C CXX)
 include(GNUInstallDirs)
+option(BUILD_TESTING "Build CowType development tests" OFF)
 include(CTest)
 find_package(Fcitx5Core 5.1.23 REQUIRED)
 find_package(Threads REQUIRED)

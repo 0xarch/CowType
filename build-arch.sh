@@ -8,7 +8,8 @@ usage() {
 Usage: bash build-arch.sh [--check]
 
 Download verified default dictionaries and locked Rust dependencies, then build
-and test an Arch x86_64 package. Output: dist/*.pkg.tar.zst (or your makepkg format).
+an Arch x86_64 package without building or running development tests.
+Output: dist/*.pkg.tar.zst (or your makepkg format).
 Run as a regular user. This script does not install packages or download models.
 --check  Check the environment and source manifest only; no downloads or builds.
 EOF
@@ -76,8 +77,8 @@ stage='source archive preparation'
 echo '[3/4] Verifying inputs and creating the source archive...'
 python3 tooling/package_arch.py --dictionary-dir "$inputs/data" --vendor-dir "$inputs/voice-vendor"
 
-stage='makepkg build and tests'
-echo '[4/4] Building and testing the package...'
+stage='makepkg build'
+echo '[4/4] Building the production package...'
 cd "$project_dir/build/arch"
 PKGDEST="$project_dir/dist" makepkg --cleanbuild --force
 printf '\nPackage build completed in %ss. Packages are in %s/dist/\n' "$SECONDS" "$project_dir"

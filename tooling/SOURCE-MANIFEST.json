@@ -15,13 +15,13 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "6fb9f34ae31c1769017e786c6dc1aa9f5cb836c73473c15f7c52ce7a6fff814f",
-      "bytes": 1937
+      "sha256": "d90edaec9a6b5a6c1825a76c1f2fac068d725c6b946518ab1728130a96d9f8f5",
+      "bytes": 1979
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "88cb25a950a58e3fd1b9c288c758fdf6d13aa07de450095d516b314323daf28e",
-      "bytes": 10408
+      "sha256": "43a7620cf664d9f5e7a1f1c4a5df7f831e44d21f4c7c9c77fcb00de10164dc95",
+      "bytes": 10468
     },
     {
       "path": "Cargo.lock",
@@ -60,13 +60,13 @@
     },
     {
       "path": "README.md",
-      "sha256": "e4267552636205e2238a512e4d7a009e36688a0fb82cfbcb5fcdd8070406e379",
-      "bytes": 3282
+      "sha256": "b98a72214cc169fe76f5857caa1ad342e913033ea55950a9d8a4859f5abd2535",
+      "bytes": 3279
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "7a70ae6021af870c7bdcd29b7609a794e1d6d639f3862d7c1855a3713cd8973d",
-      "bytes": 1764
+      "sha256": "32dc19d88254e1624d52bcb4eae5a67d4b164becf29f2e22859f7804a70b11ce",
+      "bytes": 1770
     },
     {
       "path": "assets/icons/README.md",
@@ -120,8 +120,8 @@
     },
     {
       "path": "build-arch.sh",
-      "sha256": "405baac021c64428a75457c5270d7a070cfd1ca52546384b0919ee94d41caa49",
-      "bytes": 3246
+      "sha256": "ca3bce8072e5c799eb2360c8316ac9545ee594892a8035e0154c89a3965f97fb",
+      "bytes": 3272
     },
     {
       "path": "docs/ATTRIBUTION.md",
@@ -130,8 +130,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "e57f9165c5631c53cf74a0df6e8822bdc8dbf48cfd3aff94881eb389d476843e",
-      "bytes": 4704
+      "sha256": "2c3d2b021c8b2dccb6f1164b64d7e2de1f49e6e9a230310fedcd7518915899be",
+      "bytes": 4795
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -170,13 +170,13 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "480cd5f410c9865ec47c7217f923ac0d2d13e08e7e7372ab8f8c79a2287faa8e",
-      "bytes": 438
+      "sha256": "b166c40e4bfbbb4f490dda1c6b9e7c782c593fb2f5dcbd97de3e8ef40e445918",
+      "bytes": 536
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "8b62e81efa7f8eff7788256003ca2a7943a24ab565cd6e7e913135f20679622b",
-      "bytes": 2276
+      "sha256": "b7222b40b69aa1a169389f5cd2282a177b38bb7d5ea1e2b71f41ec429aaddb4f",
+      "bytes": 1557
     },
     {
       "path": "src-data-tools/README.md",
