@@ -150,3 +150,5 @@ voice.paraformer.shape	ONNX 输出形状或数值无效，模型、词表和缓�
 setting.StatisticalModel	本地统计语言模型
 hint.statistical_model	默认关闭。启用后使用本机已安装的 libime 中文模型，不会下载模型。
 warning.dictionary_optional	可选词库或本地统计模型不可用，基本输入仍可使用。
+setting.Emoji	表情与符号候选
+hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词，默认关闭。

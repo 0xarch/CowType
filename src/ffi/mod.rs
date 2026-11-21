@@ -448,6 +448,7 @@ pub unsafe extern "C" fn cowtype2_session_configure(
         c.completion = r.settings.completion;
         c.initials = r.settings.initials;
         c.learning = r.settings.learning;
+        c.emoji = r.settings.emoji;
         h.session.configure(c);
         h.session.set_learning(Some(r.service.state.clone()));
         h.update(h.session.frame());

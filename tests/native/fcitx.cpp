@@ -105,6 +105,17 @@ int main(int argc, char **argv) {
             CHECK(press(engine,pinyin,a,FcitxKey_asciicircum));CHECK(a.committed.back()=="……");
             const auto configPath = std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v1.ini";
             std::filesystem::create_directories(configPath.parent_path());
+            // CLDR candidates travel through the real native decoder/session ABI.
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=True\nLearning=False\n"; }
+            addon->reloadConfig();
+            type(engine,pinyin,a,"shan");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="山");
+            CHECK(a.inputPanel().candidateList()->candidate(1).text().toString()=="⛰️");
+            CHECK(press(engine,pinyin,a,FcitxKey_2)); CHECK(a.committed.back()=="⛰️");
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=False\nLearning=False\n"; }
+            addon->reloadConfig(); type(engine,pinyin,a,"shan");
+            CHECK(a.inputPanel().candidateList()->candidate(1).text().toString()!="⛰️");
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
             // Default activation restores Chinese, including after an F6 switch.
             CHECK(press(engine,pinyin,a,FcitxKey_F6));
             engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);

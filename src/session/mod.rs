@@ -68,6 +68,7 @@ pub struct SessionConfig {
     pub completion: bool,
     pub initials: bool,
     pub learning: bool,
+    pub emoji: bool,
 }
 impl Default for SessionConfig {
     fn default() -> Self {
@@ -79,6 +80,7 @@ impl Default for SessionConfig {
             completion: true,
             initials: false,
             learning: false,
+            emoji: false,
         }
     }
 }
@@ -444,6 +446,9 @@ impl Session {
                     });
                 }
             }
+        }
+        if self.config.emoji {
+            crate::engine::symbols::augment(&self.remaining, &mut self.candidates);
         }
         self.selected_candidate = 0;
     }

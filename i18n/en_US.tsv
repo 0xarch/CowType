@@ -150,3 +150,5 @@ voice.paraformer.shape	Invalid ONNX output shape or value; model, tokens and cac
 setting.StatisticalModel	Local statistical language model
 hint.statistical_model	Off by default. Uses the installed libime Chinese model; never downloads a model.
 warning.dictionary_optional	An optional dictionary or local statistical model is unavailable. Basic input remains available.
+setting.Emoji	Emoji and symbol suggestions
+hint.emoji	Match complete Chinese or English keywords using Unicode CLDR. Off by default.

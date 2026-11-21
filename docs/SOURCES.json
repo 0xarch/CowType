@@ -818,5 +818,22 @@
       "scope": "Compact storage/precompilation ideas only; no copied implementation."
     },
     "data": "Existing pinned dictionary manifests unchanged; runtime system dictionary/model supplied by distribution, no automatic model retrieval."
+  },
+  "cldr_symbols_2026_11_21": {
+    "paths": [
+      "src/engine/symbols.rs",
+      "src-data-tools/emoji/prepare.py",
+      "src-data-tools/emoji/keywords.tsv"
+    ],
+    "implementation": "Original CowType keyword converter and optional session candidate augmentation; Unicode CLDR data is not project-authored. No statistical model or transliteration is used.",
+    "upstream": "https://github.com/unicode-org/cldr",
+    "version": "CLDR 48 / Unicode Emoji 17.0",
+    "cldr_revision": "acd6d88ae493633240e19a87a721076a8a75c310",
+    "authors": "Unicode, Inc. and CLDR contributors",
+    "license": "Unicode-3.0",
+    "license_file": "LICENSES/Unicode-3.0.txt",
+    "source_registry": "src-data-tools/emoji/sources.json",
+    "runtime": "Bundled offline derived index. Full Chinese candidate and English keyword matching; user-controlled, default off.",
+    "new_dependencies": []
   }
 }

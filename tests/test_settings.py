@@ -20,6 +20,12 @@ class SettingsTests(unittest.TestCase):
     def tearDown(self):
         self.env.stop()
         self.temporary.cleanup()
+    def test_emoji_defaults_off_and_roundtrips(self):
+        values = settings.load()
+        self.assertEqual(values['Emoji'], 'False')
+        values['Emoji'] = 'True'
+        settings.save(values)
+        self.assertEqual(settings.load()['Emoji'], 'True')
     def test_roundtrip_unknown_key_private_permissions(self):
         values = settings.load()
         values.update(PageSize='9', Sentence='False', FutureOption='preserved')

@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "cldr_version": "48",
+  "cldr_revision": "acd6d88ae493633240e19a87a721076a8a75c310",
+  "emoji_version": "17.0",
+  "authors": "Unicode, Inc. and CLDR contributors",
+  "license": "Unicode-3.0",
+  "license_file": "LICENSES/Unicode-3.0.txt",
+  "files": [
+    {
+      "path": "annotations/zh.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/annotations/zh.xml",
+      "bytes": 291028,
+      "sha256": "92389f71659998736530c72d4dcc86e453fe0be170cde5c5ad27094cab2a2de8"
+    },
+    {
+      "path": "annotations/en.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/annotations/en.xml",
+      "bytes": 294945,
+      "sha256": "8511aadd046fdba2f0ffe590266ced8bbf48175ad139b2675d85d7141057b235"
+    },
+    {
+      "path": "annotationsDerived/zh.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/annotationsDerived/zh.xml",
+      "bytes": 502514,
+      "sha256": "777acebb7c4ed103c34f5605881a2537656e0a17d9d1127518da7cd54f612bcc"
+    },
+    {
+      "path": "annotationsDerived/en.xml",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/annotationsDerived/en.xml",
+      "bytes": 548066,
+      "sha256": "d76bd041c8c9e7b00b716aff8b7d9dbf509877010e191d5efd068be2553e066e"
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/LICENSE",
+      "bytes": 2033,
+      "sha256": "b4c0ae8ef04f7059f96ce5bbe0467f9fe6f6d81bbe13517701dfeb961fb4d0b6"
+    },
+    {
+      "path": "emoji-test.txt",
+      "url": "https://unicode.org/Public/17.0.0/emoji/emoji-test.txt",
+      "bytes": 669326,
+      "sha256": "1d8a944f88d7952f7ef7c5167fef3c67995bcae24543949710231b03a201acda"
+    }
+  ],
+  "output": {
+    "path": "src-data-tools/emoji/keywords.tsv",
+    "bytes": 1523566,
+    "sha256": "ab1ece8f3175e1466336a1531001264fb3a7335ab92658879bf571594911b1d1",
+    "pairs": 63822,
+    "conversion": "prepare.py: exact keyword aliases, complete-name-first; fully-qualified emoji sequences, unchanged ordinary symbols"
+  }
+}

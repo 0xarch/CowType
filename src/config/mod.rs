@@ -17,6 +17,7 @@ pub struct Settings {
     pub shift_toggle: bool,
     pub remember_mode: bool,
     pub statistical_model: bool,
+    pub emoji: bool,
     pub voice: bool,
     pub voice_resident: bool,
     pub voice_hotkey: u32,
@@ -40,6 +41,7 @@ impl Default for Settings {
             shift_toggle: true,
             remember_mode: false,
             statistical_model: false,
+            emoji: false,
             voice: false,
             voice_resident: true,
             voice_hotkey: 0,
@@ -105,6 +107,7 @@ impl Settings {
             ("ShiftToggle", &mut settings.shift_toggle),
             ("RememberMode", &mut settings.remember_mode),
             ("StatisticalModel", &mut settings.statistical_model),
+            ("Emoji", &mut settings.emoji),
             ("Voice", &mut settings.voice),
             ("VoiceResident", &mut settings.voice_resident),
             ("VoiceModifierHold", &mut settings.voice_modifier_hold),
@@ -138,6 +141,12 @@ impl Settings {
 #[cfg(test)]
 mod hotkey_tests {
     use super::*;
+    #[test]
+    fn cldr_symbols_are_explicit_and_default_off() {
+        assert!(!Settings::parse("Version=1\n").unwrap().emoji);
+        assert!(Settings::parse("Version=1\nEmoji=True\n").unwrap().emoji);
+        assert!(Settings::parse("Version=1\nEmoji=auto\n").is_err());
+    }
     #[test]
     fn statistical_model_is_explicit_and_defaults_off() {
         assert!(!Settings::parse("Version=1\n").unwrap().statistical_model);

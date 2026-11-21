@@ -4,6 +4,7 @@ use crate::dictionary::{CustomPhrases, Dictionary};
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::sync::Arc;
 mod sentence;
+pub(crate) mod symbols;
 pub mod wubi;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

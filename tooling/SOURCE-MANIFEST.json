@@ -20,8 +20,8 @@
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "23ac96481ce40971eec978a2a5518ff4c351dfc0ae8f4bab728d8a713c782415",
-      "bytes": 13116
+      "sha256": "2dde730d7a5f614ec284be76807618a048d639c9ce52f4636fcabf001192871e",
+      "bytes": 13244
     },
     {
       "path": "Cargo.lock",
@@ -59,14 +59,19 @@
       "bytes": 1078
     },
     {
+      "path": "LICENSES/Unicode-3.0.txt",
+      "sha256": "b4c0ae8ef04f7059f96ce5bbe0467f9fe6f6d81bbe13517701dfeb961fb4d0b6",
+      "bytes": 2033
+    },
+    {
       "path": "README.md",
-      "sha256": "0de829356abe8c3d882ed7b1dce41a3484f77e442561ffdc23d2dacee6a3c73e",
-      "bytes": 3446
+      "sha256": "92f7703473d7e7d65dfdc6a92909effe1b243525f1d450a6dd72ee288e16a5dd",
+      "bytes": 3512
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "32dc19d88254e1624d52bcb4eae5a67d4b164becf29f2e22859f7804a70b11ce",
-      "bytes": 1770
+      "sha256": "e709ee3fa2896aeb6d9f173804b6347793164f05567566e659d205c1f7e5f421",
+      "bytes": 1848
     },
     {
       "path": "assets/icons/README.md",
@@ -125,8 +130,8 @@
     },
     {
       "path": "docs/ATTRIBUTION.md",
-      "sha256": "1f9a786f1ecfc022b2762adefd349e1463f410f78ec178d690467a72f574fa77",
-      "bytes": 1359
+      "sha256": "624c13bde21facd40f1304b5d9e6c4a89799644494a6e4e7401a0c73546069e4",
+      "bytes": 1644
     },
     {
       "path": "docs/BUILD.md",
@@ -140,8 +145,8 @@
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
-      "sha256": "25c30a6f8a1699e8bfaaf6e9bb503fa3189547dd576306a8393ba6d21b2a2c5e",
-      "bytes": 4660
+      "sha256": "d78f18d2a22c1bf720b7fa15ba2db893d7afe92935ddd64f486b709c917efa86",
+      "bytes": 7281
     },
     {
       "path": "docs/README.md",
@@ -150,13 +155,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "c3d9398215d69db8851fa8dbe14c417e26b5e2800457546dee78ae78b1f2ca9d",
-      "bytes": 33797
+      "sha256": "6d12636e8b74ffdffc6ccde544bb3b2aa9ef0e420ee04fc9eaa85438000851e4",
+      "bytes": 34684
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "21fa91e995cb6f9cd96d247df8b65a7f1f48e994113e674ea948d135fc024017",
-      "bytes": 3383
+      "sha256": "1c05a72b2e10ad0e1b6f62e7d57105a1c045bed80e1d5d121376b1270a6aa9d7",
+      "bytes": 4223
     },
     {
       "path": "i18n/README.md",
@@ -165,13 +170,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "51e661a97def054851132e32a703731437e001ed5d77dedf3d9b88a96fb5e0df",
-      "bytes": 9096
+      "sha256": "bacbca335b04aad912c2f6d398f0f25fd0ffd8322aa341dd8cdb37d787df254e",
+      "bytes": 9229
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "47d1b2a673264ebb35afcd4e698da8ec6e283e9e92fa4243dee8fc10fb844aed",
-      "bytes": 7863
+      "sha256": "85ef5c4270fa7a5288c8b1d97ad16907d99ece35b82771c098c41071e6d74d42",
+      "bytes": 7982
     },
     {
       "path": "packaging/README.md",
@@ -185,8 +190,8 @@
     },
     {
       "path": "src-data-tools/README.md",
-      "sha256": "b8f52960322a2ad61027fb4987a43bddf4e4b74c4956b632ed785ac516cce064",
-      "bytes": 490
+      "sha256": "5a1509709aba4b51c5242f279afa479f8e25c4d80c1c3d68e214c864616628ed",
+      "bytes": 649
     },
     {
       "path": "src-data-tools/cli/cowtype-dictionaries.in",
@@ -202,6 +207,26 @@
       "path": "src-data-tools/dictionaries/manage.py",
       "sha256": "2c0d7ec5b468f91b9d23d0388939395832d79531221dd1cf682fdd0104dad706",
       "bytes": 12893
+    },
+    {
+      "path": "src-data-tools/emoji/README.md",
+      "sha256": "874f82675730ea550e42faa00cd6d0c3007037bf556ace72c6867427fe0aadcc",
+      "bytes": 1555
+    },
+    {
+      "path": "src-data-tools/emoji/keywords.tsv",
+      "sha256": "ab1ece8f3175e1466336a1531001264fb3a7335ab92658879bf571594911b1d1",
+      "bytes": 1523566
+    },
+    {
+      "path": "src-data-tools/emoji/prepare.py",
+      "sha256": "5db8a89952f673a790762e02b55be9d2312429b90d3351800239c816d7dc50a7",
+      "bytes": 3173
+    },
+    {
+      "path": "src-data-tools/emoji/sources.json",
+      "sha256": "20c38351c07ebaf97705fc3ee8bbf97f1735f6253d2faaf1d3daf185cceef6a2",
+      "bytes": 2267
     },
     {
       "path": "src-data-tools/manifest/notices/THUOCL-LICENSE",
@@ -305,13 +330,13 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "7c139dc5107df5ea740896ddf7f68ce940d7e49c700f14bededb85def2dd0a46",
-      "bytes": 20120
+      "sha256": "5d29924b059262a35490ff9f558f5dedbf11af1a132a780297ff6b4ede92926b",
+      "bytes": 20339
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "b153a91dbfdb0f6a7886ae3fb76367e0a9d6063f3111d7ff9fa065f25da2d78e",
-      "bytes": 3908
+      "sha256": "9a3151056ab1cfba18006fbdbcd034f2c43057fb99e67314a2b40881c2f2d68b",
+      "bytes": 3923
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -445,8 +470,8 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "6171e13af7bd90d1dba0690fda221792c331babd66e9880d92f8a7b90491fda0",
-      "bytes": 5794
+      "sha256": "ae19727c12ee904c4c874b674ca2fa6d161987961ea62d3a32301d381f573fac",
+      "bytes": 6167
     },
     {
       "path": "src/dictionary/mod.rs",
@@ -455,13 +480,18 @@
     },
     {
       "path": "src/engine/mod.rs",
-      "sha256": "fd29ea3dd957dc229ebad7c075988c920d759b05e8933e50ae97bdd375b4b8ff",
-      "bytes": 14550
+      "sha256": "5826ba6dd7f9fc2b230b90e65d89ae7ddd1a08263d16dc9758b91061198bb9db",
+      "bytes": 14574
     },
     {
       "path": "src/engine/sentence.rs",
       "sha256": "82cfc7a01dc474fa160c64d04f25ea430a7302dff14f30a3504520edacca47b0",
       "bytes": 10872
+    },
+    {
+      "path": "src/engine/symbols.rs",
+      "sha256": "f158f3e672f721693469b5e38e2175176bd0257f7995ad1bdb9e818adf7585ea",
+      "bytes": 3073
     },
     {
       "path": "src/engine/wubi.rs",
@@ -470,8 +500,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "ad8800e6632e330e9826d36c82ca58f3aaed98f3f65b6beffdafdb3bd0277745",
-      "bytes": 18891
+      "sha256": "f4964f74c6c0727be6fd7cb6c86bbd9b5ec663facf94c9957e79e7dae08ec17d",
+      "bytes": 18927
     },
     {
       "path": "src/i18n/mod.rs",
@@ -495,8 +525,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "9dac0ad61a44fbeb41f93192c0c7c992eb489af9b6c7d5a2b7182486f015debe",
-      "bytes": 17188
+      "sha256": "a62aaa078dff6e5915c311beeb1682cda353a3025c636c18fd8e098daee984ad",
+      "bytes": 17360
     },
     {
       "path": "src/session/punctuation.rs",
@@ -585,8 +615,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "e906d55a65e4469c83960f0f9ffa39fd5e90e13fac8352bbd8f019f9d454e815",
-      "bytes": 19458
+      "sha256": "28e1f3bb3f7eeba31726e263d6bed1740731f05d9c74c448f2d4efbbddf9d82f",
+      "bytes": 20346
     },
     {
       "path": "tests/native/isolated.py",
@@ -614,6 +644,11 @@
       "bytes": 11383
     },
     {
+      "path": "tests/symbols.rs",
+      "sha256": "1c2575d9995a69205ebe5d52bda44afbf7112c94f4f63920448d5bf36b7a8ea5",
+      "bytes": 4250
+    },
+    {
       "path": "tests/test_development.py",
       "sha256": "a864a5c20b47e76c90b30694052d815df74ace7da093035bb7f498e4f78835f9",
       "bytes": 3205
@@ -624,9 +659,14 @@
       "bytes": 6310
     },
     {
+      "path": "tests/test_emoji_data.py",
+      "sha256": "5587a9fb499c8e83a8672ea226f0c12863a3717dce1a2cf77bed9f25628b8159",
+      "bytes": 1587
+    },
+    {
       "path": "tests/test_settings.py",
-      "sha256": "5d29efa08320bfa9a586bd2b1cc707d14070fc5d2d1cd117c2864b1ac8d7adf3",
-      "bytes": 3616
+      "sha256": "a1cfd5766ba1fb25d9494cf9e0f42bc1041ec3edda5b8ce0bbfd90c714d14529",
+      "bytes": 3876
     },
     {
       "path": "tests/test_settings_startup.py",

@@ -27,7 +27,7 @@ set(RUST_TARGET "${CMAKE_BINARY_DIR}/rust-target")
 file(GLOB_RECURSE RUST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.rs")
 add_custom_command(OUTPUT "${RUST_TARGET}/release/libcowtype.a" "${RUST_TARGET}/release/cowtype"
     COMMAND ${CMAKE_COMMAND} -E env "CARGO_TARGET_DIR=${RUST_TARGET}" ${CARGO_EXECUTABLE} build --release --offline --locked --features native-ffi
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" DEPENDS ${RUST_SOURCES} ${I18N_RESOURCES} Cargo.toml Cargo.lock VERBATIM)
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" DEPENDS ${RUST_SOURCES} ${I18N_RESOURCES} src-data-tools/emoji/keywords.tsv Cargo.toml Cargo.lock VERBATIM)
 add_custom_target(cowtype-rust ALL DEPENDS "${RUST_TARGET}/release/libcowtype.a" "${RUST_TARGET}/release/cowtype")
 add_library(cowtype-core STATIC IMPORTED GLOBAL)
 set_target_properties(cowtype-core PROPERTIES IMPORTED_LOCATION "${RUST_TARGET}/release/libcowtype.a")
@@ -45,6 +45,7 @@ install(FILES src-fcitx5/config/cowtype.conf src-fcitx5/config/cowtype-wubi.conf
 install(PROGRAMS "${RUST_TARGET}/release/cowtype" DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY "${COWTYPE_DICTIONARY_DIR}/ice" "${COWTYPE_DICTIONARY_DIR}/wubi" DESTINATION ${CMAKE_INSTALL_DATADIR}/cowtype/dictionaries)
 install(DIRECTORY assets/icons/hicolor/ DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)
+install(FILES LICENSES/Unicode-3.0.txt DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype)
 install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype)
 install(DIRECTORY src-data-tools/manifest/notices/ DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype/dictionary-notices)
 install(FILES src-data-tools/dictionaries/manage.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/dictionaries)

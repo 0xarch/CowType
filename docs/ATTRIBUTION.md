@@ -9,3 +9,5 @@ CowType 自身实现使用 GPL-3.0 许可。
 - libime、Fcitx5、GTK/libadwaita、Boost、OpenSSL、ONNX Runtime 及 Rust/Python 依赖分别适用上游许可，发布时保留所需通知。公开参考版本与语音依赖记录见 SOURCES.json。
 
 PUBLIC-SOURCES.json 记录部分公开资源的核实范围和限制。新增第三方实现、数据或模型均保留其真实来源与适用许可。
+
+- 表情与符号关键词：Unicode CLDR 48（简体中文、英文）与 Unicode Emoji 17.0，版权归 Unicode, Inc. 及相应贡献者所有，按 Unicode-3.0 使用。许可原文位于 `LICENSES/Unicode-3.0.txt`，固定版本及摘要见 `src-data-tools/emoji/sources.json`。
