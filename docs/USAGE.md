@@ -1,6 +1,6 @@
 # 使用与当前能力
 
-安装本地构建的 Arch 实验包后重启 Fcitx5，在 fcitx5-configtool 添加“牛打字·拼音”或“牛打字·五笔86”。运行 cowtype-config 打开设置。程序不会自动更改桌面输入法配置。
+安装本地构建的 Arch 实验包后重启 Fcitx5，在 fcitx5-configtool 添加“CowType·拼音”或“CowType·五笔86”。运行 cowtype-config 打开设置。程序不会自动更改桌面输入法配置。
 
 ## 文字输入
 

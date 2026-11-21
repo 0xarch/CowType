@@ -1,6 +1,6 @@
 [Addon]
 Name=CowType
-Name[zh_CN]=牛打字
+Name[zh_CN]=CowType
 Category=InputMethod
 Type=SharedLibrary
 Library=libcowtype-fcitx5

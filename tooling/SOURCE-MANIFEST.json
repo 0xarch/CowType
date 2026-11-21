@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "808a4e07ac0f570dda0d433241af16d7b7f38f101600f99045cf93464128d6d4",
-      "bytes": 3299
+      "sha256": "e4267552636205e2238a512e4d7a009e36688a0fb82cfbcb5fcdd8070406e379",
+      "bytes": 3282
     },
     {
       "path": "STRUCTURES.md",
@@ -150,8 +150,8 @@
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "523d5fac86a560c5cf0f7cec80f1dbc03cced3ef27589a3e70b042bdf1b493ec",
-      "bytes": 3083
+      "sha256": "e621d856bdab6930b7d6c0f5cea30abd107b4c36c7fd46aee5f05770bf27f5e5",
+      "bytes": 3079
     },
     {
       "path": "i18n/README.md",
@@ -165,8 +165,8 @@
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "14160a1ebbf82bca97cf3f2169eecfa588372fe7d78485bfb83fc50aa912f7c2",
-      "bytes": 7560
+      "sha256": "5b4cb0b3f146ed2aec8be06f5c60d8a9cdadbb3f114a5f1024e3cfac04301cf9",
+      "bytes": 7558
     },
     {
       "path": "packaging/README.md",
@@ -210,18 +210,18 @@
     },
     {
       "path": "src-fcitx5/config/cowtype-addon.conf.in",
-      "sha256": "01afac9b77f59e627eaae2e27b7efda7de250e0fbacb4295dbed6f6fe09002c0",
-      "bytes": 233
+      "sha256": "c5fb9527ddaa880e64bc590df0e5cc59647484e4ce4739f2248af8e02a6ec1fb",
+      "bytes": 231
     },
     {
       "path": "src-fcitx5/config/cowtype-wubi.conf",
-      "sha256": "ae04777ee2362adc753199ea7d983e0909abb93c0777f363fb6f7109cb2a05c2",
-      "bytes": 137
+      "sha256": "4c2f20011f27297b931e0b45dae24188a0717bbf248bfd2ffebceecfe99ae449",
+      "bytes": 135
     },
     {
       "path": "src-fcitx5/config/cowtype.conf",
-      "sha256": "1ecfb97240910f22acfdef81ebabbbccac884e24012a824f4d4460aeb13179ec",
-      "bytes": 134
+      "sha256": "5d467bf2fa060fe0304f39e5f4ee41f40d7afe73d7e7eef7de05ce13ed8990ee",
+      "bytes": 136
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
