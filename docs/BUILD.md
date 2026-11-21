@@ -2,22 +2,23 @@
 
 ## Arch Linux：从源码生成安装包
 
-如果只是想安装使用，从这里开始即可，无需先运行后面的开发测试命令。
+如果只是想安装使用，从这里开始即可。
 
 ```sh
+# 准备材料
 sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost gtk4 libadwaita python python-gobject
 git clone https://github.com/0xarch/CowType.git
 cd CowType
+# 构建
 bash build-arch.sh
 ```
 
-已经下载项目的话，在项目目录运行最后一条命令即可。请用普通用户运行脚本。脚本先检查依赖，再准备默认雾凇、五笔词库和 Rust 编译依赖，最后调用 makepkg 编译、测试和打包。首次准备需要访问 GitHub 和 crates.io；后续会复用下载缓存。可先用 `bash build-arch.sh --check` 检查环境，此命令不下载或编译。
+请用普通用户运行脚本。
+脚本先检查依赖，再准备默认雾凇、五笔词库和 Rust 编译依赖，最后调用 makepkg 编译、测试和打包。
+首次准备需要访问 GitHub 和 crates.io；后续会复用下载缓存。
+可先用 `bash build-arch.sh --check` 检查环境，此命令不下载或编译。
 
-成功后安装包在 `dist/`，默认文件名为 `cowtype-dev-0.1.0.dev6.3-1-x86_64.pkg.tar.zst`：
-
-```sh
-sudo pacman -U dist/cowtype-dev-0.1.0.dev6.3-1-x86_64.pkg.tar.zst
-```
+成功后安装包在 `dist/`。使用 `pacman -U dist/<package>` 安装。
 
 如果修改过 makepkg 的压缩格式，以 `dist/` 中实际生成的文件名为准。安装后重启 Fcitx5，在 Fcitx5 配置工具中添加 CowType 拼音或五笔。没有配置工具时可安装 `fcitx5-configtool`。设置界面使用 `cowtype-config` 打开，详见[使用说明](USAGE.md)。语音默认关闭，打包不会下载模型。
 
