@@ -25,13 +25,13 @@
     },
     {
       "path": "Cargo.lock",
-      "sha256": "4b2f5b9ded41845b477c60f85688b818b871a4581306b43d422446f310a53a92",
-      "bytes": 159
+      "sha256": "d4d6a5cd86ac625b3748726ed5b04a0ac659cf80cdbcc04dad02252e3492ca56",
+      "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "4616b261514ab338d93b93ffc3407566dac51eff9b849a668bcdd95e55c72dd9",
-      "bytes": 330
+      "sha256": "77a3796275076efa7487fba27fcb8fd3399fe638b01e4b165bcd6d45e3147b9d",
+      "bytes": 322
     },
     {
       "path": "LICENSE",
@@ -175,8 +175,8 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "7b45b9ff02752fe7d8fbb19d287794dd4dc0d7560b420c4866f22a6a84ccea33",
-      "bytes": 1535
+      "sha256": "6baa7842185fb8e50961cd2dc11a9b381bf66bd22a58e9167c9f7c13d2b2063d",
+      "bytes": 1521
     },
     {
       "path": "src-data-tools/README.md",
@@ -225,8 +225,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "4539d4210d6f682d20571f95ec3d94539ca4f6c7657a09cc7d8b669cf75426d4",
-      "bytes": 26251
+      "sha256": "420b555af4affbae690fb523858267e3469deb4975d7826e365777e77c221e80",
+      "bytes": 26235
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -290,8 +290,8 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "7b4ebae173f78bbd24832c9fcbb1b7269e70fecbf1e0c67f03ecbdbc0d3f4cf7",
-      "bytes": 19854
+      "sha256": "b638daa16fddea7300853404a8bc85e5f744d9b737b0b6d2634919f28621bfcb",
+      "bytes": 19846
     },
     {
       "path": "src-settings/config/settings.py",
@@ -320,13 +320,13 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "f91d21dd1a538fa602ead3fca1bcb3f4adb3c4505ff5b2d5d068687b28e0940c",
-      "bytes": 11504
+      "sha256": "63cb3645c72c8c4364209d0ef3f6597cf4493a8d4cbbfb604c8d211d086d2769",
+      "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "93035a0a7b1bc8be4a4e1b04cadcb78b736496397cb315da757daf4a66ec57d6",
-      "bytes": 481
+      "sha256": "f093b6305453c6369e81e4c683706e01a793a682ba33377a3d026d78a11162d1",
+      "bytes": 473
     },
     {
       "path": "src-voice/README.md",
@@ -635,8 +635,8 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "f6ae30f332c7f467d48e6ee6b73d0481b5bc2ca6a10a2d4796286f85d2ea70f8",
-      "bytes": 5411
+      "sha256": "ca3240893728c58f5cc9a6cd9598998aa09233cfe20db23c340b06df85234635",
+      "bytes": 5404
     }
   ]
 }
