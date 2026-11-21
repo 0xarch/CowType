@@ -44,7 +44,7 @@ install(FILES "${CMAKE_BINARY_DIR}/cowtype-addon.conf" DESTINATION ${CMAKE_INSTA
 install(FILES src-fcitx5/config/cowtype.conf src-fcitx5/config/cowtype-wubi.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/fcitx5/inputmethod)
 install(PROGRAMS "${RUST_TARGET}/release/cowtype" DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY "${COWTYPE_DICTIONARY_DIR}/ice" "${COWTYPE_DICTIONARY_DIR}/wubi" DESTINATION ${CMAKE_INSTALL_DATADIR}/cowtype/dictionaries)
-install(DIRECTORY assets/icons/hicolor/ DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor)
+include("${CMAKE_SOURCE_DIR}/tooling/icons.cmake")
 install(FILES LICENSES/Unicode-3.0.txt DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype)
 install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype)
 install(DIRECTORY src-data-tools/manifest/notices/ DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype/dictionary-notices)

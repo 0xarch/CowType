@@ -23,3 +23,6 @@ __pycache__/
 /.aws/
 /.codex/
 /cowtype-state
+
+# Raster icons are generated in the build tree from the scalable SVG.
+/assets/icons/hicolor/*/apps/*.png

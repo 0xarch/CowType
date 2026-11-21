@@ -835,5 +835,18 @@
     "source_registry": "src-data-tools/emoji/sources.json",
     "runtime": "Bundled offline derived index. Full Chinese candidate and English keyword matching; user-controlled, default off.",
     "new_dependencies": []
+  },
+  "build_icons_2026_11_21": {
+    "paths": [
+      "tooling/icons.cmake"
+    ],
+    "implementation": "Original CowType CMake rules generating raster variants from the retained scalable SVG; existing icon attribution unchanged. PNG outputs are excluded from source inventory and archives.",
+    "build_dependency": {
+      "name": "librsvg / rsvg-convert",
+      "version_reviewed": "2.63.4",
+      "license": "LGPL-2.1-or-later",
+      "upstream": "https://gitlab.gnome.org/GNOME/librsvg",
+      "use": "Installed build-time SVG renderer only. No upstream code is vendored."
+    }
   }
 }

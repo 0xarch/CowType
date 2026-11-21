@@ -54,6 +54,9 @@ def inventory(root):
                 continue
             if any(part in BUILD_DIRS or part in ENV_DIRS for part in rel.parts):
                 raise ValueError(f'Generated/private directory in source: {rel}')
+            # Legacy raster icons are generated assets, never source/archive inputs.
+            if rel.parts[:3] == ('assets', 'icons', 'hicolor') and path.suffix.lower() == '.png':
+                continue
             if path.is_file() and rel.as_posix() != MANIFEST_REL:
                 if path.suffix.lower() in EXCLUDED_SUFFIXES or path.stat().st_size > 5 * 1024 * 1024:
                     raise ValueError(f'Model/build/archive or oversized source: {rel}')

@@ -10,8 +10,8 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "7b5c0855c77bd3c6cb0163041f609105d6f6d67b571359bc714e1d372776510d",
-      "bytes": 277
+      "sha256": "c4e451d920c63e73d27b2c12b0eb65c4b503a48cd8662e80bb405fac99d739d0",
+      "bytes": 383
     },
     {
       "path": "AGENTS.md",
@@ -20,8 +20,8 @@
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "2dde730d7a5f614ec284be76807618a048d639c9ce52f4636fcabf001192871e",
-      "bytes": 13244
+      "sha256": "c51d35fe421ab8f11656fc48eba0ab8a016d548c66f7c4fb4f1a641b14c7f2f5",
+      "bytes": 13203
     },
     {
       "path": "Cargo.lock",
@@ -70,53 +70,13 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "e709ee3fa2896aeb6d9f173804b6347793164f05567566e659d205c1f7e5f421",
-      "bytes": 1848
+      "sha256": "24fbe0a6b1270900b7e28a4f213a88ef7c30c072f56d479d5f78044ba7e6470e",
+      "bytes": 1878
     },
     {
       "path": "assets/icons/README.md",
-      "sha256": "9b1970f16727e1c1dc6a0fbf0d2ea2d471d89a0621d65e91b704c3ee4d438e76",
-      "bytes": 439
-    },
-    {
-      "path": "assets/icons/hicolor/128x128/apps/cowtype.png",
-      "sha256": "103e4800d1f7390083b4e0d83921a0c2171f5b5db60e48045f2a7768f4b76c4b",
-      "bytes": 4978
-    },
-    {
-      "path": "assets/icons/hicolor/16x16/apps/cowtype.png",
-      "sha256": "6af9ae6c352891c64966280049eba1a44595506e0204eb3e490a066503f90e61",
-      "bytes": 565
-    },
-    {
-      "path": "assets/icons/hicolor/22x22/apps/cowtype.png",
-      "sha256": "f37d2a6c49ae65e094b2c7c7acf2f631f1ba293005d1dd826d6c155d281c4f68",
-      "bytes": 764
-    },
-    {
-      "path": "assets/icons/hicolor/24x24/apps/cowtype.png",
-      "sha256": "6895e21a30d5b164f134fc4890c15206cef173af7780e50bd3ec9642a96e7d47",
-      "bytes": 834
-    },
-    {
-      "path": "assets/icons/hicolor/256x256/apps/cowtype.png",
-      "sha256": "736e8561275a81ada9cb43e8754bd59c450bffec9c7290bb17a86c226ae759ad",
-      "bytes": 11451
-    },
-    {
-      "path": "assets/icons/hicolor/32x32/apps/cowtype.png",
-      "sha256": "441c69e6cbe11817f602493a769d4f081e0cafb693cc82559659dfe2bd81bd48",
-      "bytes": 1071
-    },
-    {
-      "path": "assets/icons/hicolor/48x48/apps/cowtype.png",
-      "sha256": "f09413d1ba14ded133ecd6a1937327d0f33a4d1cf65b5791c588aa212a421eca",
-      "bytes": 1753
-    },
-    {
-      "path": "assets/icons/hicolor/64x64/apps/cowtype.png",
-      "sha256": "6128aa4e12f5fef2458d2d754b42b0fc06531e32c2ebfd065cd59466df323da6",
-      "bytes": 2173
+      "sha256": "33829f809fb179d74c71b301dea7304150461130d88a4e8bf9078dcb0c7b5abc",
+      "bytes": 754
     },
     {
       "path": "assets/icons/hicolor/scalable/apps/cowtype.svg",
@@ -135,8 +95,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "c8d7aba0eacbfc7007666afd98e9e6f5f8dfc47af13bb35ba600d750816ba57d",
-      "bytes": 4814
+      "sha256": "983ff496c1208666ddff31840e61817e0fb0e2ccc7835661b2b35259062f5dd4",
+      "bytes": 5078
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -155,8 +115,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "6d12636e8b74ffdffc6ccde544bb3b2aa9ef0e420ee04fc9eaa85438000851e4",
-      "bytes": 34684
+      "sha256": "e9d4d8cfd8327dfeb5338d7e45b139febd4cf8963ece61e8123757bf3e7c7c89",
+      "bytes": 35271
     },
     {
       "path": "docs/USAGE.md",
@@ -185,8 +145,8 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "1d6503f1d73fa560a69583cc125ee999da79c72ded2983d5b3a14aacf0f54f4e",
-      "bytes": 1531
+      "sha256": "69d15943de88c81251368473405f667efae64ff412fdda9cb43aae4305563c43",
+      "bytes": 1541
     },
     {
       "path": "src-data-tools/README.md",
@@ -685,8 +645,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "4a321367fb42f4611c921b92f9918985189b9974c0fd71d538456ded5dc373e5",
-      "bytes": 325
+      "sha256": "c494749d14b4394051612a10bf0b4d3106c199b24d2548d964231885746fc585",
+      "bytes": 475
     },
     {
       "path": "tooling/compile_i18n.py",
@@ -695,8 +655,13 @@
     },
     {
       "path": "tooling/development.py",
-      "sha256": "ed4e26d6be4e7afb3892fd635dcbfaf878a2ab205040a77f88aff4e797400c3b",
-      "bytes": 4658
+      "sha256": "c2afabdd19914d8e3d868f6230b6296a712f05a6df562c7b61dc4b06d059953e",
+      "bytes": 4866
+    },
+    {
+      "path": "tooling/icons.cmake",
+      "sha256": "f980d3b7ed3dbc28470768486f1d178dbd0830b1e94ea422e4c37b599949a553",
+      "bytes": 1222
     },
     {
       "path": "tooling/package_arch.py",

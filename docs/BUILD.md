@@ -6,7 +6,7 @@
 
 ```sh
 # 准备材料
-sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost openssl gtk4 libadwaita python python-gobject
+sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost openssl librsvg gtk4 libadwaita python python-gobject
 git clone https://github.com/0xarch/CowType.git
 cd CowType
 # 构建
@@ -32,7 +32,7 @@ bash build-arch.sh
 
 ## 开发：单独构建与测试
 
-需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.23、libime >= 1.1.7 、Boost 与 OpenSSL；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
+需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.23、libime >= 1.1.7 、Boost、OpenSSL 与 librsvg（rsvg-convert）；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
 
 首次运行离线命令前，先准备 Cargo 依赖（需要网络）：
 
@@ -60,6 +60,8 @@ cmake -S . -B build/native -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_P
 cmake --build build/native -j2
 ctest --test-dir build/native --output-on-failure
 ```
+
+构建自动从 scalable SVG 生成缺失或过期的多尺寸 PNG，产物位于构建目录的 `icons/hicolor/`，无需在源码树保存或校验 PNG。可单独运行 `cmake --build build/native --target cowtype-icons`。
 
 已有输出可选择新目录并传 CMake 的 COWTYPE_DICTIONARY_DIR。原生探针使用隔离的 Fcitx5 路径、临时 XDG 目录与假语音进程；GTK 测试需要可用测试显示后端。真实模型测试和 tests/voice_resident.py 需另外提供模型，合成静音测试不代表麦克风与准确率验收。
 
