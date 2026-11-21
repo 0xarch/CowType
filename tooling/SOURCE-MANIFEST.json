@@ -25,22 +25,22 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "5004f62c83b739403edc249c9df500c4661fe3e019051c84de1c131ce452f89a",
-      "bytes": 3788
+      "sha256": "e7004552c1097b63c5922ea2000a71c12c806dc7f09542f29954e08e0b59f330",
+      "bytes": 5802
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "048c9e90a19a4a2f9be17edd2a4400ea1b53562062103dacb69af1785f11bb9a",
+      "sha256": "a337a941267a34b5660a61988faa8ada3b4767b5475d6f5be26d4c8e25c5158b",
       "bytes": 14847
     },
     {
       "path": "Cargo.lock",
-      "sha256": "0f00569f30566b7b228d716adfe7701de6106855d306da2d3440af040974e347",
+      "sha256": "0986b3f1ce03407f0555989368ac8806baa75a63a5c047084a7a6d229c462a9f",
       "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "0b31c84ece26ad8d106a04b112473a662d0cb963fc0d941e2907f1e08d990b49",
+      "sha256": "3c6111ccf4b71831699e131a9ca00fff4ffab0d30bc9877e019df5d25b196e4a",
       "bytes": 322
     },
     {
@@ -153,7 +153,7 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "023e6372c61e2b36bb46e9e7bdd0087070d305977d8eaafbf60087d301745bd3",
+      "sha256": "377fc1436051ebe6247c6ef2cd38ca5708d8ecead02b6a21279baf773eccf339",
       "bytes": 1541
     },
     {
@@ -238,7 +238,7 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "aab918fccf9641a9868fd4ec3c3ddf17bbb285e337f83d1a39761f59cf3e90da",
+      "sha256": "8edc637297cb9ad6a702cfa5279cbd2b4fff04032c7da21ce5d8f71f8cb1fb32",
       "bytes": 36357
     },
     {
@@ -338,7 +338,7 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "feb5d64742edb848a7743db0d1f1232fff41e2acb01b146945280b2965e8a6bf",
+      "sha256": "cd5cefa4e3af16854af0e57ea5106d228943bd03ddbae2141c2bbd9f501d72e0",
       "bytes": 20774
     },
     {
@@ -368,12 +368,12 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "e3b1536de5007500eba441814e7f18cb353cd1df20cdeb97f2b02c236bedc6b0",
+      "sha256": "ea155d822c85431e381c65a4d80b0f036ea6dfbc6af8f204e130ccc348c26012",
       "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "c69468c298e8dc3e1a41f5d17f0fb41e2c765b0746ec0751ff9a7c22e6770d11",
+      "sha256": "c349c80303bd0ecd9471c94dc213ee28f8b1fd6b2d06ebaaff42dcbce80b0e76",
       "bytes": 473
     },
     {
@@ -738,7 +738,7 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "ae4770876e73c5458ffc3ca318baa3ba3efa4df96649b548021d7da480be6824",
+      "sha256": "18b4584ffa0ee54db0ced9815827bbf485df934f98b3fa6d36166a05aa999fd5",
       "bytes": 5404
     },
     {

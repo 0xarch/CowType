@@ -16,7 +16,7 @@ import tarfile
 import development
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.2.0'
+VERSION = '0.3.0'
 EPOCH = 1794960000  # Fixed archive timestamp; not an upstream publication date.
 
 
