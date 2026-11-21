@@ -117,6 +117,7 @@ bash build-arch.sh
 - [万象拼音](https://github.com/amzxyz/rime_wanxiang)：可选词库
 - [Unicode CLDR](https://cldr.unicode.org/)：emoji 的中英文关键词
 - [FunASR](https://github.com/modelscope/FunASR)：当前 Paraformer 实现参考
+- [fcitx5-gb18030](https://github.com/openkylin/fcitx5-gb18030)：GB18030 内码输入实现参考
 - [Zed](https://zed.dev)：代码编辑器
 - [WowType](https://github.com/Gloridust/WowType)：灵感来源
 
