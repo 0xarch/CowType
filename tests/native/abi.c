@@ -16,6 +16,12 @@ int main(int argc, char **argv) {
     CHECK(!cowtype2_engine_new(argv[2], NULL, 0));
     CHECK(!cowtype2_engine_new(argv[1], NULL, 99));
     CHECK(!cowtype2_engine_new(argv[2], NULL, 2));
+    Cowtype2Engine *empty = cowtype2_engine_external_new(); CHECK(empty);
+    Cowtype2Session *pending = cowtype2_session_new(empty); CHECK(pending);
+    CHECK(cowtype2_session_key(pending, 'a', 0, false, UINT32_MAX));
+    CHECK(!strcmp(cowtype2_session_preedit(pending), "a"));
+    CHECK(cowtype2_session_count(pending) == 0);
+    cowtype2_session_free(pending); cowtype2_engine_free(empty);
     Cowtype2Engine *external = cowtype2_engine_new(argv[1], NULL, 2);
     CHECK(external);cowtype2_engine_free(external);
     Cowtype2Engine *fallback = cowtype2_engine_new(argv[1], argv[2], 0);

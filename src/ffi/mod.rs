@@ -141,6 +141,19 @@ pub unsafe extern "C" fn cowtype2_engine_new(
         }
     })
 }
+// The native host validates/compiles its own dictionary. Avoid reading millions
+// of TSV rows into an unused Rust index before attaching that decoder.
+#[no_mangle]
+pub extern "C" fn cowtype2_engine_external_new() -> *mut EngineHandle {
+    protect(ptr::null_mut(), || {
+        Box::into_raw(Box::new(EngineHandle {
+            engine: Arc::new(Engine::new(Dictionary {
+                entries: Vec::new(),
+            })),
+            warning: CString::default(),
+        }))
+    })
+}
 #[no_mangle]
 pub unsafe extern "C" fn cowtype2_engine_free(handle: *mut EngineHandle) {
     if !handle.is_null() {
@@ -402,6 +415,7 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         9 => s.page_brackets as u32,
         10 => s.page_minus_equal as u32,
         11 => (s.shift_toggle && s.remember_mode) as u32,
+        12 => s.statistical_model as u32,
         _ => 0,
     }
 }

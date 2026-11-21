@@ -62,7 +62,7 @@ pub fn reading_tokens(reading: &str) -> Option<Vec<String>> {
 
 impl Dictionary {
     /// Bad rows are isolated, including invalid UTF-8. Duplicate reading/text pairs
-    /// keep their first position and maximum frequency (never sum duplicate rows).
+    /// keep their first position and sum their original frequencies.
     pub fn from_tsv(bytes: &[u8]) -> Result<LoadReport<Self>, LoadError> {
         let mut entries: Vec<Entry> = Vec::new();
         let mut seen = HashMap::new();
@@ -89,7 +89,11 @@ impl Dictionary {
                 let key = (reading.join(" "), columns[1].to_owned());
                 if let Some(&position) = seen.get(&key) {
                     let entry: &mut Entry = &mut entries[position];
-                    entry.frequency = entry.frequency.max(frequency);
+                    let combined = entry.frequency + frequency;
+                    if !combined.is_finite() {
+                        return Err("combined frequency overflow");
+                    }
+                    entry.frequency = combined;
                     duplicates += 1;
                 } else {
                     seen.insert(key, entries.len());

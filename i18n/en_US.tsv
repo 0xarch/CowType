@@ -147,3 +147,6 @@ voice.paraformer.manual	Download models separately; use --model-url for the offi
 voice.paraformer.pointer	Model file is empty or a Git LFS pointer; download the actual file first
 voice.paraformer.runtime	Cannot load system ONNX Runtime (1.22 or newer required; set ORT_DYLIB_PATH to select the library)
 voice.paraformer.shape	Invalid ONNX output shape or value; model, tokens and cache configuration may not match
+setting.StatisticalModel	Local statistical language model
+hint.statistical_model	Off by default. Uses the installed libime Chinese model; never downloads a model.
+warning.dictionary_optional	An optional dictionary or local statistical model is unavailable. Basic input remains available.

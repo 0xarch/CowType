@@ -134,12 +134,12 @@ fn loader_reports_totally_unusable_dictionary() {
 }
 
 #[test]
-fn duplicate_rows_use_maximum_frequency_not_sum() {
+fn duplicate_rows_sum_original_frequency() {
     let report = Dictionary::from_tsv("lin\t林\t2\nlin\t临\t3\nlin\t林\t2\n".as_bytes()).unwrap();
     assert_eq!(report.duplicates, 1);
     assert_eq!(report.accepted, 3);
     assert_eq!(report.value.len(), 2);
-    assert_eq!(texts(&Engine::new(report.value), "lin"), ["临", "林"]);
+    assert_eq!(texts(&Engine::new(report.value), "lin"), ["林", "临"]);
 }
 
 #[test]
@@ -211,4 +211,11 @@ fn synthetic_query_space_always_returns_valid_nonempty_raw_ranges() {
             }
         }
     }
+}
+
+#[test]
+fn duplicate_frequency_overflow_is_diagnosed_without_poisoning_entry() {
+    let report = Dictionary::from_tsv(b"lin\tx\t1e308\nlin\tx\t1e308\n").unwrap();
+    assert_eq!(report.accepted, 1);
+    assert_eq!(report.diagnostics[0].reason, "combined frequency overflow");
 }

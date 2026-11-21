@@ -147,3 +147,6 @@ voice.paraformer.manual	模型由用户自行下载；用 --model-url 查看官�
 voice.paraformer.pointer	模型文件为空或仍是 Git LFS 指针，请先下载真实文件
 voice.paraformer.runtime	无法加载系统 ONNX Runtime（需要 1.22 或更高版本）
 voice.paraformer.shape	ONNX 输出形状或数值无效，模型、词表和缓存配置可能不匹配
+setting.StatisticalModel	本地统计语言模型
+hint.statistical_model	默认关闭。启用后使用本机已安装的 libime 中文模型，不会下载模型。
+warning.dictionary_optional	可选词库或本地统计模型不可用，基本输入仍可使用。

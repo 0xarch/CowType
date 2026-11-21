@@ -16,6 +16,7 @@ pub struct Settings {
     pub horizontal: bool,
     pub shift_toggle: bool,
     pub remember_mode: bool,
+    pub statistical_model: bool,
     pub voice: bool,
     pub voice_resident: bool,
     pub voice_hotkey: u32,
@@ -38,6 +39,7 @@ impl Default for Settings {
             horizontal: false,
             shift_toggle: true,
             remember_mode: false,
+            statistical_model: false,
             voice: false,
             voice_resident: true,
             voice_hotkey: 0,
@@ -102,6 +104,7 @@ impl Settings {
             ("Horizontal", &mut settings.horizontal),
             ("ShiftToggle", &mut settings.shift_toggle),
             ("RememberMode", &mut settings.remember_mode),
+            ("StatisticalModel", &mut settings.statistical_model),
             ("Voice", &mut settings.voice),
             ("VoiceResident", &mut settings.voice_resident),
             ("VoiceModifierHold", &mut settings.voice_modifier_hold),
@@ -135,6 +138,16 @@ impl Settings {
 #[cfg(test)]
 mod hotkey_tests {
     use super::*;
+    #[test]
+    fn statistical_model_is_explicit_and_defaults_off() {
+        assert!(!Settings::parse("Version=1\n").unwrap().statistical_model);
+        assert!(
+            Settings::parse("Version=1\nStatisticalModel=True\n")
+                .unwrap()
+                .statistical_model
+        );
+        assert!(Settings::parse("Version=1\nStatisticalModel=auto\n").is_err());
+    }
     #[test]
     fn voice_shortcut_defaults_and_rejects_unknown_keys() {
         let mut settings = String::from("[CowType]\nVersion=1\n");

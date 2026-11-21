@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// New adapter against libime 1.1 public APIs. No system dictionary or LM is loaded.
+// Adapter against libime public APIs with disjoint source layers and optional local LM.
 #pragma once
 #include "cowtype2.h"
+#include "dictionary.h"
+#include <libime/pinyin/pinyindecoder.h>
+#include <cstdlib>
 #include <libime/pinyin/pinyinime.h>
 #include <libime/pinyin/pinyincontext.h>
 #include <libime/pinyin/pinyindictionary.h>
@@ -18,35 +21,31 @@
 class LibimeDecoder {
     std::mutex mutex_;
     std::unique_ptr<libime::PinyinIME> ime_;
-    struct Entry { std::string reading, text; double frequency; };
-    static void load(const std::string &path, std::vector<Entry> &rows, bool required) {
-        std::ifstream input(path);
-        if(!input) { if(required) throw std::runtime_error("Pinyin dictionary cannot be read"); return; }
-        std::string line;
-        while(std::getline(input,line)) {
-            if(line.empty() || line[0]=='#') continue;
-            const auto a=line.find('\t'), b=line.find('\t',a==std::string::npos?0:a+1);
-            if(a==std::string::npos || b==std::string::npos) throw std::runtime_error("Invalid dictionary row");
-            auto reading=line.substr(0,a), text=line.substr(a+1,b-a-1);
-            double frequency=std::stod(line.substr(b+1));
-            if(!std::isfinite(frequency) || frequency<=0) throw std::runtime_error("Invalid dictionary frequency");
-            std::replace(reading.begin(),reading.end(),' ','\'');
-            rows.push_back({std::move(reading),std::move(text),frequency});
-        }
-    }
+    const libime::PinyinDictionary *dictionary_ = nullptr;
 public:
-    LibimeDecoder(const std::string &path, const std::string &optional) {
-        std::vector<Entry> rows; load(path,rows,true);
-        // The Rust loader validates the optional file independently. Never partially add it.
-        if(!optional.empty()) { std::vector<Entry> extra; try { load(optional,extra,false); rows.insert(rows.end(),extra.begin(),extra.end()); } catch(const std::exception &) {} }
-        double total=0;for(const auto &e:rows) total+=e.frequency;
-        auto dict=std::make_unique<libime::PinyinDictionary>();size_t accepted=0;
-        for(const auto &e:rows) {
-            try { dict->addWord(0,e.reading,e.text,static_cast<float>(std::log10(e.frequency/total)));++accepted; }
-            catch(const std::invalid_argument &) { /* Public dictionary may include readings unsupported by libime. */ }
+    static constexpr unsigned ModelUnavailable = 4;
+    unsigned warnings = 0;
+    bool cacheHit = false;
+    bool modelLoaded = false;
+    static std::string installed(const char *name, const char *fallback) {
+        const char *value = std::getenv(name); return value ? value : fallback;
+    }
+    static std::string systemPath() { return installed("COWTYPE_SYSTEM_PINYIN_DICT", "/usr/share/libime/sc.dict"); }
+    static std::string modelPath() { return installed("COWTYPE_STATISTICAL_MODEL_FILE", "/usr/lib/libime/zh_CN.lm"); }
+    LibimeDecoder(const std::string &path, const std::string &optional)
+        : LibimeDecoder(cowtype::PinyinSources{path, optional, "", "", ""}, false) {}
+    LibimeDecoder(const cowtype::PinyinSources &sources, bool statisticalModel) {
+        auto compiled = cowtype::loadPinyin(sources);
+        warnings = compiled.warnings; cacheHit = compiled.cacheHit;
+        dictionary_ = compiled.dictionary.get();
+        auto model = std::make_unique<libime::UserLanguageModel>();
+        if (statisticalModel) {
+            try { const auto path = modelPath();
+                if (path.empty()) throw std::runtime_error("Statistical model path is empty");
+                model = std::make_unique<libime::UserLanguageModel>(path.c_str()); modelLoaded = true; }
+            catch (const std::exception &) { warnings |= ModelUnavailable; }
         }
-        if(!accepted) throw std::runtime_error("No supported pinyin dictionary entries");
-        ime_=std::make_unique<libime::PinyinIME>(std::move(dict),std::make_unique<libime::UserLanguageModel>());
+        ime_ = std::make_unique<libime::PinyinIME>(std::move(compiled.dictionary), std::move(model));
         ime_->setCorrectionProfile(std::make_shared<libime::PinyinCorrectionProfile>(libime::BuiltinPinyinCorrectionProfile::Qwerty));
     }
     static void destroy(void *p) { delete static_cast<LibimeDecoder *>(p); }
@@ -76,8 +75,34 @@ public:
             auto typed=raw;typed.erase(std::remove(typed.begin(),typed.end(),'\''),typed.end());
             return !reading.empty() && reading==typed && !candidate.sentence().empty() && candidate.sentence().back()->to()->index()==raw.size();
         };
-        std::stable_partition(candidates.begin(),candidates.end(),literal);
-        for(const auto &candidate:candidates) {
+        // Decorate once: full literal matches first, then source tier. Keep the
+        // decoder's statistical/frequency order inside each tier. A composed
+        // sentence belongs to its least preferred constituent dictionary.
+        auto tier = [&](const libime::SentenceResult &candidate) {
+            unsigned result = 0;
+            for (const auto *node : candidate.sentence()) {
+                const auto *pinyin = dynamic_cast<const libime::PinyinLatticeNode *>(node);
+                unsigned source = 2;
+                if (pinyin) {
+                    const auto &encoded = pinyin->encodedPinyin();
+                    const auto reading = libime::PinyinEncoder::decodeFullPinyin(encoded.data(), encoded.size());
+                    for (unsigned i = 0; i < 3; ++i) {
+                        if (dictionary_->lookupWord(i, reading, node->word()).has_value()) { source = i; break; }
+                    }
+                }
+                result = std::max(result, source);
+            }
+            return result;
+        };
+        struct Ranked { size_t index; bool full; unsigned source; };
+        std::vector<Ranked> ranked;
+        for (size_t i = 0; i < candidates.size(); ++i) ranked.push_back({i, literal(candidates[i]), tier(candidates[i])});
+        std::stable_sort(ranked.begin(), ranked.end(), [](const auto &a, const auto &b) {
+            if (a.full != b.full) return a.full > b.full;
+            return a.source < b.source;
+        });
+        for(const auto &rank:ranked) {
+            const auto &candidate = candidates[rank.index];
             if(candidate.sentence().empty() || (!(flags&1) && candidate.size()>1)) continue;
             auto reading=context.candidateFullPinyin(candidate);
             if(reading.empty()) continue; // libime's literal fallback is handled by the session.

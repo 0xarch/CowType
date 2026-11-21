@@ -787,5 +787,36 @@
     ],
     "new_dependencies": [],
     "implementation": "Bounded lifecycle timing diagnostics, pending-only Fcitx event source, metadata-based resource reuse, and validation-only Rust initialization for an external libime provider."
+  },
+  "dictionary_compilation_2026_11_21": {
+    "paths": [
+      "src-fcitx5/engine/dictionary.h",
+      "src-data-tools/dictionaries/compile.cpp",
+      "tests/native/dictionary.cpp",
+      "tests/native/dictionary-benchmark.cpp"
+    ],
+    "implementation": "Original CowType streaming log-sum compiler with compact ID columns and public libime binary trie APIs; no WowType code or snapshot format copied.",
+    "dependencies": [
+      {
+        "name": "OpenSSL Crypto",
+        "version_reviewed": "4.1.0",
+        "license": "Apache-2.0",
+        "upstream": "https://github.com/openssl/openssl",
+        "use": "System EVP SHA-256 APIs for dictionary source and cache integrity; dynamically linked."
+      },
+      {
+        "name": "libime",
+        "version_reviewed": "1.1.17",
+        "license": "LGPL-2.1-or-later",
+        "upstream": "https://github.com/fcitx/libime",
+        "use": "System public dictionary binary/text serialization and optional locally installed Chinese language model. Models are not bundled."
+      }
+    ],
+    "design_reference": {
+      "url": "https://github.com/Gloridust/WowType/pull/283",
+      "head_reviewed": "6581a01699504d1ad40930cc9bc171388a9d3795",
+      "scope": "Compact storage/precompilation ideas only; no copied implementation."
+    },
+    "data": "Existing pinned dictionary manifests unchanged; runtime system dictionary/model supplied by distribution, no automatic model retrieval."
   }
 }

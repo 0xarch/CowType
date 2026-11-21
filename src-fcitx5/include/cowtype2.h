@@ -23,6 +23,8 @@ enum Cowtype2Key {
  CT2_PAGE_UP, CT2_PAGE_DOWN, CT2_TOGGLE
 };
 uint32_t cowtype2_abi_version(void);
+/* Empty engine for hosts which validate and own an external dictionary. */
+Cowtype2Engine *cowtype2_engine_external_new(void);
 const char *cowtype2_last_error(void); /* thread-local, copy immediately on failure */
 /* scheme: 0 standalone pinyin index, 1 Wubi, 2 validated external pinyin.
  * Scheme 2 requires cowtype2_engine_set_decoder before publishing to sessions. */
@@ -53,7 +55,8 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
 /* options: 0 page size; 1 horizontal; 2 Shift tap; 3 voice enabled;
  * 4 resident model; 5 voice key index; 6 modifier hold; 7 show pinyin;
  * 8 always resident; 9 bracket paging; 10 minus/equal paging;
- * 11 remember language mode (effective only with Shift tap enabled) */
+ * 11 remember language mode (effective only with Shift tap enabled);
+ * 12 optional local statistical language model (default off) */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);

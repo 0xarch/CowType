@@ -27,6 +27,12 @@
       "license": "Apache-2.0",
       "saved_as": "src-model-tools/text-models/LICENSE.Qwen3",
       "scope": "Official license text; model weight metadata separately verified, no weights downloaded"
+    },
+    {
+      "url": "https://api.github.com/repos/Gloridust/WowType/pulls/283/files",
+      "verified_on": "2026-11-21",
+      "sha256": "da2958a53a74e03f1d622a868384e7fd3ebf461c63f1870b8c91f77ae07ba5db",
+      "scope": "PR head 6581a01699504d1ad40930cc9bc171388a9d3795: reviewed compact storage/precompilation design; no implementation copied."
     }
   ],
   "reference_only": [

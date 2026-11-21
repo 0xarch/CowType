@@ -20,8 +20,8 @@
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "43a7620cf664d9f5e7a1f1c4a5df7f831e44d21f4c7c9c77fcb00de10164dc95",
-      "bytes": 10468
+      "sha256": "23ac96481ce40971eec978a2a5518ff4c351dfc0ae8f4bab728d8a713c782415",
+      "bytes": 13116
     },
     {
       "path": "Cargo.lock",
@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "b98a72214cc169fe76f5857caa1ad342e913033ea55950a9d8a4859f5abd2535",
-      "bytes": 3279
+      "sha256": "0de829356abe8c3d882ed7b1dce41a3484f77e442561ffdc23d2dacee6a3c73e",
+      "bytes": 3446
     },
     {
       "path": "STRUCTURES.md",
@@ -125,18 +125,23 @@
     },
     {
       "path": "docs/ATTRIBUTION.md",
-      "sha256": "08f4c19a170d4aa9f0b11903d74d6e4b428a2cc97b66591b93f25d1a390acbfb",
-      "bytes": 1349
+      "sha256": "1f9a786f1ecfc022b2762adefd349e1463f410f78ec178d690467a72f574fa77",
+      "bytes": 1359
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "2c3d2b021c8b2dccb6f1164b64d7e2de1f49e6e9a230310fedcd7518915899be",
-      "bytes": 4795
+      "sha256": "c8d7aba0eacbfc7007666afd98e9e6f5f8dfc47af13bb35ba600d750816ba57d",
+      "bytes": 4814
+    },
+    {
+      "path": "docs/DICTIONARIES.md",
+      "sha256": "012014b0526ff7a13874698f67a7716eb21973e50ff11467a0368f1c10734fa5",
+      "bytes": 4343
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
-      "sha256": "2bfa7d5b49a99bb840270ef8a98fae671075356a51b813f8f60adb35dc37fd6d",
-      "bytes": 4308
+      "sha256": "25c30a6f8a1699e8bfaaf6e9bb503fa3189547dd576306a8393ba6d21b2a2c5e",
+      "bytes": 4660
     },
     {
       "path": "docs/README.md",
@@ -145,13 +150,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "858d22f3827eb21b3204993dd836d292e3ea2c44c7eeabec5f06dfc8cf098a96",
-      "bytes": 32353
+      "sha256": "c3d9398215d69db8851fa8dbe14c417e26b5e2800457546dee78ae78b1f2ca9d",
+      "bytes": 33797
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "361883a7bfdd0c9889523698431846fa7dbe472c2791bc262bf2be12ec0adf51",
-      "bytes": 3212
+      "sha256": "21fa91e995cb6f9cd96d247df8b65a7f1f48e994113e674ea948d135fc024017",
+      "bytes": 3383
     },
     {
       "path": "i18n/README.md",
@@ -160,13 +165,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "9708a191b0808b14d1a0fa7cda270fbff595480374d26df3e47ae091025613e8",
-      "bytes": 8808
+      "sha256": "51e661a97def054851132e32a703731437e001ed5d77dedf3d9b88a96fb5e0df",
+      "bytes": 9096
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "c9cbc0b423e30e6e9eefbad573dedb440514c98d350fc0bd98625e4fbfc19122",
-      "bytes": 7596
+      "sha256": "47d1b2a673264ebb35afcd4e698da8ec6e283e9e92fa4243dee8fc10fb844aed",
+      "bytes": 7863
     },
     {
       "path": "packaging/README.md",
@@ -175,18 +180,23 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "6baa7842185fb8e50961cd2dc11a9b381bf66bd22a58e9167c9f7c13d2b2063d",
-      "bytes": 1521
+      "sha256": "1d6503f1d73fa560a69583cc125ee999da79c72ded2983d5b3a14aacf0f54f4e",
+      "bytes": 1531
     },
     {
       "path": "src-data-tools/README.md",
-      "sha256": "bc09567fab0f276bbd1de12759e579e6a9c1581e95294e4014b0f54a33de5158",
-      "bytes": 271
+      "sha256": "b8f52960322a2ad61027fb4987a43bddf4e4b74c4956b632ed785ac516cce064",
+      "bytes": 490
     },
     {
       "path": "src-data-tools/cli/cowtype-dictionaries.in",
       "sha256": "7077c4337fd0ebee875a200c5bed70804df757fc9a562ccff23a1f31c5e10ab1",
       "bytes": 98
+    },
+    {
+      "path": "src-data-tools/dictionaries/compile.cpp",
+      "sha256": "c187b39918d9d04106517d34dd2412fc48ccb239b559bc188f3f48e2ec25b6cf",
+      "bytes": 1037
     },
     {
       "path": "src-data-tools/dictionaries/manage.py",
@@ -205,8 +215,8 @@
     },
     {
       "path": "src-fcitx5/README.md",
-      "sha256": "2b84285c23502a87b75d0f0c348c715b123f18a8ab54446a9f125c39683808f7",
-      "bytes": 214
+      "sha256": "d9b54815cf781c9dfaf199365cb57ab14e125af2ad05eeacc0865db9e02f3c3a",
+      "bytes": 387
     },
     {
       "path": "src-fcitx5/config/cowtype-addon.conf.in",
@@ -225,13 +235,18 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "420b555af4affbae690fb523858267e3469deb4975d7826e365777e77c221e80",
-      "bytes": 26235
+      "sha256": "649a19028a7fcd4fea1d66b4e21cc3122f5140926465da6ec9fb7dc1204b340d",
+      "bytes": 27361
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
       "sha256": "d2e32448abb9a37f9c110535c6da23070dd73473e97e09e6f7644ba0e2889047",
       "bytes": 1987
+    },
+    {
+      "path": "src-fcitx5/engine/dictionary.h",
+      "sha256": "2a592e91130cc09cfccd68bf13587bf9f29ac76f680a54a7b3995fb2b9ea9f82",
+      "bytes": 15034
     },
     {
       "path": "src-fcitx5/engine/level.h",
@@ -240,8 +255,8 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "3d702d15a716b65b693ac0d6bece21b0124083333206694dc244761966b0308f",
-      "bytes": 6005
+      "sha256": "8032c0fb4b90584595bc0c2806a0f3fc7dda1ad37ba9c72fbb45289f9c2cf8e9",
+      "bytes": 7022
     },
     {
       "path": "src-fcitx5/engine/voice.h",
@@ -250,8 +265,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "bf7cbc535984cd477b1e9296f2a406a5954401ebd167ad1df252df4e5edf4f70",
-      "bytes": 3847
+      "sha256": "43818baf9ca67fe394c5beb0d9b68d167a1149ac9f083b6f4fc1d7916fb51608",
+      "bytes": 4038
     },
     {
       "path": "src-model-tools/README.md",
@@ -290,13 +305,13 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "b638daa16fddea7300853404a8bc85e5f744d9b737b0b6d2634919f28621bfcb",
-      "bytes": 19846
+      "sha256": "7c139dc5107df5ea740896ddf7f68ce940d7e49c700f14bededb85def2dd0a46",
+      "bytes": 20120
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "28a6e3ab96f2d7f677eb3f520e7be0fc21eb6206ec16632bfce93e0e982c864f",
-      "bytes": 3882
+      "sha256": "b153a91dbfdb0f6a7886ae3fb76367e0a9d6063f3111d7ff9fa065f25da2d78e",
+      "bytes": 3908
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -430,13 +445,13 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "b65d243239b8cb373ce3e9b506d2da7ae98180b513e77a2e205ddab98a7a2024",
-      "bytes": 5267
+      "sha256": "6171e13af7bd90d1dba0690fda221792c331babd66e9880d92f8a7b90491fda0",
+      "bytes": 5794
     },
     {
       "path": "src/dictionary/mod.rs",
-      "sha256": "e5affd8e26d94b1cfe158ceb9b9e011869191e4c8b6fbc437658e5dab325f470",
-      "bytes": 7628
+      "sha256": "fa45085135951da176655da00213d496b349077fed94b30d6c8d8369dba00b8f",
+      "bytes": 7792
     },
     {
       "path": "src/engine/mod.rs",
@@ -455,8 +470,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "f1113b58c388ce2ca3fa3fe338263a93b1f7b020dc8f6132f5ebcc3e0fd90965",
-      "bytes": 18361
+      "sha256": "ad8800e6632e330e9826d36c82ca58f3aaed98f3f65b6beffdafdb3bd0277745",
+      "bytes": 18891
     },
     {
       "path": "src/i18n/mod.rs",
@@ -500,8 +515,8 @@
     },
     {
       "path": "tests/engine.rs",
-      "sha256": "0f03541cd9deb4a2819bfde91e98e26ba04366df99a2d742f11324af58e6fd3c",
-      "bytes": 7351
+      "sha256": "234c4118340fb360e2dffe5ea75802002bca3345b28fc4d1162c7cdc58df30bd",
+      "bytes": 7624
     },
     {
       "path": "tests/fixtures/basic.tsv",
@@ -530,8 +545,8 @@
     },
     {
       "path": "tests/native/abi.c",
-      "sha256": "be6938f695baef6052cf1a8318916e637137a0776d7ff21e725762a14525eb10",
-      "bytes": 2316
+      "sha256": "d98516a59712858d6288b174a05ec3ffb82e4eeb541422d1d5cca643eff3eafe",
+      "bytes": 2709
     },
     {
       "path": "tests/native/correction.cpp",
@@ -542,6 +557,16 @@
       "path": "tests/native/data.c",
       "sha256": "52acbd596d2c135c36874137adbf9820bbbcc53e6080622e77762d68431ed239",
       "bytes": 1289
+    },
+    {
+      "path": "tests/native/dictionary-benchmark.cpp",
+      "sha256": "80c1be8b83b4aee328f6a99144dbbcc686eb5c61f66bf800071f0b7d476c86d7",
+      "bytes": 1655
+    },
+    {
+      "path": "tests/native/dictionary.cpp",
+      "sha256": "b01856efacaaceaf770027c245302b7b6dc1894db38a7f31846834cf67f055b1",
+      "bytes": 7050
     },
     {
       "path": "tests/native/discovery.cpp",
@@ -565,8 +590,8 @@
     },
     {
       "path": "tests/native/isolated.py",
-      "sha256": "9d0902239a7926cb92012814e64c2466c3247efd93e501b8e6d6afc86d18ab17",
-      "bytes": 1581
+      "sha256": "2ed43627347f0296e8f0bbec1f9ad01573b07955994cbef2cbc2c1d611d5f05c",
+      "bytes": 1647
     },
     {
       "path": "tests/native/isolation.h",

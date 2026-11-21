@@ -6,7 +6,7 @@
 
 ```sh
 # 准备材料
-sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost gtk4 libadwaita python python-gobject
+sudo pacman -S --needed base-devel git cmake ninja rust cargo fcitx5 libime boost openssl gtk4 libadwaita python python-gobject
 git clone https://github.com/0xarch/CowType.git
 cd CowType
 # 构建
@@ -32,7 +32,7 @@ bash build-arch.sh
 
 ## 开发：单独构建与测试
 
-需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.23、libime >= 1.1.7 与 Boost；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
+需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.23、libime >= 1.1.7 、Boost 与 OpenSSL；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
 
 首次运行离线命令前，先准备 Cargo 依赖（需要网络）：
 

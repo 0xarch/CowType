@@ -297,8 +297,13 @@ private:
         std::string home = environment("XDG_DATA_HOME", environment("HOME", "") + "/.local/share");
         std::string path = data + (scheme ? "/wubi/lexicon.tsv" : "/ice/lexicon.tsv");
         std::string optional = scheme ? "" : home + "/cowtype/dictionaries/wanxiang/lexicon.tsv";
-        std::string stamp;
-        for(const auto &file:{path,optional}) {
+        const bool statisticalModel = !scheme && cowtype2_runtime_option(runtime_.get(),12);
+        const auto system = scheme ? "" : LibimeDecoder::systemPath();
+        const auto model = statisticalModel ? LibimeDecoder::modelPath() : "";
+        const auto cache = LibimeDecoder::installed("XDG_CACHE_HOME", (environment("HOME", "") + "/.cache").c_str());
+        cowtype::PinyinSources sources{path, optional, system, cache.empty() ? "" : cache + "/cowtype/dictionaries", data + "/compiled"};
+        std::string stamp = statisticalModel ? "model-on;" : "model-off;";
+        for(const auto &file:{path,optional,system,model}) {
             std::error_code error;
             const auto size=std::filesystem::file_size(file,error);
             const auto modified=std::filesystem::last_write_time(file,error);
@@ -311,16 +316,21 @@ private:
         resource.requestedStamp=std::move(stamp);
         ctDiagnostic("event=dictionary_start scheme="+std::to_string(scheme));
         resourceTimer_->setTime(now(CLOCK_MONOTONIC)+20000);resourceTimer_->setOneShot();
-        resource.pending = std::async(std::launch::async, [path, optional, scheme] {
+        resource.pending = std::async(std::launch::async, [path, optional, scheme, sources, statisticalModel] {
             const auto began=now(CLOCK_MONOTONIC);
-            EnginePtr engine(cowtype2_engine_new(path.c_str(), optional.c_str(), scheme?1:2), cowtype2_engine_free);
+            EnginePtr engine(scheme ? cowtype2_engine_new(path.c_str(), optional.c_str(), 1) : cowtype2_engine_external_new(), cowtype2_engine_free);
             std::string error = engine ? "" : cowtype2_last_error();
             ctDiagnostic("event=dictionary_stage scheme="+std::to_string(scheme)+" stage=rust elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
             const auto decoderBegan=now(CLOCK_MONOTONIC);
             if(engine && !scheme) {
                 try {
-                    auto decoder=std::make_unique<LibimeDecoder>(path,optional);
+                    auto decoder=std::make_unique<LibimeDecoder>(sources,statisticalModel);
                     if(!cowtype2_engine_set_decoder(engine.get(),decoder.get(),LibimeDecoder::query,LibimeDecoder::destroy)) throw std::runtime_error("Decoder attachment failed");
+                    if (decoder->warnings) {
+                        error = ct_tr("warning.dictionary_optional");
+                        ctDiagnostic("event=dictionary_optional_unavailable flags="+std::to_string(decoder->warnings));
+                    }
+                    ctDiagnostic("event=dictionary_cache hit="+std::to_string(decoder->cacheHit)+" model="+std::to_string(decoder->modelLoaded));
                     decoder.release();
                 } catch(const std::exception &e) { error=e.what(); engine.reset(); }
             }
@@ -370,6 +380,7 @@ private:
         if (state->scheme >= 0 && !preedit.empty()) {
             auto &resource = resources_[state->scheme];
             if (!resource.engine) { panel.setAuxUp(Text(resource.failure.empty() ? ct_tr("message.c28e670cc9d0") : ct_tr("message.b016e0472c97"))); }
+            else if (!resource.failure.empty()) { panel.setAuxUp(Text(resource.failure)); }
             else if (const char *warning = cowtype2_engine_warning(resource.engine.get()); warning && *warning) { panel.setAuxUp(Text(warning)); }
         }
         if (cowtype2_session_count(session)) {
