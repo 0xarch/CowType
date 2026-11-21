@@ -2,8 +2,8 @@
   <title>CowType</title>
   <defs>
     <linearGradient id="stroke" x1="0.15" y1="0.05" x2="0.85" y2="0.95">
-      <stop offset="0" stop-color="#43E0A0"/>
-      <stop offset="1" stop-color="#0EAF76"/>
+      <stop offset="0" stop-color="#127BDC"/>
+      <stop offset="1" stop-color="#3B5BA9"/>
     </linearGradient>
   </defs>
   <!-- Crop the original viewport first, then rotate that entire viewport clockwise. -->
