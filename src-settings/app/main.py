@@ -131,11 +131,12 @@ def main():
             privacy = self.group('input', 'group.privacy', tr('hint.learning'))
             keys = self.group('keys', 'page.keys', tr('hint.hotkey'))
             voice = self.group('voice', 'group.voice')
-            groups = {'Punctuation': general, 'Horizontal': general, 'ShiftToggle': keys,
+            groups = {'Punctuation': general, 'Horizontal': general, 'ShiftToggle': keys, 'RememberMode': keys,
                 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
                 'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
             for key, group in groups.items():
                 row = Adw.SwitchRow(title=tr('setting.' + key))
+                if key == 'RememberMode': row.set_subtitle(tr('hint.remember_mode'))
                 if key == 'Initials': row.set_subtitle(tr('hint.initials'))
                 if key == 'VoiceResident': row.set_subtitle(tr('hint.resident'))
                 if key == 'VoiceAlwaysResident': row.set_subtitle(tr('hint.always_resident'))
@@ -198,13 +199,20 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 15
+                    assert len(self.pages) == 5 and len(self.controls) == 16
                     assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
                     assert self.get_windows() == [self.window]
                     assert self.window.get_mapped() and self.stack.get_mapped()
                     assert isinstance(self.overlay, Adw.ToastOverlay)
                     assert not self.controls['VoiceModifierHold'].get_visible()
                     self.ready = False
+                    assert self.controls['RememberMode'].get_visible()
+                    self.controls['ShiftToggle'].set_active(False)
+                    self.update_visibility()
+                    assert not self.controls['RememberMode'].get_visible()
+                    self.controls['ShiftToggle'].set_active(True)
+                    self.update_visibility()
+                    assert self.controls['RememberMode'].get_visible()
                     self.hotkey.set_selected(3)
                     self.update_visibility()
                     assert self.controls['VoiceModifierHold'].get_visible()
@@ -224,6 +232,7 @@ def main():
                 GLib.timeout_add(1000, check_visible)
 
         def update_visibility(self):
+            self.controls['RememberMode'].set_visible(self.controls['ShiftToggle'].get_active())
             self.controls['VoiceModifierHold'].set_visible(self.hotkey.get_selected() >= 3)
             self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
 

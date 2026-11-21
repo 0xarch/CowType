@@ -37,6 +37,7 @@ hint.learning	只保存在本机。仅确认选词会学习；五笔保持码表
 hint.libime	使用 libime 分词与选词，词频来自雾凇词库。#remove
 hint.model	模型由用户下载，安装包不含权重。继续使用原有模型目录。
 hint.modifier_hold	按住 300 毫秒开始录音，松开停止；短按仍可切换。
+hint.remember_mode	切换回 CowType 时保留当前输入框的中英文状态；关闭后每次使用中文。
 hint.resident	首次使用后保留约 0.9 GB 内存。
 hint.translate	尚未接入翻译后端。
 hint.words	默认包含雾凇拼音与五笔86。
@@ -115,6 +116,7 @@ setting.PageBrackets	使用 [ 和 ] 翻页
 setting.PageMinusEqual	使用 - 和 = 翻页
 setting.PageSize	每页候选数
 setting.Punctuation	中文标点
+setting.RememberMode	状态保留
 setting.Sentence	长句分词
 setting.ShiftToggle	单按 Shift 切换中英文
 setting.ShowPinyin	候选词旁显示拼音

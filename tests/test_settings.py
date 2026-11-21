@@ -56,6 +56,14 @@ class SettingsTests(unittest.TestCase):
         path.symlink_to(target)
         with self.assertRaises(ValueError): settings.save(settings.DEFAULTS)
         self.assertEqual(target.read_text(), 'keep')
+    def test_remember_mode_defaults_and_roundtrip(self):
+        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\n')
+        values = settings.load()
+        self.assertEqual(values['RememberMode'], 'False')
+        values.update(RememberMode='True', ShiftToggle='False')
+        settings.save(values)
+        self.assertEqual(settings.load(), values)
+
     def test_voice_hold_and_candidate_reading_options(self):
         values = settings.load()
         self.assertEqual(values['VoiceModifierHold'], 'False')

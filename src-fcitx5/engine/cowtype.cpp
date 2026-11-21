@@ -128,7 +128,12 @@ public:
         const auto began=now(CLOCK_MONOTONIC);
         const int scheme=entry.uniqueName()=="cowtype-wubi"?1:0;
         event.inputContext()->propertyFor(&factory_)->active=true;
-        attach(event.inputContext(),scheme); render(event.inputContext(), false);
+        attach(event.inputContext(),scheme);
+        auto *session = event.inputContext()->propertyFor(&factory_)->session.get();
+        if (!cowtype2_runtime_option(runtime_.get(),11) && cowtype2_session_mode(session)) {
+            cowtype2_session_key(session,CT2_TOGGLE,0,false,0xffffffff);
+        }
+        render(event.inputContext(), false);
         ctDiagnostic("event=activate scheme="+std::to_string(scheme)+" ready="+std::to_string(bool(resources_[scheme].engine))+" elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
     }
     void deactivate(const InputMethodEntry &, InputContextEvent &event) override {

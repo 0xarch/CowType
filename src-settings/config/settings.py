@@ -12,7 +12,7 @@ from catalog import tr
 
 DEFAULTS = dict(Version='1', PageSize='5', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
-                Horizontal='False', ShiftToggle='True', Voice='False', VoiceResident='True', VoiceHotkey='F8', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
+                Horizontal='False', ShiftToggle='True', RememberMode='False', Voice='False', VoiceResident='True', VoiceHotkey='F8', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
 VOICE_HOTKEYS = ('F8', 'F9', 'F10', 'Alt_L', 'Alt_R', 'ISO_Level3_Shift', 'Control_R')
 
 def config_home():

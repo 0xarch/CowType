@@ -99,6 +99,30 @@ int main(int argc, char **argv) {
             CHECK(press(engine,pinyin,a,FcitxKey_asciicircum));CHECK(a.committed.back()=="……");
             const auto configPath = std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v1.ini";
             std::filesystem::create_directories(configPath.parent_path());
+            // Default activation restores Chinese, including after an F6 switch.
+            CHECK(press(engine,pinyin,a,FcitxKey_F6));
+            engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
+            CHECK(press(engine,pinyin,a,FcitxKey_a));
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            for (const auto &options : {std::string("ShiftToggle=True\nRememberMode=True\n"),
+                                        std::string("ShiftToggle=True\nRememberMode=False\n"),
+                                        std::string("ShiftToggle=False\nRememberMode=True\n")}) {
+                { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\n" << options; }
+                addon->reloadConfig();
+                CHECK(press(engine,pinyin,a,FcitxKey_F6));
+                engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
+                const bool remember = options == "ShiftToggle=True\nRememberMode=True\n";
+                CHECK(press(engine,pinyin,a,FcitxKey_a) == !remember);
+                if (remember) {
+                    // A different input field starts in Chinese; this field keeps English.
+                    InputContextEvent activateB(&b,EventType::InputContextInputMethodActivated);
+                    engine->activate(pinyin,activateB);
+                    CHECK(press(engine,pinyin,b,FcitxKey_a));
+                    CHECK(press(engine,pinyin,b,FcitxKey_Escape));
+                    CHECK(!press(engine,pinyin,a,FcitxKey_a));
+                    CHECK(press(engine,pinyin,a,FcitxKey_F6));
+                } else { CHECK(press(engine,pinyin,a,FcitxKey_Escape)); }
+            }
             { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nPageSize=7\nPageBrackets=False\nPageMinusEqual=False\nHorizontal=True\nShowPinyin=False\nVoice=True\nVoiceHotkey=F9\n"; }
             addon->reloadConfig();
             type(engine, pinyin, a, "shan");

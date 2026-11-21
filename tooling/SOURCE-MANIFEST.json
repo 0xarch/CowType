@@ -15,8 +15,8 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "668e15a0d01e92093d1b63fdc5af121a6df49cbf6e9bbe5495e2998ac2e4603c",
-      "bytes": 1783
+      "sha256": "6fb9f34ae31c1769017e786c6dc1aa9f5cb836c73473c15f7c52ce7a6fff814f",
+      "bytes": 1937
     },
     {
       "path": "CMakeLists.txt",
@@ -60,8 +60,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "67eebed1dbf5ed003ad13bc6083b1372db4dd4321eb906a7423e5bc673f165b4",
-      "bytes": 3192
+      "sha256": "808a4e07ac0f570dda0d433241af16d7b7f38f101600f99045cf93464128d6d4",
+      "bytes": 3299
     },
     {
       "path": "STRUCTURES.md",
@@ -125,13 +125,13 @@
     },
     {
       "path": "docs/ATTRIBUTION.md",
-      "sha256": "8dc753eeb34c3b2094a9d9b849a2ed47df293b9f21fc951fcb0a5f8bbe64e828",
-      "bytes": 1347
+      "sha256": "08f4c19a170d4aa9f0b11903d74d6e4b428a2cc97b66591b93f25d1a390acbfb",
+      "bytes": 1349
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "e79d52cc6a55e07a7177b0d7ae58328225b7431fd06513c63a6fef14a434ae7a",
-      "bytes": 4900
+      "sha256": "e57f9165c5631c53cf74a0df6e8822bdc8dbf48cfd3aff94881eb389d476843e",
+      "bytes": 4704
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -150,8 +150,8 @@
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "4fb6fb94e47e469908dd299611c6daa96b22f364046c7858ad59d498370cc4e1",
-      "bytes": 2753
+      "sha256": "523d5fac86a560c5cf0f7cec80f1dbc03cced3ef27589a3e70b042bdf1b493ec",
+      "bytes": 3083
     },
     {
       "path": "i18n/README.md",
@@ -160,13 +160,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "8560a0258bb19c6b4ea5dc3771d5da3430b190cd1c7df30d9a68acecee3a5982",
-      "bytes": 8985
+      "sha256": "b39bb27cd86e0162bf5abe61a6c1044880b6ec89a5a535ccbd939165b83d2a92",
+      "bytes": 9153
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "51bb0e4ea7d05557876304d35fdc11ab8d8f7738ef0f6c94c3df04ffd2bf2b67",
-      "bytes": 7744
+      "sha256": "5703831c00bd4861802befa98ef105cc9b4a116514df5c84fa6afb7ab0d0cc0b",
+      "bytes": 7891
     },
     {
       "path": "packaging/README.md",
@@ -225,8 +225,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "0a2d860b4e39ff206aec1a73f36c491acecf045543b1f51296b7d2a32235ea0c",
-      "bytes": 25583
+      "sha256": "fd44003ef79b3e1d2a8fde34997f20fd62dac7069de7541356a89637bb85f17b",
+      "bytes": 25852
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -250,8 +250,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "0e296fe0659e50bbb30adc32c7ff682cc8d51f0f867f42e1e412acbe800b0827",
-      "bytes": 3777
+      "sha256": "bf7cbc535984cd477b1e9296f2a406a5954401ebd167ad1df252df4e5edf4f70",
+      "bytes": 3847
     },
     {
       "path": "src-model-tools/README.md",
@@ -290,13 +290,13 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "23857349c93cc3ccaa32d6d309d1c22000b0a7e5fb7733d6d4a00a5c11c158a4",
-      "bytes": 19269
+      "sha256": "ca816fe3adbd26961aa298a9b18f639188022c72305a340dd3a511e9cd027d4f",
+      "bytes": 19913
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "cb83f442220bd907429416ba17ed5fd49616f5890eb8818d7c354a385d6878fa",
-      "bytes": 3860
+      "sha256": "28a6e3ab96f2d7f677eb3f520e7be0fc21eb6206ec16632bfce93e0e982c864f",
+      "bytes": 3882
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -430,8 +430,8 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "12ddb5b90f4e868ab6128e3481fc34137ada7282466f528378693d9c6473c077",
-      "bytes": 5145
+      "sha256": "b65d243239b8cb373ce3e9b506d2da7ae98180b513e77a2e205ddab98a7a2024",
+      "bytes": 5267
     },
     {
       "path": "src/dictionary/mod.rs",
@@ -455,8 +455,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "3976f39fcef9a6fd6fd286dc1373aa07e2554e19e6acf3d35f21a8c1a7dc825e",
-      "bytes": 18303
+      "sha256": "f1113b58c388ce2ca3fa3fe338263a93b1f7b020dc8f6132f5ebcc3e0fd90965",
+      "bytes": 18361
     },
     {
       "path": "src/i18n/mod.rs",
@@ -560,8 +560,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "b1e501df2f25407a82f7eba84877cc3272e6ae68ea5a7ae068c1ec1881b3d5f7",
-      "bytes": 17265
+      "sha256": "9865d26ec92774b53c539570d4a135bccfa57221782981432eedd393227dbe53",
+      "bytes": 18958
     },
     {
       "path": "tests/native/isolated.py",
@@ -600,8 +600,8 @@
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "bde4d4033f75ec877106798b2ebba254273a98e14e09b5a5b5f8935b0190f30b",
-      "bytes": 3231
+      "sha256": "5d29efa08320bfa9a586bd2b1cc707d14070fc5d2d1cd117c2864b1ac8d7adf3",
+      "bytes": 3616
     },
     {
       "path": "tests/test_settings_startup.py",

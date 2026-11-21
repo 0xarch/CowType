@@ -37,6 +37,7 @@ hint.learning	Stored on this device. Only confirmed selections are learned; Wubi
 hint.libime	libime segments pinyin and generates candidates using Ice word frequencies.
 hint.model	Models are downloaded explicitly and are not included in the package. Your existing model folder is preserved.
 hint.modifier_hold	Hold for 300 ms to record, then release to stop. Tap to toggle. Key combinations cancel recording.
+hint.remember_mode	Keep this input field’s language mode when switching back to CowType. When disabled, start in Chinese.
 hint.resident	Keeps about 0.9 GB of memory after first use. No recording while idle.
 hint.translate	Translation is not connected. No network requests are sent.
 hint.words	Ice Pinyin (GPL-3.0-only) and Wubi 86 (LGPL-3.0-only) are included. Wanxiang is an optional CC-BY-4.0 text dictionary.
@@ -115,6 +116,7 @@ setting.PageBrackets	Page with [ and ]
 setting.PageMinusEqual	Page with - and =
 setting.PageSize	Candidates per Page
 setting.Punctuation	Chinese Punctuation
+setting.RememberMode	Remember Language Mode
 setting.Sentence	Sentence Segmentation
 setting.ShiftToggle	Tap Shift to Switch Languages
 setting.ShowPinyin	Show Pinyin beside Candidates

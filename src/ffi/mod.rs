@@ -401,6 +401,7 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         8 => s.voice_always_resident as u32,
         9 => s.page_brackets as u32,
         10 => s.page_minus_equal as u32,
+        11 => (s.shift_toggle && s.remember_mode) as u32,
         _ => 0,
     }
 }

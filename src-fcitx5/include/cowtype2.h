@@ -52,7 +52,8 @@ void cowtype2_runtime_free(Cowtype2Runtime *);
 bool cowtype2_runtime_reload(Cowtype2Runtime *);
 /* options: 0 page size; 1 horizontal; 2 Shift tap; 3 voice enabled;
  * 4 resident model; 5 voice key index; 6 modifier hold; 7 show pinyin;
- * 8 always resident; 9 bracket paging; 10 minus/equal paging */
+ * 8 always resident; 9 bracket paging; 10 minus/equal paging;
+ * 11 remember language mode (effective only with Shift tap enabled) */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);
