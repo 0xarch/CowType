@@ -693,8 +693,8 @@
     },
     {
       "path": "tests/test_settings_startup.py",
-      "sha256": "da98a1eb4f5e0603d814ed3dbce416dd837180665ea70e617776d19b049c02cb",
-      "bytes": 1886
+      "sha256": "0b05546faa370951eed0e1dc5d214869fc88724fe5615278e512db925fdbb42b",
+      "bytes": 2032
     },
     {
       "path": "tests/voice_resident.py",
@@ -713,8 +713,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "c427f98b23f52bdbe3ca84e3f12bda6a66376c619aaf1f50f7ecbfd5d54317e9",
-      "bytes": 4415
+      "sha256": "712e98c1dfb93c28b0b77af0d180b8634fa0f82e4c350a309a41440f95e69a91",
+      "bytes": 4620
     },
     {
       "path": "tooling/compile_i18n.py",

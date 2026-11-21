@@ -25,8 +25,10 @@ class StartupTests(unittest.TestCase):
                     if list(Path(temporary).glob('*.socket')): break
                     if server.poll() is not None: self.fail('Broadway exited before startup')
                     time.sleep(0.05)
-                result = subprocess.run([sys.executable, str(root / 'src-settings/app/launch.py'),
-                    '--smoke-test'], env=env, capture_output=True, text=True, timeout=15)
+                installed = os.environ.get('COWTYPE_TEST_SETTINGS_EXECUTABLE')
+                command = [installed] if installed else [sys.executable, str(root / 'src-settings/app/launch.py')]
+                result = subprocess.run([*command, '--smoke-test'], env=env,
+                    capture_output=True, text=True, timeout=15)
                 log = Path(temporary + '/state/cowtype/settings.log')
                 self.assertEqual(result.returncode, 0, log.read_text() if log.exists() else result.stderr)
                 self.assertIn('remain mapped after startup', result.stdout)
