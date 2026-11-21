@@ -922,5 +922,15 @@
     ],
     "implementation": "Original CowType generated shared key registry, physical modifier overlap validation, uniform gesture state machine and explicit legacy Shift binding migration. No upstream code copied.",
     "dependencies": []
+  },
+  "unicode_input_2026_11_21": {
+    "paths": [
+      "src-fcitx5/unicode/decoder.h",
+      "src-fcitx5/unicode/README.md",
+      "tests/native/unicode-code.cpp"
+    ],
+    "implementation": "Original CowType Unicode scalar validation and UTF-8 encoding, independent of GB18030/iconv. No external Unicode table, model or upstream code copied.",
+    "features": "Separate per-field mode and shortcut registered alongside language, voice and GB18030. Shared conflict checks include overlapping modifier aliases.",
+    "dependencies": []
   }
 }

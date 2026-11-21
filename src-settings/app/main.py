@@ -211,7 +211,7 @@ def main():
                     assert not self.controls['Emoji'].get_active()
                     assert self.controls['StatisticalModel'].get_visible()
                     assert not self.controls['StatisticalModel'].get_active()
-                    assert len(self.feature_hotkeys) == 3
+                    assert len(self.feature_hotkeys) == 4
                     assert self.feature_hotkeys['InternalCodeHotkey'].get_selected() == 6
                     assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
                     assert self.get_windows() == [self.window]

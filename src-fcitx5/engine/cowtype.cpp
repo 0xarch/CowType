@@ -8,6 +8,7 @@
 #include "libime.h"
 #include "shortcuts.h"
 #include "../gb18030/decoder.h"
+#include "../unicode/decoder.h"
 #include <fcitx-config/configuration.h>
 #include <fcitx/addonfactory.h>
 #include <fcitx/addonmanager.h>
@@ -52,6 +53,8 @@ struct State : InputContextProperty {
     Shortcuts::Gesture shortcuts;
     std::unique_ptr<EventSourceTime> voiceHold;
     bool internalCode = false;
+    bool unicodeCode = false;
+    std::string unicodeBuffer;
     std::string internalBuffer;
     int internalCursor = 0;
     VoiceLevel voiceLevel;
@@ -60,8 +63,8 @@ struct State : InputContextProperty {
 class InternalWord final : public CandidateWord {
     std::function<void(InputContext *)> select_;
 public:
-    InternalWord(const cowtype::InternalCodeCandidate &candidate, std::function<void(InputContext *)> select)
-        : CandidateWord(Text(candidate.text)), select_(std::move(select)) { setComment(Text(candidate.code)); }
+    InternalWord(std::string text, std::string code, std::function<void(InputContext *)> select)
+        : CandidateWord(Text(std::move(text))), select_(std::move(select)) { setComment(Text(std::move(code))); }
     void select(InputContext *ic) const override { select_(ic); }
 };
 class Cowtype;
@@ -109,7 +112,7 @@ public:
         instance_->inputContextManager().registerProperty("cowtype-v2-session", &factory_);
         focus_ = instance_->watchEvent(EventType::InputContextFocusOut, EventWatcherPhase::PreInputMethod,
             [this](Event &event) { auto *ic = static_cast<InputContextEvent &>(event).inputContext();
-                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->internalCode=false;state->internalBuffer.clear();state->shortcuts.reset(); cowtype2_session_reset(state->session.get(), false); render(ic, false); });
+                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->internalCode=false;state->internalBuffer.clear();state->unicodeCode=false;state->unicodeBuffer.clear();state->shortcuts.reset(); cowtype2_session_reset(state->session.get(), false); render(ic, false); });
         resourceTimer_=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+20000,1000,
             [this](EventSourceTime *timer,uint64_t) {
                 for(int scheme=0;scheme<2;++scheme) {
@@ -138,7 +141,7 @@ public:
         instance_->inputContextManager().foreach([this](InputContext *ic) {
             auto *state=ic->propertyFor(&factory_);
             state->shortcuts.reset();state->voiceHold.reset();
-            if(state->internalCode){state->internalCode=false;state->internalBuffer.clear();render(ic,false);}
+            if(state->internalCode || state->unicodeCode){state->internalCode=false;state->internalBuffer.clear();state->unicodeCode=false;state->unicodeBuffer.clear();render(ic,false);}
             return true;
         });
         voice_.setResident(cowtype2_runtime_option(runtime_.get(),4));
@@ -164,6 +167,8 @@ public:
         event.inputContext()->propertyFor(&factory_)->active=false;
         event.inputContext()->propertyFor(&factory_)->internalCode=false;
         event.inputContext()->propertyFor(&factory_)->internalBuffer.clear();
+        event.inputContext()->propertyFor(&factory_)->unicodeCode=false;
+        event.inputContext()->propertyFor(&factory_)->unicodeBuffer.clear();
         cancelVoice(event.inputContext());
         bool commit = event.type() == EventType::InputContextSwitchInputMethod;
         if (commit) { commit = static_cast<InputContextSwitchInputMethodEvent &>(event).reason() != InputMethodSwitchedReason::CapabilityChanged; }
@@ -174,9 +179,12 @@ public:
         cancelVoice(event.inputContext());
         event.inputContext()->propertyFor(&factory_)->internalCode=false;
         event.inputContext()->propertyFor(&factory_)->internalBuffer.clear();
+        event.inputContext()->propertyFor(&factory_)->unicodeCode=false;
+        event.inputContext()->propertyFor(&factory_)->unicodeBuffer.clear();
         cowtype2_session_reset(event.inputContext()->propertyFor(&factory_)->session.get(), false); render(event.inputContext(), false);
     }
     std::string subMode(const InputMethodEntry &, InputContext &ic) override {
+        if(ic.propertyFor(&factory_)->unicodeCode) return ct_tr("unicode.mode");
         if(ic.propertyFor(&factory_)->internalCode) return ct_tr("gb18030.mode");
         return cowtype2_session_mode(ic.propertyFor(&factory_)->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6");
     }
@@ -186,6 +194,7 @@ public:
         if (ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive) | CapabilityFlag::Disable)) {
             cancelVoice(ic);
             ic->propertyFor(&factory_)->internalCode=false;ic->propertyFor(&factory_)->internalBuffer.clear();
+            ic->propertyFor(&factory_)->unicodeCode=false;ic->propertyFor(&factory_)->unicodeBuffer.clear();
             cowtype2_session_reset(ic->propertyFor(&factory_)->session.get(), false); render(ic, false); return;
         }
         attach(ic, entry.uniqueName() == "cowtype-wubi" ? 1 : 0);
@@ -195,9 +204,9 @@ public:
         const auto modifiers=event.key().states().toInteger() | event.rawKey().states().toInteger();
         const auto time=fcitx::now(CLOCK_MONOTONIC);
 
-        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),cowtype2_runtime_option(runtime_.get(),5),cowtype2_runtime_option(runtime_.get(),3));
+        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),cowtype2_runtime_option(runtime_.get(),5),cowtype2_runtime_option(runtime_.get(),3),cowtype2_runtime_option(runtime_.get(),15));
         auto shortcut=state->shortcuts.handle(sym,modifiers,event.isRelease(),time,action,cowtype2_runtime_option(runtime_.get(),6));
-        if(shortcut.interrupted || event.isRelease())state->voiceHold.reset();
+        if(shortcut.interrupted || (event.isRelease() && shortcut.handled))state->voiceHold.reset();
         if(shortcut.cancelVoice && voice_.owns(ic)){cancelVoice(ic);render(ic,false);}
         if(shortcut.armHold) {
             state->voiceHold=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,time+300000,1000,
@@ -214,6 +223,7 @@ public:
         if(shortcut.stopVoice && voice_.owns(ic)){voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");render(ic,false);}
         if(shortcut.accept)event.filterAndAccept();
         if(shortcut.handled)return;
+        if(state->unicodeCode){unicodeKey(ic,event,modifiers);return;}
         if(state->internalCode){internalKey(ic,event,modifiers);return;}
         if(voice_.owns(ic) && !event.isRelease()){
             cancelVoice(ic);render(ic,false);
@@ -275,7 +285,7 @@ private:
         auto candidates=cowtype::InternalCode::candidates(state->internalBuffer);
         if(index>=candidates.size())return;
         ic->commitString(candidates[index].text);
-        state->internalCode=false;state->internalBuffer.clear();state->internalCursor=0;
+        state->internalCode=false;state->internalBuffer.clear();state->unicodeCode=false;state->unicodeBuffer.clear();state->internalCursor=0;
         render(ic,false);
     }
     void internalKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
@@ -283,7 +293,7 @@ private:
         if(event.isRelease())return;
         if(modifiers&(4|8|64|128))return;
         auto sym=event.key().sym();
-        if(sym==FcitxKey_Escape) {state->internalCode=false;state->internalBuffer.clear();}
+        if(sym==FcitxKey_Escape) {state->internalCode=false;state->internalBuffer.clear();state->unicodeCode=false;state->unicodeBuffer.clear();}
         else if(sym==FcitxKey_BackSpace) {if(!state->internalBuffer.empty())state->internalBuffer.pop_back();state->internalCursor=0;}
         else if(sym==FcitxKey_space || sym==FcitxKey_KP_Space || sym==FcitxKey_Return || sym==FcitxKey_KP_Enter) {
             chooseInternal(ic,state->internalCursor);event.filterAndAccept();return;
@@ -308,29 +318,67 @@ private:
         auto candidates=cowtype::InternalCode::candidates(state->internalBuffer);
         auto list=std::make_unique<CommonCandidateList>();list->setPageSize(16);
         for(size_t i=0;i<candidates.size();++i) {
-            list->append<InternalWord>(candidates[i],[this,i](InputContext *context){chooseInternal(context,i);});
+            list->append<InternalWord>(candidates[i].text,candidates[i].code,[this,i](InputContext *context){chooseInternal(context,i);});
         }
         if(!candidates.empty())list->setGlobalCursorIndex(state->internalCursor);
         if(candidates.empty() && (state->internalBuffer.size()==4 || state->internalBuffer.size()==8))panel.setAuxDown(Text(ct_tr("gb18030.invalid")));
         panel.setCandidateList(std::move(list));
         ic->updatePreedit();ic->updateUserInterface(UserInterfaceComponent::InputPanel);
     }
+    void chooseUnicode(InputContext *ic) {
+        auto *state=ic->propertyFor(&factory_);
+        if(!state->unicodeCode || !ic->hasFocus() || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable))return;
+        auto candidates=cowtype::UnicodeCode::candidates(state->unicodeBuffer);
+        if(candidates.empty())return;
+        ic->commitString(candidates[0].text);state->unicodeCode=false;state->unicodeBuffer.clear();render(ic,false);
+    }
+    void unicodeKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
+        auto *state=ic->propertyFor(&factory_);
+        if(event.isRelease() || (modifiers&(4|8|64|128)))return;
+        auto sym=event.key().sym();
+        if(sym==FcitxKey_Escape){state->unicodeCode=false;state->unicodeBuffer.clear();}
+        else if(sym==FcitxKey_BackSpace){if(!state->unicodeBuffer.empty())state->unicodeBuffer.pop_back();}
+        else if(sym==FcitxKey_space || sym==FcitxKey_KP_Space || sym==FcitxKey_Return || sym==FcitxKey_KP_Enter){chooseUnicode(ic);event.filterAndAccept();return;}
+        else {
+            uint32_t code=Key::keySymToUnicode(sym);
+            if(sym>=FcitxKey_KP_0 && sym<=FcitxKey_KP_9)code='0'+sym-FcitxKey_KP_0;
+            if(code<128 && cowtype::UnicodeCode::accepts(state->unicodeBuffer,char(code)))state->unicodeBuffer+=char(code);
+        }
+        render(ic,false);event.filterAndAccept();
+    }
+    void renderUnicode(InputContext *ic) {
+        auto *state=ic->propertyFor(&factory_);auto &panel=ic->inputPanel();panel.reset();
+        panel.setAuxUp(Text(ct_tr("unicode.hint")));
+        Text preedit(state->unicodeBuffer,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);
+        preedit.setCursor(state->unicodeBuffer.size());
+        if(ic->capabilityFlags().test(CapabilityFlag::Preedit))panel.setClientPreedit(preedit);else panel.setPreedit(preedit);
+        auto candidates=cowtype::UnicodeCode::candidates(state->unicodeBuffer);
+        auto list=std::make_unique<CommonCandidateList>();list->setPageSize(1);
+        if(!candidates.empty()) {
+            list->append<InternalWord>(candidates[0].text,candidates[0].code,[this](InputContext *context){chooseUnicode(context);});
+            list->setGlobalCursorIndex(0);
+        } else if(!state->unicodeBuffer.empty() && state->unicodeBuffer!="u" && state->unicodeBuffer!="U" && !cowtype::UnicodeCode::digits(state->unicodeBuffer).empty())panel.setAuxDown(Text(ct_tr("unicode.invalid")));
+        panel.setCandidateList(std::move(list));ic->updatePreedit();ic->updateUserInterface(UserInterfaceComponent::InputPanel);
+    }
     void invokeShortcut(InputContext *ic,Shortcuts::Action action) {
         auto *state=ic->propertyFor(&factory_);
         if(action==Shortcuts::Action::Voice) {
-            state->internalCode=false;state->internalBuffer.clear();
+            state->internalCode=false;state->internalBuffer.clear();state->unicodeCode=false;state->unicodeBuffer.clear();
             bool starting=!voice_.active();toggleVoice(ic);
             state->shortcuts.voiceStarted(starting && voice_.owns(ic));render(ic,false);return;
         }
         // Do not reset the shortcut gesture here: its release/repeat belongs
         // to the shared state machine even after changing the input mode.
         voice_.cancel(ic);state->voiceHold.reset();state->voiceStatus.clear();state->voicePartial.clear();
-        state->internalBuffer.clear();state->internalCursor=0;
+        state->internalBuffer.clear();state->internalCursor=0;state->unicodeBuffer.clear();
         if(action==Shortcuts::Action::InternalCode) {
+            state->unicodeCode=false;
             if(!cowtype::InternalCode::supported()){state->voiceStatus=ct_tr("gb18030.unavailable");ctDiagnostic("event=gb18030_unavailable reason=system_mapping");}
-            else state->internalCode=!state->internalCode;
+            else {state->unicodeCode=false;state->internalCode=!state->internalCode;}
+        } else if(action==Shortcuts::Action::Unicode) {
+            state->internalCode=false;state->unicodeCode=!state->unicodeCode;
         } else if(action==Shortcuts::Action::Mode) {
-            state->internalCode=false;cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
+            state->internalCode=false;state->unicodeCode=false;cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
         }
         render(ic,action==Shortcuts::Action::Mode);
     }
@@ -419,6 +467,7 @@ private:
     }
     void render(InputContext *ic, bool consumeCommit) {
         auto *state = ic->propertyFor(&factory_);
+        if(state->unicodeCode){renderUnicode(ic);return;}
         if(state->internalCode){renderInternal(ic);return;}
         auto *session = state->session.get();
         if (!session) { return; }

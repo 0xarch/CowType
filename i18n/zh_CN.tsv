@@ -171,3 +171,7 @@ hotkey.Shift_R	右 Shift
 hotkey.Control_L	左 Ctrl
 hotkey.Super_L	左 Super
 hotkey.Super_R	右 Super
+setting.UnicodeHotkey	Unicode 码点输入
+unicode.mode	Unicode 码点
+unicode.hint	Unicode：输入 1–6 位十六进制（可带 U+）；空格/回车提交，Esc 退出
+unicode.invalid	无效码点、代理项或控制字符

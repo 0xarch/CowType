@@ -38,6 +38,15 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(settings.load()['ModeHotkey'], 'Shift')
         settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nShiftToggle=True\nModeHotkey=F6\n')
         self.assertEqual(settings.load()['ModeHotkey'], 'F6')
+    def test_unicode_independent_binding_and_legacy_f9_migration(self):
+        self.assertEqual(settings.DEFAULTS['UnicodeHotkey'], 'F9')
+        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nVoiceHotkey=F9\n')
+        values = settings.load()
+        self.assertEqual(values['UnicodeHotkey'], 'None')
+        self.assertEqual(values['VoiceHotkey'], 'F9')
+        with self.assertRaises(ValueError):
+            settings.validate(dict(values, UnicodeHotkey='F9'))
+        settings.validate(dict(values, UnicodeHotkey='Control_R', InternalCodeHotkey='Alt_L'))
     def test_emoji_defaults_off_and_roundtrips(self):
         values = settings.load()
         self.assertEqual(values['Emoji'], 'False')

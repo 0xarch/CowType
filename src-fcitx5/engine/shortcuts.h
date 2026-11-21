@@ -8,7 +8,7 @@
 // One physical-key matcher and gesture state machine for every feature.
 class Shortcuts {
 public:
-  enum class Action { None, Mode, InternalCode, Voice };
+  enum class Action { None, Mode, InternalCode, Voice, Unicode };
   static unsigned mask(fcitx::KeySym key) {
     switch (key) {
     case FcitxKey_Shift_L:
@@ -46,13 +46,15 @@ public:
     return fcitx::Key::keySymFromString(std::string(name)) == sym;
   }
   static Action resolve(fcitx::KeySym sym, unsigned modifiers, unsigned mode,
-                        unsigned internal, unsigned speech, bool enabled) {
+                        unsigned internal, unsigned speech, bool enabled,
+                        unsigned unicode = 12) {
     if (modifiers & ((1 | 4 | 8 | 64 | 128) & ~mask(sym)))
       return Action::None;
-    for (const auto &[key, action] : std::array<std::pair<unsigned, Action>, 3>{
+    for (const auto &[key, action] : std::array<std::pair<unsigned, Action>, 4>{
              {{mode, Action::Mode},
               {internal, Action::InternalCode},
-              {speech, enabled ? Action::Voice : Action::None}}})
+              {speech, enabled ? Action::Voice : Action::None},
+              {unicode, Action::Unicode}}})
       if (matches(key, sym))
         return action;
     return Action::None;

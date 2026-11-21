@@ -39,7 +39,7 @@ int main() {
     return 0u;
   };
   for (auto action : {Shortcuts::Action::Mode, Shortcuts::Action::InternalCode,
-                      Shortcuts::Action::Voice}) {
+                      Shortcuts::Action::Voice, Shortcuts::Action::Unicode}) {
     for (auto sym :
          {FcitxKey_Shift_L, FcitxKey_Shift_R, FcitxKey_Control_L,
           FcitxKey_Alt_L, FcitxKey_Super_R, FcitxKey_ISO_Level3_Shift}) {

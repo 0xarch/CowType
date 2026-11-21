@@ -23,6 +23,7 @@ pub struct Settings {
     pub voice_hotkey: u32,
     pub mode_hotkey: u32,
     pub internal_code_hotkey: u32,
+    pub unicode_hotkey: u32,
     pub voice_modifier_hold: bool,
     pub show_pinyin: bool,
     pub voice_always_resident: bool,
@@ -49,6 +50,7 @@ impl Default for Settings {
             voice_hotkey: shortcut_default_index("VoiceHotkey"),
             mode_hotkey: shortcut_default_index("ModeHotkey"),
             internal_code_hotkey: shortcut_default_index("InternalCodeHotkey"),
+            unicode_hotkey: shortcut_default_index("UnicodeHotkey"),
             voice_modifier_hold: false,
             show_pinyin: true,
             voice_always_resident: false,
@@ -124,6 +126,7 @@ impl Settings {
             ("ModeHotkey", &mut settings.mode_hotkey),
             ("InternalCodeHotkey", &mut settings.internal_code_hotkey),
             ("VoiceHotkey", &mut settings.voice_hotkey),
+            ("UnicodeHotkey", &mut settings.unicode_hotkey),
         ] {
             // Explicit unified binding wins over the removed legacy Shift switch.
             let legacy = if name == "ModeHotkey"
@@ -143,11 +146,36 @@ impl Settings {
                     .ok_or("unsupported feature shortcut")? as u32;
             }
         }
+        // A new default must not invalidate an existing voice F9 binding.
+        // Only an absent Unicode binding may be disabled during migration.
+        if !values.contains_key("UnicodeHotkey") {
+            let unicode_keys = shortcut_physical_keys(
+                shortcut_choices("UnicodeHotkey")[settings.unicode_hotkey as usize],
+            );
+            let overlaps = [
+                ("ModeHotkey", settings.mode_hotkey),
+                ("VoiceHotkey", settings.voice_hotkey),
+                ("InternalCodeHotkey", settings.internal_code_hotkey),
+            ]
+            .iter()
+            .any(|(name, index)| {
+                shortcut_physical_keys(shortcut_choices(name)[*index as usize])
+                    .iter()
+                    .any(|key| unicode_keys.contains(key))
+            });
+            if overlaps {
+                settings.unicode_hotkey = shortcut_choices("UnicodeHotkey")
+                    .iter()
+                    .position(|key| *key == "None")
+                    .unwrap() as u32;
+            }
+        }
         let mut assigned = std::collections::BTreeSet::new();
         for (action, index) in [
             ("ModeHotkey", settings.mode_hotkey),
             ("InternalCodeHotkey", settings.internal_code_hotkey),
             ("VoiceHotkey", settings.voice_hotkey),
+            ("UnicodeHotkey", settings.unicode_hotkey),
         ] {
             let choices = shortcut_choices(action);
             let key = choices[index as usize];
@@ -231,7 +259,12 @@ mod hotkey_tests {
             shortcut_choices("ModeHotkey"),
             shortcut_choices("InternalCodeHotkey")
         );
-        for role in ["ModeHotkey", "VoiceHotkey", "InternalCodeHotkey"] {
+        for role in [
+            "ModeHotkey",
+            "VoiceHotkey",
+            "InternalCodeHotkey",
+            "UnicodeHotkey",
+        ] {
             for key in [
                 "Shift",
                 "Alt",
@@ -265,6 +298,17 @@ mod hotkey_tests {
                 .mode_hotkey,
             5
         );
+    }
+    #[test]
+    fn unicode_has_its_own_binding_and_respects_old_voice_f9_configs() {
+        assert_eq!(Settings::default().unicode_hotkey, 8);
+        let old = Settings::parse("Version=1\nVoiceHotkey=F9\n").unwrap();
+        assert_eq!(old.voice_hotkey, 8);
+        assert_eq!(old.unicode_hotkey, 12);
+        assert!(Settings::parse("Version=1\nVoiceHotkey=F9\nUnicodeHotkey=F9\n").is_err());
+        let new = Settings::parse("Version=1\nUnicodeHotkey=Control_R\nInternalCodeHotkey=Alt_L\n")
+            .unwrap();
+        assert_ne!(new.unicode_hotkey, new.internal_code_hotkey);
     }
     #[test]
     fn cldr_symbols_are_explicit_and_default_off() {

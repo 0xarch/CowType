@@ -171,3 +171,7 @@ hotkey.Shift_R	Right Shift
 hotkey.Control_L	Left Ctrl
 hotkey.Super_L	Left Super
 hotkey.Super_R	Right Super
+setting.UnicodeHotkey	Unicode code point input
+unicode.mode	Unicode code point
+unicode.hint	Unicode: 1–6 hex digits, optional U+ prefix; Space/Enter to commit, Escape to exit
+unicode.invalid	Invalid code point, surrogate or control character

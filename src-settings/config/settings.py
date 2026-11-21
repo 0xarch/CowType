@@ -70,7 +70,7 @@ def validate(values):
         if assigned & physical:
             raise ValueError(tr('error.shortcut.conflict'))
         assigned.update(physical)
-    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'VoiceHotkey', 'ModeHotkey', 'InternalCodeHotkey'}:
+    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'VoiceHotkey', 'ModeHotkey', 'InternalCodeHotkey', 'UnicodeHotkey'}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values
@@ -91,6 +91,8 @@ def load():
         values.update(parser['CowType'])
         if 'ModeHotkey' not in parser['CowType'] and parser['CowType'].get('ShiftToggle', '').lower() == 'true':
             values['ModeHotkey'] = 'Shift'
+        if 'UnicodeHotkey' not in parser['CowType'] and values['UnicodeHotkey'] in (values['ModeHotkey'], values['InternalCodeHotkey'], values['VoiceHotkey']):
+            values['UnicodeHotkey'] = 'None'
     return validate(values)
 
 def save(values):

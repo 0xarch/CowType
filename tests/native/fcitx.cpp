@@ -130,6 +130,32 @@ int main(int argc, char **argv) {
             CHECK(a.inputPanel().candidateList()->size()==0);
             CHECK(press(engine,pinyin,a,FcitxKey_Return));
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            // Unicode is an independent module and shortcut; preserve normal composition.
+            type(engine,pinyin,a,"shan");
+            CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
+            type(engine,pinyin,a,"U+1F600");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="😀");
+            CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="😀");
+            CHECK(a.inputPanel().clientPreedit().toString()=="shan");CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
+            type(engine,pinyin,a,"D800");CHECK(a.inputPanel().candidateList()->size()==0);
+            const auto invalidBefore=a.committed.size();CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.size()==invalidBefore);
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
+            type(engine,pinyin,a,"20000");a.inputPanel().candidateList()->candidate(0).select(&a);CHECK(a.committed.back()=="𠀀");
+            // The two module hotkeys switch directly without reinterpreting a buffer.
+            CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));type(engine,pinyin,a,"d6");
+            CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
+            CHECK(a.inputPanel().clientPreedit().empty());type(engine,pinyin,a,"4e2d");
+            CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="中");
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nModeHotkey=Shift\nInternalCodeHotkey=Alt_L\nUnicodeHotkey=Control_R\n";}
+            addon->reloadConfig();
+            CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L));CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L,true));type(engine,pinyin,a,"b9fa");
+            CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="国");
+            CHECK(!press(engine,pinyin,a,FcitxKey_Control_R));CHECK(!press(engine,pinyin,a,FcitxKey_Control_R,true));type(engine,pinyin,a,"1f600");
+            CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="😀");
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nModeHotkey=F6\n";}
+            addon->reloadConfig();
             // Click selection and keypad input use the same guarded commit path.
             CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
             type(engine,pinyin,a,"b9fa");
@@ -313,8 +339,17 @@ int main(int argc, char **argv) {
                         case 29:
                             CHECK(a.inputPanel().clientPreedit().toString()=="合成中间结果");
                             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));break;
-                        default:
+                        case 30:
                             CHECK(a.committed.size()==before+7);
+                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nModeHotkey=F6\nVoice=True\nVoiceHotkey=Shift\nVoiceModifierHold=False\n"; }
+                            addon->reloadConfig();
+                            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_R));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_R,true));break;
+                        case 31:
+                            CHECK(a.inputPanel().clientPreedit().toString()=="合成中间结果");
+                            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));break;
+                        default:
+                            CHECK(a.committed.size()==before+8);
+                            CHECK(press(engine,pinyin,a,FcitxKey_a));CHECK(press(engine,pinyin,a,FcitxKey_Escape));
                             instance.eventLoop().exit(); return false;
                         }
                     } catch(const std::exception &error) { voiceFailure=error.what();instance.eventLoop().exit();return false; }
@@ -326,9 +361,9 @@ int main(int argc, char **argv) {
             std::string currentPid;size_t starts=0;
             std::vector<std::string> workerPids;
             while(std::getline(pids,currentPid)){workerPids.push_back(currentPid);++starts;}
-            CHECK(starts==12);
+            CHECK(starts==13);
             std::ifstream prepared(std::filesystem::path(std::getenv("COWTYPE_TEST_ROOT"))/"voice-test-prepared");
-            std::string preparedPid;std::getline(prepared,preparedPid);CHECK(preparedPid==workerPids.back());
+            std::string preparedPid;std::getline(prepared,preparedPid);CHECK(preparedPid==workerPids[11]);
             for(size_t n=1;n<6;++n){CHECK(workerPids[n]==workerPids[0]);}
             CHECK(workerPids[6]!=workerPids[0] && workerPids[7]!=workerPids[6]);
             a.focusOut();
