@@ -61,7 +61,9 @@ def main():
                 template = template.replace('@' + key + '@', value)
             (stage / 'DEBIAN').mkdir()
             (stage / 'DEBIAN/control').write_text(template)
-            run('dpkg-deb', '--root-owner-group', '--build', stage, output / f'cowtype_{version}-1~{args.distro}_{architecture}.deb')
+            # Keep '~' in the Debian control version, but use a release-safe
+            # filename so uploaded asset names still match SHA256SUMS.
+            run('dpkg-deb', '--root-owner-group', '--build', stage, output / f'cowtype_{version}-1.{args.distro}_{architecture}.deb')
         else:
             for name in ('BUILD', 'BUILDROOT', 'RPMS', 'SOURCES', 'SPECS', 'SRPMS'):
                 (work / name).mkdir()

@@ -148,8 +148,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "10f3f2f0a248eb7366a782c90336775f371faac3799b2ec18a348e57b9e3c748",
-      "bytes": 3088
+      "sha256": "707fcf5c5582a12601a27f6cb64df97a83fe2126a249522320ecc73a2dbf8ac4",
+      "bytes": 3272
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
@@ -743,8 +743,8 @@
     },
     {
       "path": "tooling/package_linux.py",
-      "sha256": "5673125058e04430def4338256cb9716fb2cba9f49446f468481c20636bc9ba6",
-      "bytes": 4492
+      "sha256": "314be621bda5491a17edfa5d3636f84f90d24979691a1660fcd3ab28e36702d7",
+      "bytes": 4640
     },
     {
       "path": "tooling/release_notes.py",
