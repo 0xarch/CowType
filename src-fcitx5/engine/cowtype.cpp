@@ -311,7 +311,7 @@ private:
     }
     void renderInternal(InputContext *ic) {
         auto *state=ic->propertyFor(&factory_);auto &panel=ic->inputPanel();panel.reset();
-        panel.setAuxUp(Text(ct_tr("gb18030.hint")));
+        if(state->internalBuffer.empty())panel.setAuxUp(Text(ct_tr("gb18030.hint")));
         Text preedit(state->internalBuffer,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);
         preedit.setCursor(state->internalBuffer.size());
         if(ic->capabilityFlags().test(CapabilityFlag::Preedit))panel.setClientPreedit(preedit);else panel.setPreedit(preedit);
@@ -348,7 +348,7 @@ private:
     }
     void renderUnicode(InputContext *ic) {
         auto *state=ic->propertyFor(&factory_);auto &panel=ic->inputPanel();panel.reset();
-        panel.setAuxUp(Text(ct_tr("unicode.hint")));
+        if(state->unicodeBuffer.empty())panel.setAuxUp(Text(ct_tr("unicode.hint")));
         Text preedit(state->unicodeBuffer,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);
         preedit.setCursor(state->unicodeBuffer.size());
         if(ic->capabilityFlags().test(CapabilityFlag::Preedit))panel.setClientPreedit(preedit);else panel.setPreedit(preedit);

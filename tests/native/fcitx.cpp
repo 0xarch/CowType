@@ -116,6 +116,15 @@ int main(int argc, char **argv) {
             std::filesystem::create_directories(configPath.parent_path());
             // Internal code mode suspends normal composition and is per field.
             a.focusIn();
+            // Long operation hints disappear while typing and return when empty.
+            for(auto key : {FcitxKey_F7,FcitxKey_F9}) {
+                CHECK(press(engine,pinyin,a,key));CHECK(press(engine,pinyin,a,key,true));
+                CHECK(!a.inputPanel().auxUp().empty());
+                type(engine,pinyin,a,"4");CHECK(a.inputPanel().auxUp().empty());
+                CHECK(press(engine,pinyin,a,FcitxKey_BackSpace));
+                CHECK(!a.inputPanel().auxUp().empty());
+                CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            }
             type(engine,pinyin,a,"shan");
             CHECK(press(engine,pinyin,a,FcitxKey_F7)); CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
             type(engine,pinyin,a,"d6d0");
