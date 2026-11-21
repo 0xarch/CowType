@@ -12,7 +12,11 @@ dependencies)
     fedora*)
       dnf install -y gcc-c++ cmake ninja-build rust cargo libime-devel boost-devel openssl-devel librsvg2-tools fcitx5-devel fcitx5 python3 python3-gobject gtk4-devel libadwaita rpm-build rpmdevtools git pkgconf-pkg-config dbus-daemon findutils file
       ;;
-    debian*|ubuntu*)
+    opensuse*)
+      zypper --non-interactive refresh
+      zypper --non-interactive install --no-recommends gcc-c++ make cmake ninja rust cargo libime-devel boost-devel libopenssl-devel rsvg-convert fcitx5 fcitx5-devel python3 python3-gobject python3-gobject-Gdk gtk4-tools typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 rpm-build git pkgconf-pkg-config dbus-1 findutils file ca-certificates
+      ;;
+    debian*|ubuntu*|deepin*)
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
       apt-get install -y --no-install-recommends build-essential cmake ninja-build cargo rustc libimecore-dev libimepinyin-dev libboost-dev libssl-dev librsvg2-bin libfcitx5core-dev libfcitx5config-dev libfcitx5utils-dev fcitx5 python3 python3-gi libgtk-4-bin gir1.2-gtk-4.0 gir1.2-adw-1 dpkg-dev git pkg-config dbus-bin ca-certificates
@@ -50,6 +54,7 @@ verify)
   case "$2" in
     arch) sed -i '/^NoExtract/d' /etc/pacman.conf; pacman -U --noconfirm dist/packages/*.pkg.tar.zst; pacman -Qkk cowtype ;;
     fedora*) dnf install -y dist/packages/*.rpm; rpm -V cowtype ;;
+    opensuse*) zypper --non-interactive install --no-recommends --allow-unsigned-rpm dist/packages/*.rpm; rpm -V cowtype ;;
     *) apt-get install -y ./dist/packages/*.deb; dpkg --verify cowtype ;;
   esac
   libdir=$(pkg-config --variable=libdir Fcitx5Core)

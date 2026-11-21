@@ -51,6 +51,10 @@ jobs:
           - {distro: arch, image: 'archlinux:latest', format: arch}
           - {distro: fedora45, image: 'fedora:45', format: rpm}
           - {distro: debianunstable, image: 'debian:unstable', format: deb}
+          - {distro: deepin23, image: 'linuxdeepin/deepin:23', format: deb}
+          - {distro: deepin25, image: 'linuxdeepin/deepin:25', format: deb}
+          - {distro: opensusetumbleweed, image: 'opensuse/tumbleweed:latest', format: rpm}
+          - {distro: opensuseleap16.0, image: 'registry.opensuse.org/opensuse/leap:16.0', format: rpm}
     defaults:
       run:
         shell: bash

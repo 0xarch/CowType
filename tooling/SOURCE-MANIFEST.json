@@ -10,8 +10,8 @@
     },
     {
       "path": ".github/workflows/linux-packages.yml",
-      "sha256": "fffab6928b5d0c170a6c83668d1f8431bd9d688c5e8ca392f440952301bff6a1",
-      "bytes": 3808
+      "sha256": "323b383e349f880d9373abd97dc0d21b25a845347e855970a75a3ceded74bfc9",
+      "bytes": 4154
     },
     {
       "path": ".gitignore",
@@ -163,8 +163,8 @@
     },
     {
       "path": "packaging/rpm/cowtype.spec.in",
-      "sha256": "cf3fa159d3183eb533d6b8b50f5c523bfc5b42dad247eb982964c3ad38d4c352",
-      "bytes": 1076
+      "sha256": "ea84e36092d9cb6808b2c99ef03ca7a6335abc4a30f67073c36b6a9941cfd9e6",
+      "bytes": 1021
     },
     {
       "path": "src-data-tools/README.md",
@@ -713,8 +713,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "11f6d02d558a0f81a5da75d51a74a0e0a771ae4d33b077c00697c21930294be2",
-      "bytes": 3729
+      "sha256": "ab7f530b912ffac474c839bc0506e43935c982d2391c4f4136c9a490489ccff9",
+      "bytes": 4254
     },
     {
       "path": "tooling/compile_i18n.py",
@@ -743,8 +743,8 @@
     },
     {
       "path": "tooling/package_linux.py",
-      "sha256": "d311873cd66f8ed8234f013f5a17adcdb50451e6eee5ca31842d0f11dc139499",
-      "bytes": 4042
+      "sha256": "5673125058e04430def4338256cb9716fb2cba9f49446f468481c20636bc9ba6",
+      "bytes": 4492
     },
     {
       "path": "tooling/release_notes.py",

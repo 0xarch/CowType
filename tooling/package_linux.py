@@ -66,7 +66,12 @@ def main():
             for name in ('BUILD', 'BUILDROOT', 'RPMS', 'SOURCES', 'SPECS', 'SRPMS'):
                 (work / name).mkdir()
             spec = (source / 'packaging/rpm/cowtype.spec.in').read_text()
-            for key, value in {'VERSION': version, 'DISTRO': args.distro, 'STAGE': str(stage), 'LIBDIR': args.libdir}.items():
+            suse = args.distro.startswith('opensuse')
+            ui_requires = ('python3, python3-gobject, typelib-1_0-Gtk-4_0 >= 4.10, typelib-1_0-Adw-1 >= 1.5'
+                           if suse else 'python3, python3-gobject, gtk4 >= 4.10, libadwaita >= 1.5')
+            emoji_font = 'google-noto-coloremoji-fonts' if suse else 'google-noto-color-emoji-fonts'
+            for key, value in {'VERSION': version, 'DISTRO': args.distro, 'STAGE': str(stage), 'LIBDIR': args.libdir,
+                               'UI_REQUIRES': ui_requires, 'EMOJI_FONT': emoji_font}.items():
                 spec = spec.replace('@' + key + '@', value)
             specfile = work / 'SPECS/cowtype.spec'
             specfile.write_text(spec)
