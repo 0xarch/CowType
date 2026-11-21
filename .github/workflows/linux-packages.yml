@@ -51,7 +51,6 @@ jobs:
           - {distro: arch, image: 'archlinux:latest', format: arch}
           - {distro: fedora45, image: 'fedora:45', format: rpm}
           - {distro: debianunstable, image: 'debian:unstable', format: deb}
-          - {distro: ubuntu26.04, image: 'ubuntu:26.04', format: deb}
     defaults:
       run:
         shell: bash

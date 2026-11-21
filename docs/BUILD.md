@@ -87,4 +87,12 @@ PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 
 ## 多发行版与 GitHub Actions
 
-Arch、Fedora、Debian/Ubuntu 容器构建与打包入口见[打包说明](../packaging/README.md)。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
+Arch、Fedora、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
+
+## Ubuntu
+
+Ubuntu 暂不列入自动构建支持范围。2026-11-21 的 GitHub Actions 实测中，Ubuntu 26.04 官方仓库提供 Fcitx5 5.1.19，而 CowType 当前需要 Fcitx5 >= 5.1.23，CMake 因版本不足拒绝配置。Debian unstable 生成的 Deb 包面向其原生库版本，不应直接视作 Ubuntu 兼容包。
+
+需要在 Ubuntu 自行构建的用户，应自行准备满足版本要求的 Fcitx5 运行库及开发包，确保它们的版本与安装路径一致，并满足 libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、OpenSSL、Boost、librsvg、Rust/Cargo（语音依赖要求 Rust >= 1.88）等条件。Debian 系的 libime 开发包拆分为 `libimecore-dev` 与 `libimepinyin-dev`，并没有本项目可用的统一 `libime-dev` 包。
+
+准备依赖后，按上面的通用 CMake 开发步骤构建并运行测试，指定适合本机 Fcitx5 的 `CMAKE_INSTALL_LIBDIR`。不要仅修改最低版本检查来绕过配置失败；本项目不自动添加软件源或替换系统 Fcitx5。Ubuntu 的依赖升级、原生打包和桌面兼容性由使用者自行处理。

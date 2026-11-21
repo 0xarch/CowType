@@ -10,8 +10,8 @@
     },
     {
       "path": ".github/workflows/linux-packages.yml",
-      "sha256": "53a60e33cb794206abfc9843e69465ba2ec10264253d71c5de370285c47ea5a4",
-      "bytes": 3878
+      "sha256": "fffab6928b5d0c170a6c83668d1f8431bd9d688c5e8ca392f440952301bff6a1",
+      "bytes": 3808
     },
     {
       "path": ".gitignore",
@@ -105,8 +105,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "bb362d283a91f50a73d8055fd3cc47f3edfbf6c006eebce96bb7bf446ecb681a",
-      "bytes": 5300
+      "sha256": "da0ce21fc97f51c45efb8908b69a12bd826f4b11c5f3b963211192f8b0b5e7f5",
+      "bytes": 6393
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -150,8 +150,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "ba4c37e5bff6cb95c2d168a80678fa4018c98598767afd9644c6d2e58c137dca",
-      "bytes": 1981
+      "sha256": "a2278e6b147079f386697195bba5a1f420ca1dd8b3b959ca6c84840b43ed5382",
+      "bytes": 2154
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
