@@ -15,7 +15,7 @@ dependencies)
     debian*|ubuntu*)
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
-      apt-get install -y --no-install-recommends build-essential cmake ninja-build cargo rustc libime-dev libboost-dev libssl-dev librsvg2-bin libfcitx5core-dev libfcitx5config-dev libfcitx5utils-dev fcitx5 python3 python3-gi libgtk-4-bin gir1.2-gtk-4.0 gir1.2-adw-1 dpkg-dev git pkg-config dbus-bin ca-certificates
+      apt-get install -y --no-install-recommends build-essential cmake ninja-build cargo rustc libimecore-dev libimepinyin-dev libboost-dev libssl-dev librsvg2-bin libfcitx5core-dev libfcitx5config-dev libfcitx5utils-dev fcitx5 python3 python3-gi libgtk-4-bin gir1.2-gtk-4.0 gir1.2-adw-1 dpkg-dev git pkg-config dbus-bin ca-certificates
       ;;
     *) exit 2 ;;
   esac

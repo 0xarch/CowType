@@ -670,8 +670,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "08d2be4d0d755cd4d3ef2d6df5e7ce0113c0eb148ea335cca3d17333158454ba",
-      "bytes": 3708
+      "sha256": "11f6d02d558a0f81a5da75d51a74a0e0a771ae4d33b077c00697c21930294be2",
+      "bytes": 3729
     },
     {
       "path": "tooling/compile_i18n.py",
