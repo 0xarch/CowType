@@ -26,6 +26,18 @@ class SettingsTests(unittest.TestCase):
                 settings.validate(dict(settings.DEFAULTS, **changes))
         settings.validate(dict(settings.DEFAULTS, ModeHotkey='None', InternalCodeHotkey='None'))
         settings.validate(dict(settings.DEFAULTS, ModeHotkey='F11', InternalCodeHotkey='F12'))
+    def test_common_shortcuts_and_legacy_shift_migration(self):
+        self.assertEqual(len({choices for _, choices in settings.SHORTCUTS.values()}), 1)
+        for role in settings.SHORTCUTS:
+            for key in ('Shift', 'Alt', 'Control', 'Super', 'Shift_R', 'Control_L', 'None'):
+                settings.validate(dict(settings.DEFAULTS, **{role: key}))
+        for generic, side in [('Shift', 'Shift_L'), ('Alt', 'Alt_R'), ('Control', 'Control_R')]:
+            with self.assertRaises(ValueError):
+                settings.validate(dict(settings.DEFAULTS, ModeHotkey=generic, VoiceHotkey=side))
+        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nShiftToggle=True\n')
+        self.assertEqual(settings.load()['ModeHotkey'], 'Shift')
+        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nShiftToggle=True\nModeHotkey=F6\n')
+        self.assertEqual(settings.load()['ModeHotkey'], 'F6')
     def test_emoji_defaults_off_and_roundtrips(self):
         values = settings.load()
         self.assertEqual(values['Emoji'], 'False')

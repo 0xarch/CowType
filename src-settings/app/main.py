@@ -131,7 +131,7 @@ def main():
             privacy = self.group('input', 'group.privacy')
             keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
-            groups = {'Emoji': general, 'Punctuation': general, 'Horizontal': general, 'ShiftToggle': keys, 'RememberMode': keys,
+            groups = {'Emoji': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
                 'StatisticalModel': pinyin, 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
                 'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
             for key, group in groups.items():
@@ -151,20 +151,16 @@ def main():
             self.page_size.set_value(int(self.values['PageSize']))
             self.page_size.connect('notify::value', self.save)
             general.add(self.page_size)
-            self.hotkey = Adw.ComboRow(title=tr('setting.VoiceHotkey'),
-                model=Gtk.StringList.new([tr('hotkey.' + key) for key in config.VOICE_HOTKEYS]))
-            self.hotkey.set_selected(config.VOICE_HOTKEYS.index(self.values['VoiceHotkey']))
-            self.hotkey.connect('notify::selected', self.save)
-            keys.add(self.hotkey)
             self.feature_hotkeys = {}
-            for name in ('ModeHotkey', 'InternalCodeHotkey'):
+            for name, (_, choices) in config.SHORTCUTS.items():
                 shortcut = Adw.ComboRow(title=tr('setting.' + name),
-                    model=Gtk.StringList.new([tr('hotkey.disabled') if key == 'None' else key for key in config.FEATURE_HOTKEYS]))
+                    model=Gtk.StringList.new([tr('hotkey.' + key) if key not in tuple(f'F{i}' for i in range(1, 13)) else key for key in choices]))
                 shortcut.set_subtitle(tr('hint.shortcuts'))
-                shortcut.set_selected(config.FEATURE_HOTKEYS.index(self.values[name]))
+                shortcut.set_selected(choices.index(self.values[name]))
                 shortcut.connect('notify::selected', self.save)
                 self.feature_hotkeys[name] = shortcut
                 keys.add(shortcut)
+            self.hotkey = self.feature_hotkeys['VoiceHotkey']
             hold = Adw.SwitchRow(title=tr('setting.VoiceModifierHold'), subtitle=tr('hint.modifier_hold'))
             hold.set_active(self.values['VoiceModifierHold'].lower() == 'true')
             hold.connect('notify::active', self.save)
@@ -210,12 +206,12 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 18
+                    assert len(self.pages) == 5 and len(self.controls) == 17
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
                     assert self.controls['StatisticalModel'].get_visible()
                     assert not self.controls['StatisticalModel'].get_active()
-                    assert len(self.feature_hotkeys) == 2
+                    assert len(self.feature_hotkeys) == 3
                     assert self.feature_hotkeys['InternalCodeHotkey'].get_selected() == 6
                     assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
                     assert self.get_windows() == [self.window]
@@ -224,16 +220,10 @@ def main():
                     assert not self.controls['VoiceModifierHold'].get_visible()
                     self.ready = False
                     assert self.controls['RememberMode'].get_visible()
-                    self.controls['ShiftToggle'].set_active(False)
-                    self.update_visibility()
-                    assert not self.controls['RememberMode'].get_visible()
-                    self.controls['ShiftToggle'].set_active(True)
-                    self.update_visibility()
-                    assert self.controls['RememberMode'].get_visible()
-                    self.hotkey.set_selected(3)
+                    self.hotkey.set_selected(config.VOICE_HOTKEYS.index('Alt_L'))
                     self.update_visibility()
                     assert self.controls['VoiceModifierHold'].get_visible()
-                    self.hotkey.set_selected(0)
+                    self.hotkey.set_selected(config.VOICE_HOTKEYS.index('F8'))
                     self.controls['VoiceResident'].set_active(False)
                     self.update_visibility()
                     assert not self.controls['VoiceAlwaysResident'].get_visible()
@@ -249,8 +239,7 @@ def main():
                 GLib.timeout_add(1000, check_visible)
 
         def update_visibility(self):
-            self.controls['RememberMode'].set_visible(self.controls['ShiftToggle'].get_active())
-            self.controls['VoiceModifierHold'].set_visible(self.hotkey.get_selected() >= 3)
+            self.controls['VoiceModifierHold'].set_visible(config.VOICE_HOTKEYS[self.hotkey.get_selected()] not in ('None', *tuple(f'F{i}' for i in range(1, 13))))
             self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
 
         def save(self, *_):
@@ -259,8 +248,7 @@ def main():
             try:
                 values = self.values.copy()
                 values['PageSize'] = str(int(self.page_size.get_value()))
-                values['VoiceHotkey'] = config.VOICE_HOTKEYS[self.hotkey.get_selected()]
-                values.update({name: config.FEATURE_HOTKEYS[row.get_selected()] for name, row in self.feature_hotkeys.items()})
+                values.update({name: config.SHORTCUTS[name][1][row.get_selected()] for name, row in self.feature_hotkeys.items()})
                 values.update({key: str(row.get_active()) for key, row in self.controls.items()})
                 config.save(values)
                 self.values = values

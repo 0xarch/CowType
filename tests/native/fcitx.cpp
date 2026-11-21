@@ -94,11 +94,20 @@ int main(int argc, char **argv) {
             a.setCapabilityFlags(CapabilityFlag::Preedit);
             CHECK(press(engine, pinyin, a, FcitxKey_F6)); CHECK(!press(engine, pinyin, a, FcitxKey_a));
             CHECK(press(engine, pinyin, a, FcitxKey_F6));
+            // F6 is the sole default binding; a legacy Shift flag cannot add a second trigger.
+            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            CHECK(press(engine,pinyin,a,FcitxKey_a));CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            auto earlyConfig=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v1.ini";
+            std::filesystem::create_directories(earlyConfig.parent_path());
+            {std::ofstream settings(earlyConfig);settings<<"[CowType]\nVersion=1\nModeHotkey=Shift\n";}
+            addon->reloadConfig();
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));
-            CHECK(press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
             CHECK(!press(engine,pinyin,a,FcitxKey_a));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));
-            CHECK(press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            {std::ofstream settings(earlyConfig);settings<<"[CowType]\nVersion=1\nModeHotkey=F6\nShiftToggle=True\n";}
+            addon->reloadConfig();
             type(engine,pinyin,a,"kn");
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="可能");
             CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="可能");
@@ -175,14 +184,14 @@ int main(int argc, char **argv) {
             engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
             CHECK(press(engine,pinyin,a,FcitxKey_a));
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
-            for (const auto &options : {std::string("ShiftToggle=True\nRememberMode=True\n"),
-                                        std::string("ShiftToggle=True\nRememberMode=False\n"),
-                                        std::string("ShiftToggle=False\nRememberMode=True\n")}) {
+            for (const auto &options : {std::string("ModeHotkey=F6\nRememberMode=True\n"),
+                                        std::string("ModeHotkey=F6\nRememberMode=False\n"),
+                                        std::string("ModeHotkey=F6\nShiftToggle=False\nRememberMode=True\n")}) {
                 { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\n" << options; }
                 addon->reloadConfig();
                 CHECK(press(engine,pinyin,a,FcitxKey_F6));
                 engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
-                const bool remember = options == "ShiftToggle=True\nRememberMode=True\n";
+                const bool remember = options.find("RememberMode=True")!=std::string::npos;
                 CHECK(press(engine,pinyin,a,FcitxKey_a) == !remember);
                 if (remember) {
                     // A different input field starts in Chinese; this field keeps English.

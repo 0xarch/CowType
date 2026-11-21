@@ -913,5 +913,14 @@
     },
     "notice": "src-fcitx5/gb18030/NOTICE.md",
     "runtime_dependency": "System libc iconv GB18030 mapping with 2022 probe checks; no bundled models or mapping tables."
+  },
+  "unified_shortcuts_2026_11_21": {
+    "paths": [
+      "src/config/shortcuts.tsv",
+      "tooling/compile_shortcuts.py",
+      "src-fcitx5/engine/shortcuts.h"
+    ],
+    "implementation": "Original CowType generated shared key registry, physical modifier overlap validation, uniform gesture state machine and explicit legacy Shift binding migration. No upstream code copied.",
+    "dependencies": []
   }
 }

@@ -59,17 +59,17 @@ def validate(values):
         raise ValueError(tr("message.de3a048a1ebc"))
     if not 3 <= int(values['PageSize']) <= 9:
         raise ValueError(tr("message.95c892b2b067"))
-    if 'VoiceHotkey' not in values:
-        values['VoiceHotkey'] = DEFAULTS['VoiceHotkey']
-    if values.get('VoiceHotkey') not in VOICE_HOTKEYS:
-        raise ValueError('Unsupported voice shortcut')
-    for key in ('ModeHotkey', 'InternalCodeHotkey'):
-        values.setdefault(key, DEFAULTS[key])
-        if values[key] not in FEATURE_HOTKEYS:
+    assigned = set()
+    aliases = {'Shift': ('Shift_L', 'Shift_R'), 'Control': ('Control_L', 'Control_R'),
+               'Alt': ('Alt_L', 'Alt_R'), 'Super': ('Super_L', 'Super_R'), 'None': ()}
+    for name, (default, choices) in SHORTCUTS.items():
+        values.setdefault(name, default)
+        if values[name] not in choices:
             raise ValueError(tr('error.shortcut.unsupported'))
-    reserved = [values[key] for key in ('ModeHotkey', 'InternalCodeHotkey', 'VoiceHotkey') if values[key] != 'None']
-    if len(reserved) != len(set(reserved)):
-        raise ValueError(tr('error.shortcut.conflict'))
+        physical = set(aliases.get(values[name], (values[name],)))
+        if assigned & physical:
+            raise ValueError(tr('error.shortcut.conflict'))
+        assigned.update(physical)
     for key in DEFAULTS.keys() - {'Version', 'PageSize', 'VoiceHotkey', 'ModeHotkey', 'InternalCodeHotkey'}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
@@ -89,6 +89,8 @@ def load():
         if parser['CowType'].get('Version') != '1':
             raise ValueError(tr("message.de3a048a1ebc"))
         values.update(parser['CowType'])
+        if 'ModeHotkey' not in parser['CowType'] and parser['CowType'].get('ShiftToggle', '').lower() == 'true':
+            values['ModeHotkey'] = 'Shift'
     return validate(values)
 
 def save(values):

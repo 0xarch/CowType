@@ -81,6 +81,16 @@ fn shortcut_choices(action: &str) -> Vec<&'static str> {
         })
         .expect("registered shortcut action")
 }
+fn shortcut_physical_keys(key: &str) -> Vec<&str> {
+    match key {
+        "None" => vec![],
+        "Shift" => vec!["Shift_L", "Shift_R"],
+        "Control" => vec!["Control_L", "Control_R"],
+        "Alt" => vec!["Alt_L", "Alt_R"],
+        "Super" => vec!["Super_L", "Super_R"],
+        other => vec![other],
+    }
+}
 pub fn path() -> PathBuf {
     std::env::var_os("XDG_CONFIG_HOME")
         .filter(|v| !v.is_empty())
@@ -110,20 +120,26 @@ impl Settings {
                 return Err("page size must be 3–9");
             }
         }
-        if let Some(value) = values.get("VoiceHotkey") {
-            settings.voice_hotkey = shortcut_choices("VoiceHotkey")
-                .iter()
-                .position(|name| name == value)
-                .ok_or("unsupported voice shortcut")? as u32;
-        }
         for (name, target) in [
             ("ModeHotkey", &mut settings.mode_hotkey),
             ("InternalCodeHotkey", &mut settings.internal_code_hotkey),
+            ("VoiceHotkey", &mut settings.voice_hotkey),
         ] {
-            if let Some(value) = values.get(name) {
+            // Explicit unified binding wins over the removed legacy Shift switch.
+            let legacy = if name == "ModeHotkey"
+                && !values.contains_key(name)
+                && values
+                    .get("ShiftToggle")
+                    .is_some_and(|value| matches!(*value, "True" | "true"))
+            {
+                Some("Shift")
+            } else {
+                None
+            };
+            if let Some(value) = values.get(name).copied().or(legacy) {
                 *target = shortcut_choices(name)
                     .iter()
-                    .position(|key| key == value)
+                    .position(|key| *key == value)
                     .ok_or("unsupported feature shortcut")? as u32;
             }
         }
@@ -135,8 +151,10 @@ impl Settings {
         ] {
             let choices = shortcut_choices(action);
             let key = choices[index as usize];
-            if key != "None" && !assigned.insert(key) {
-                return Err("feature shortcut conflict");
+            for physical in shortcut_physical_keys(key) {
+                if !assigned.insert(physical) {
+                    return Err("feature shortcut conflict");
+                }
             }
         }
         for (name, target) in [
@@ -204,6 +222,51 @@ mod hotkey_tests {
         .is_ok());
     }
     #[test]
+    fn modifiers_are_shared_and_generic_bindings_conflict_with_either_side() {
+        assert_eq!(
+            shortcut_choices("ModeHotkey"),
+            shortcut_choices("VoiceHotkey")
+        );
+        assert_eq!(
+            shortcut_choices("ModeHotkey"),
+            shortcut_choices("InternalCodeHotkey")
+        );
+        for role in ["ModeHotkey", "VoiceHotkey", "InternalCodeHotkey"] {
+            for key in [
+                "Shift",
+                "Alt",
+                "Control",
+                "Super",
+                "Shift_R",
+                "Control_L",
+                "None",
+            ] {
+                assert!(Settings::parse(&format!("Version=1\n{role}={key}\n")).is_ok());
+            }
+        }
+        for (generic, side) in [
+            ("Shift", "Shift_R"),
+            ("Control", "Control_L"),
+            ("Alt", "Alt_R"),
+        ] {
+            assert!(Settings::parse(&format!(
+                "Version=1\nModeHotkey={generic}\nVoiceHotkey={side}\n"
+            ))
+            .is_err());
+        }
+        let legacy = Settings::parse("Version=1\nShiftToggle=True\n").unwrap();
+        assert_eq!(
+            shortcut_choices("ModeHotkey")[legacy.mode_hotkey as usize],
+            "Shift"
+        );
+        assert_eq!(
+            Settings::parse("Version=1\nShiftToggle=True\nModeHotkey=F6\n")
+                .unwrap()
+                .mode_hotkey,
+            5
+        );
+    }
+    #[test]
     fn cldr_symbols_are_explicit_and_default_off() {
         assert!(!Settings::parse("Version=1\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=True\n").unwrap().emoji);
@@ -222,10 +285,10 @@ mod hotkey_tests {
     #[test]
     fn voice_shortcut_defaults_and_rejects_unknown_keys() {
         let mut settings = String::from("[CowType]\nVersion=1\n");
-        assert_eq!(Settings::parse(&settings).unwrap().voice_hotkey, 0);
+        assert_eq!(Settings::parse(&settings).unwrap().voice_hotkey, 7);
         settings.push_str("VoiceHotkey=ISO_Level3_Shift\n");
-        assert_eq!(Settings::parse(&settings).unwrap().voice_hotkey, 5);
-        settings.push_str("VoiceHotkey=Super_L\n");
+        assert_eq!(Settings::parse(&settings).unwrap().voice_hotkey, 19);
+        settings.push_str("VoiceHotkey=Unknown\n");
         assert!(Settings::parse(&settings).is_err());
     }
 }

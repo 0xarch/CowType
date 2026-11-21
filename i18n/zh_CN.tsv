@@ -35,7 +35,7 @@ hint.fcitx	在 Fcitx5 中添加 CowType·拼音或 CowType·五笔86。
 hint.initials	例如 kn → 可能
 hint.model	模型由用户下载，安装包不含权重。继续使用原有模型目录。
 hint.modifier_hold	按住 300 毫秒开始录音，松开停止；短按仍可切换。
-hint.remember_mode	切换回 CowType 时保留当前输入框的中英文状态；关闭后每次使用中文。
+hint.remember_mode	切回 CowType 时保留该输入框的中英文状态；关闭时恢复中文。
 hint.resident	首次使用后保留约 0.9 GB 内存。
 hint.translate	尚未接入翻译后端。
 hint.words	默认包含雾凇拼音与五笔86。
@@ -116,7 +116,6 @@ setting.PageSize	每页候选数
 setting.Punctuation	中文标点
 setting.RememberMode	状态保留
 setting.Sentence	长句分词
-setting.ShiftToggle	单按 Shift 切换中英文
 setting.ShowPinyin	候选词旁显示拼音
 setting.Voice	启用本地语音输入
 setting.VoiceAlwaysResident	始终保留实例
@@ -154,11 +153,21 @@ setting.Emoji	表情与符号候选
 hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词，默认关闭。
 setting.ModeHotkey	切换中英文
 setting.InternalCodeHotkey	GB18030-2022 内码输入
-hint.shortcuts	CowType 内统一分配快捷键；包括关闭的功能在内，各功能须使用不同按键。
+hint.shortcuts	四项功能使用相同的快捷键范围；相同或重叠的修饰键分配会被拒绝。
 hotkey.disabled	禁用
 error.shortcut.unsupported	不支持的功能快捷键
-error.shortcut.conflict	快捷键冲突：中英文、语音和内码输入须使用不同按键。
+error.shortcut.conflict	快捷键冲突：各功能须使用不同且不重叠的按键。
 gb18030.mode	GB18030-2022 内码
 gb18030.hint	GB18030-2022：输入 4 或 8 位十六进制；上下选词，空格/回车提交，Esc 退出
 gb18030.invalid	无效或未分配的 GB18030 内码
 gb18030.unavailable	系统 GB18030 转换器不支持所需的 2022 映射。
+hotkey.None	禁用
+hotkey.Shift	Shift（左右均可）
+hotkey.Control	Ctrl（左右均可）
+hotkey.Alt	Alt（左右均可）
+hotkey.Super	Super（左右均可）
+hotkey.Shift_L	左 Shift
+hotkey.Shift_R	右 Shift
+hotkey.Control_L	左 Ctrl
+hotkey.Super_L	左 Super
+hotkey.Super_R	右 Super

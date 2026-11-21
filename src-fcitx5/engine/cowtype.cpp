@@ -48,11 +48,9 @@ struct State : InputContextProperty {
     unsigned generation = 0;
     int scheme = -1;
     unsigned configGeneration = 0;
-    uint64_t shiftPressed = 0, voicePressed = 0;
     bool active=false;
-    bool voiceStarted = false, shiftRepeated = false, voiceChord = false;
+    Shortcuts::Gesture shortcuts;
     std::unique_ptr<EventSourceTime> voiceHold;
-    KeySym featurePressed=FcitxKey_None;
     bool internalCode = false;
     std::string internalBuffer;
     int internalCursor = 0;
@@ -111,7 +109,7 @@ public:
         instance_->inputContextManager().registerProperty("cowtype-v2-session", &factory_);
         focus_ = instance_->watchEvent(EventType::InputContextFocusOut, EventWatcherPhase::PreInputMethod,
             [this](Event &event) { auto *ic = static_cast<InputContextEvent &>(event).inputContext();
-                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->internalCode=false;state->internalBuffer.clear();state->featurePressed=FcitxKey_None;state->shiftPressed=0;state->voicePressed=0; cowtype2_session_reset(state->session.get(), false); render(ic, false); });
+                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->internalCode=false;state->internalBuffer.clear();state->shortcuts.reset(); cowtype2_session_reset(state->session.get(), false); render(ic, false); });
         resourceTimer_=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+20000,1000,
             [this](EventSourceTime *timer,uint64_t) {
                 for(int scheme=0;scheme<2;++scheme) {
@@ -139,7 +137,7 @@ public:
         cowtype2_runtime_reload(runtime_.get());++configGeneration_;
         instance_->inputContextManager().foreach([this](InputContext *ic) {
             auto *state=ic->propertyFor(&factory_);
-            state->featurePressed=FcitxKey_None;
+            state->shortcuts.reset();state->voiceHold.reset();
             if(state->internalCode){state->internalCode=false;state->internalBuffer.clear();render(ic,false);}
             return true;
         });
@@ -197,92 +195,30 @@ public:
         const auto modifiers=event.key().states().toInteger() | event.rawKey().states().toInteger();
         const auto time=fcitx::now(CLOCK_MONOTONIC);
 
-        auto voiceIndex=cowtype2_runtime_option(runtime_.get(),5);
-        if(voiceIndex>=7) voiceIndex=0;
-        const bool modifierKey=voiceIndex>=3;
-        const bool holdModifier=modifierKey && cowtype2_runtime_option(runtime_.get(),6);
-        const uint32_t ownMask=voiceIndex==5?128:voiceIndex==6?4:modifierKey?8:0;
-        if(event.isRelease() && sym==state->featurePressed) {
-            state->featurePressed=FcitxKey_None;event.filterAndAccept();return;
-        }
-        if(!event.isRelease() && sym==state->featurePressed) {event.filterAndAccept();return;}
-        if(!event.isRelease())state->featurePressed=FcitxKey_None;
-        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),voiceIndex,cowtype2_runtime_option(runtime_.get(),3));
-        if(action==Shortcuts::Action::InternalCode || action==Shortcuts::Action::Mode) {
-            if(!event.isRelease()) {
-                state->featurePressed=sym;
-                cancelVoice(ic);state->shiftPressed=0;state->voicePressed=0;
-                state->internalBuffer.clear();state->internalCursor=0;
-                if(action==Shortcuts::Action::InternalCode) {
-                    if(!cowtype::InternalCode::supported()) {
-                        state->voiceStatus=ct_tr("gb18030.unavailable");
-                        ctDiagnostic("event=gb18030_unavailable reason=system_mapping");
-                    } else {
-                        // Do not commit or discard the user's normal composition.
-                        state->internalCode=!state->internalCode;
+        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),cowtype2_runtime_option(runtime_.get(),5),cowtype2_runtime_option(runtime_.get(),3));
+        auto shortcut=state->shortcuts.handle(sym,modifiers,event.isRelease(),time,action,cowtype2_runtime_option(runtime_.get(),6));
+        if(shortcut.interrupted || event.isRelease())state->voiceHold.reset();
+        if(shortcut.cancelVoice && voice_.owns(ic)){cancelVoice(ic);render(ic,false);}
+        if(shortcut.armHold) {
+            state->voiceHold=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,time+300000,1000,
+                [this,ic,generation=configGeneration_](EventSourceTime *source,uint64_t) {
+                    source->setEnabled(false);auto *s=ic->propertyFor(&factory_);
+                    if(generation==configGeneration_ && s->shortcuts.canHold() && ic->hasFocus() && !ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable)) {
+                        s->shortcuts.held();invokeShortcut(ic,Shortcuts::Action::Voice);
                     }
-                } else {
-                    state->internalCode=false;
-                    cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
-                }
-                render(ic,action==Shortcuts::Action::Mode);
-            }
-            event.filterAndAccept();return;
+                    return true;
+                });
+            state->voiceHold->setOneShot();
         }
-        if(state->internalCode) { internalKey(ic,event,modifiers);return; }
-        if(action==Shortcuts::Action::Voice) {
-            if(!event.isRelease()) {
-                if(!state->voicePressed && !(modifiers & ((1|4|8|64|128)&~ownMask))) {
-                    state->voicePressed=time;
-                    state->voiceChord=false;
-                    state->voiceStarted=false;
-                    if(holdModifier) {
-                        state->voiceHold=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,time+300000,1000,
-                            [this,ic,generation=configGeneration_](EventSourceTime *source,uint64_t) {
-                                source->setEnabled(false);
-                                auto *s=ic->propertyFor(&factory_);
-                                if(generation==configGeneration_ && s->voicePressed && !s->voiceChord && ic->hasFocus() && !ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable)) { toggleVoice(ic);render(ic,false); }
-                                return true;
-                            });
-                        state->voiceHold->setOneShot();
-                    }
-                    if(!modifierKey) { state->voiceStarted=!voice_.active(); toggleVoice(ic); }
-                    if(!modifierKey) event.filterAndAccept();
-                }
-            } else {
-                const auto pressed=state->voicePressed;
-                state->voicePressed=0;
-                state->voiceHold.reset();
-                if(pressed && !state->voiceChord) {
-                    if(modifierKey && !state->voiceStarted && time-pressed<(holdModifier?300000u:500000u)) toggleVoice(ic);
-                    else if(modifierKey && state->voiceStarted && voice_.owns(ic)) {
-                        voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");
-                    }
-                    else if(!modifierKey && time-pressed>=300000 && state->voiceStarted && voice_.owns(ic)) {
-                        voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");
-                    }
-                    render(ic,false);
-                    if(!modifierKey) event.filterAndAccept();
-                }
-            }
-            return; // Alt/AltGr keys and all modifier chords are passed to the application.
-        }
-        if(!event.isRelease() && state->voicePressed) {
-            state->voiceChord=true;state->voiceHold.reset();
-            if(state->voiceStarted && voice_.owns(ic)) {cancelVoice(ic);render(ic,false);}
-        }
-        if(state->voiceChord && (modifiers & (8|128))) return;
-        if(modifierKey && sym!=Shortcuts::voice(voiceIndex) && (modifiers & (8|128))) return;
+        if(shortcut.trigger!=Shortcuts::Action::None)invokeShortcut(ic,shortcut.trigger);
+        if(shortcut.stopVoice && voice_.owns(ic)){voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");render(ic,false);}
+        if(shortcut.accept)event.filterAndAccept();
+        if(shortcut.handled)return;
+        if(state->internalCode){internalKey(ic,event,modifiers);return;}
         if(voice_.owns(ic) && !event.isRelease()){
             cancelVoice(ic);render(ic,false);
             if(sym==FcitxKey_Escape){event.filterAndAccept();return;}
         }
-        if((sym==FcitxKey_Shift_L || sym==FcitxKey_Shift_R) && cowtype2_runtime_option(runtime_.get(),2)){
-            if(!event.isRelease()){if(state->shiftPressed){state->shiftRepeated=true;}else if(!state->shiftRepeated && !(modifiers & (4|8|64))){state->shiftPressed=time;}}
-            else {const auto pressed=state->shiftRepeated?0:state->shiftPressed;state->shiftPressed=0;state->shiftRepeated=false;if(pressed && time-pressed<500000 && !(modifiers & (4|8|64))){cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);render(ic,true);instance_->showCustomInputMethodInformation(ic,subMode(entry,*ic));event.filterAndAccept();return;}}
-            return;
-        }
-        if(state->shiftPressed){state->shiftRepeated=true;}state->shiftPressed=0;
         if(!event.isRelease() && (sym==FcitxKey_Delete || sym==FcitxKey_BackSpace) && !(modifiers & (8|64)) && ((modifiers & 4) || (sym==FcitxKey_Delete && (modifiers & 1)))){
             const char *preedit=cowtype2_session_preedit(state->session.get());
             if(preedit && *preedit){cowtype2_session_forget(state->session.get());render(ic,false);event.filterAndAccept();return;}
@@ -379,15 +315,34 @@ private:
         panel.setCandidateList(std::move(list));
         ic->updatePreedit();ic->updateUserInterface(UserInterfaceComponent::InputPanel);
     }
+    void invokeShortcut(InputContext *ic,Shortcuts::Action action) {
+        auto *state=ic->propertyFor(&factory_);
+        if(action==Shortcuts::Action::Voice) {
+            state->internalCode=false;state->internalBuffer.clear();
+            bool starting=!voice_.active();toggleVoice(ic);
+            state->shortcuts.voiceStarted(starting && voice_.owns(ic));render(ic,false);return;
+        }
+        // Do not reset the shortcut gesture here: its release/repeat belongs
+        // to the shared state machine even after changing the input mode.
+        voice_.cancel(ic);state->voiceHold.reset();state->voiceStatus.clear();state->voicePartial.clear();
+        state->internalBuffer.clear();state->internalCursor=0;
+        if(action==Shortcuts::Action::InternalCode) {
+            if(!cowtype::InternalCode::supported()){state->voiceStatus=ct_tr("gb18030.unavailable");ctDiagnostic("event=gb18030_unavailable reason=system_mapping");}
+            else state->internalCode=!state->internalCode;
+        } else if(action==Shortcuts::Action::Mode) {
+            state->internalCode=false;cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
+        }
+        render(ic,action==Shortcuts::Action::Mode);
+    }
     void toggleVoice(InputContext *ic) {
-        auto *state=ic->propertyFor(&factory_);state->voiceStarted=!voice_.active();
+        auto *state=ic->propertyFor(&factory_);
         if(voice_.owns(ic)) { voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c"); }
         else if(voice_.active()) state->voiceStatus=ct_tr("message.3a1b85f91ecc");
         else if(const char *p=cowtype2_session_preedit(state->session.get());p && *p) state->voiceStatus=ct_tr("message.fae536a183cb");
         else {state->voiceStatus=ct_tr("message.71cea6a7bc11");if(!voice_.start(ic,environment("COWTYPE_VOICE_HELPER",COWTYPE_VOICE_EXECUTABLE))) state->voiceStatus=ct_tr("message.f1e43bff56c4");}
     }
     void cancelVoice(InputContext *ic){
-        voice_.cancel(ic);auto *state=ic->propertyFor(&factory_);state->voiceHold.reset();state->voiceLevel.clear();state->voiceStatus.clear();state->voicePartial.clear();state->voicePressed=0;
+        voice_.cancel(ic);auto *state=ic->propertyFor(&factory_);state->voiceHold.reset();state->voiceLevel.clear();state->voiceStatus.clear();state->voicePartial.clear();state->shortcuts.reset();
     }
     void start(int scheme) {
         auto &resource = resources_[scheme];

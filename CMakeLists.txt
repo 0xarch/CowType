@@ -24,7 +24,10 @@ set(I18N_RESOURCES "${CMAKE_SOURCE_DIR}/i18n/en_US.tsv" "${CMAKE_SOURCE_DIR}/i18
 add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/messages.h"
     COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/tooling/compile_i18n.py" "${CMAKE_SOURCE_DIR}/i18n" "${CMAKE_BINARY_DIR}/messages.h"
     DEPENDS ${I18N_RESOURCES} tooling/compile_i18n.py VERBATIM)
-add_custom_target(cowtype-i18n DEPENDS "${CMAKE_BINARY_DIR}/messages.h")
+add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/shortcuts_registry.h"
+    COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/tooling/compile_shortcuts.py" "${CMAKE_SOURCE_DIR}/src/config/shortcuts.tsv" "${CMAKE_BINARY_DIR}/shortcuts_registry.h"
+    DEPENDS src/config/shortcuts.tsv tooling/compile_shortcuts.py VERBATIM)
+add_custom_target(cowtype-i18n DEPENDS "${CMAKE_BINARY_DIR}/messages.h" "${CMAKE_BINARY_DIR}/shortcuts_registry.h")
 install(DIRECTORY i18n/ DESTINATION ${CMAKE_INSTALL_DATADIR}/cowtype/i18n FILES_MATCHING PATTERN "*.tsv")
 install(FILES src-settings/i18n/catalog.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/i18n)
 
@@ -85,6 +88,8 @@ endif()
 if(BUILD_TESTING)
     add_executable(cowtype-internal-code-probe tests/native/internal-code.cpp)
     target_link_libraries(cowtype-internal-code-probe PRIVATE Fcitx5::Core)
+    target_include_directories(cowtype-internal-code-probe PRIVATE "${CMAKE_BINARY_DIR}")
+    add_dependencies(cowtype-internal-code-probe cowtype-i18n)
     target_compile_options(cowtype-internal-code-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
     add_test(NAME gb18030-shortcuts COMMAND cowtype-internal-code-probe)
     add_executable(cowtype-dictionary-benchmark tests/native/dictionary-benchmark.cpp)

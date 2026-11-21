@@ -25,13 +25,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "0dac10da2a231eb7c325423b38fa3e5993617e5457c9b10100431b6a0d54df1c",
-      "bytes": 3104
+      "sha256": "31376e2a0f513594a06b123be6087f045f82849a17aa77d6180d4345bf0c415d",
+      "bytes": 3156
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "3a744e95c662e22e87fdf09af80ccb237dbed285e6ea0c2d5efd04290b53464b",
-      "bytes": 14102
+      "sha256": "070a42c8bb636a69cd89aa24b5009b80b0ec67adaf814c51158dbcd2aa6bc27f",
+      "bytes": 14618
     },
     {
       "path": "Cargo.lock",
@@ -123,13 +123,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "6040bbc1b963fcb85246f319b7ecbabdb4bb85133e80107e0b8c82c0e888f5af",
-      "bytes": 38131
+      "sha256": "b83e928f8a3919e1c2322b7f2baa104a611900b60a09fe0e2d65c6589c93a896",
+      "bytes": 38538
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "a1b8e267b73f1d97137b8287ebfca5b732348f2a01a6308aabfd9c9b495660ad",
-      "bytes": 4809
+      "sha256": "67dacdc3d73c039b2bc393eec3cd69cfa4f50fe9a92771d83a08664c9e9eb1ac",
+      "bytes": 5154
     },
     {
       "path": "i18n/README.md",
@@ -138,13 +138,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "df012e7d4cff94768979d55ad203cd23045f6fabaa2bf927241fa2354e5e4330",
-      "bytes": 9883
+      "sha256": "d995ab01c5f6d6079c319dc3c2e82fa8dd7f1192c53b660e75b6fd32fe749389",
+      "bytes": 10104
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "ba7df826225d89f6db293e2180ab40831a377e869c4788069850c6df70f02bb7",
-      "bytes": 8635
+      "sha256": "407702001af5a1e5967591fa5065e6df66457b2da8daf980ca263b9986711cc7",
+      "bytes": 8850
     },
     {
       "path": "packaging/README.md",
@@ -238,8 +238,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "9aba38ed6bbd3bef4cc7d10913aae3c0cf8077f8009057ea9271b688c8ae2f6e",
-      "bytes": 33528
+      "sha256": "41dc6d2ead28d62681764b2b86c91c85928624f8d56643177ecd5dd6e64a81a7",
+      "bytes": 30752
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -263,8 +263,8 @@
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
-      "sha256": "1fc927563815c44f347ecdddf6ff2903a873743de5d3e4ac41e788c691dd9593",
-      "bytes": 1335
+      "sha256": "26cfb9f8a87dc08fc18ee1f4b53353e288a59696a42e25e4cd048390cbf9683a",
+      "bytes": 4253
     },
     {
       "path": "src-fcitx5/engine/voice.h",
@@ -278,8 +278,8 @@
     },
     {
       "path": "src-fcitx5/gb18030/README.md",
-      "sha256": "e364c2a861d0caeb147b8af93f37c9dc7b647a60ec3c394e9c05b0bf7c3fb397",
-      "bytes": 2560
+      "sha256": "564618a02a6951fd84f0d260438443cde17d83b2bcc8664b8e790dcb958c3df5",
+      "bytes": 2975
     },
     {
       "path": "src-fcitx5/gb18030/decoder.h",
@@ -288,8 +288,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "04e8943f6cf59f1d1c94e4c9782e2a9751aba1ed8fc69b652223d3eba6eea21c",
-      "bytes": 4109
+      "sha256": "3481a6daad823b66a7b38e4b37186f1f5c2d57e74683bcbc2a17cdc5c990c421",
+      "bytes": 4105
     },
     {
       "path": "src-model-tools/README.md",
@@ -328,13 +328,13 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "df4c2c1326bf89601977a549e1791f706d2da67b6986f2c52f85db8e2bb4ba47",
-      "bytes": 21247
+      "sha256": "cd286ab6b5409120e661a78ed795b5deb8ddf61ee104faa14bbb4cbd4eaf5680",
+      "bytes": 20518
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "cd2bb2fd9c8cc46e0387280ab5ec0360d6d59045d4f1e036d990ddac3b48b03b",
-      "bytes": 4892
+      "sha256": "cbc38c99f0198657f3b3fa380b6d5b280fcf25660751cf1ba44bbbcf51637817",
+      "bytes": 5007
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -468,13 +468,13 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "b968bf3dcb375becfa02f9e1f928a6a04b00ba49b51db37a08df73255cc4dff0",
-      "bytes": 8899
+      "sha256": "40bcba62441c010c6d896a490f6350d08654919f0004b1850ea0e647ddfc2b7e",
+      "bytes": 10967
     },
     {
       "path": "src/config/shortcuts.tsv",
-      "sha256": "a9f9864464e2a9501e88b3952724ed02daa7f8d664e01090d0248527972d5681",
-      "bytes": 188
+      "sha256": "9f521da32c40d643bcbd486799b59ee9abde78d94fb1fa5fcf6a6637ec641d4e",
+      "bytes": 498
     },
     {
       "path": "src/dictionary/mod.rs",
@@ -503,8 +503,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "7905e65fd8368c3a3f2751970af4fec2031455ff66f61dfe3892995abe796a6c",
-      "bytes": 18994
+      "sha256": "0e8febbd2411d206f6a2b34bd4a020bc01b22b63c4ade98df27333b7b4cc4c90",
+      "bytes": 18974
     },
     {
       "path": "src/i18n/mod.rs",
@@ -618,13 +618,13 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "5198bab62b10d8cbb4da34d22fbe148460dbb6f002b1f32db927704f3dcb0817",
-      "bytes": 24531
+      "sha256": "1896bebab9d55519a40953ba277e73cacf4269aabade717a0bcc95179f10c019",
+      "bytes": 25333
     },
     {
       "path": "tests/native/internal-code.cpp",
-      "sha256": "ea2415ddba6d59526ff522912d128db4a215cff8702374ad5a66a82372c9bdc6",
-      "bytes": 1688
+      "sha256": "3b7035c8fd633e187914ec0e1acac0d47828c14551960f7c6f6935ba707d8ad1",
+      "bytes": 4216
     },
     {
       "path": "tests/native/isolated.py",
@@ -673,8 +673,8 @@
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "bbb2cc5c5de60f9ec7bdb737d50fb8b152ed7836c2d2417c028a9d0c0ebaca35",
-      "bytes": 4382
+      "sha256": "7f2765c40cc2f6bec2a32ed3beb799a645d76d6f8cabcb921f44811155c745cc",
+      "bytes": 5347
     },
     {
       "path": "tests/test_settings_startup.py",
@@ -705,6 +705,11 @@
       "path": "tooling/compile_i18n.py",
       "sha256": "eb0836039830130e5c9652724ef3847e3d0a5abb732734b40f5f6b7efefd968e",
       "bytes": 1039
+    },
+    {
+      "path": "tooling/compile_shortcuts.py",
+      "sha256": "1719442d3ec5a726ad3f8949967fe77b8d48636230f584872679c9c51f020d23",
+      "bytes": 806
     },
     {
       "path": "tooling/development.py",
