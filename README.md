@@ -6,7 +6,7 @@
 
 CowType(牛子输入法)是基于 Fcitx5 的 Linux 拼音输入法。
 
-支持拼音、五笔、语音输入。
+支持拼音、五笔、语音输入。设计灵感来自 WowType ，后者则来自微信输入法。
 
 </div>
 
@@ -61,7 +61,8 @@ bash build-arch.sh
 
 ## 参与
 
-欢迎[提交 Issue](https://github.com/0xarch/CowType/issues)。反馈时附带系统、桌面环境和复现步骤；分享日志前请检查是否包含个人信息。
+欢迎[提交 Issue](https://github.com/0xarch/CowType/issues)。反馈时附带系统、桌面环境和复现步骤；
+分享日志前请检查是否包含个人信息。
 
 参与开发可从[项目结构](STRUCTURES.md)和[构建与打包说明](docs/BUILD.md)开始。
 
@@ -74,6 +75,7 @@ bash build-arch.sh
 - [万象拼音](https://github.com/amzxyz/rime_wanxiang)：可选词库
 - [Unicode CLDR](https://cldr.unicode.org/)：emoji 的中英文关键词
 - [FunASR](https://github.com/modelscope/FunASR)：当前 Paraformer 实现参考
+- [Zed](https://zed.dev)：代码编辑器
 - [WowType](https://github.com/Gloridust/WowType)：灵感来源
 
 ## 许可证
