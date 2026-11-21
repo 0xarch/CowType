@@ -25,15 +25,15 @@ public:
   static std::string_view digits(std::string_view input) {
     if (input.starts_with("U+") || input.starts_with("u+"))
       input.remove_prefix(2);
+    else if (input.starts_with("U") || input.starts_with("u"))
+      input.remove_prefix(1);
     return input;
   }
-  static bool accepts(const std::string &input, char c) {
+  static bool accepts(std::string_view input, char c) {
     if (input.empty() && (c == 'u' || c == 'U'))
       return true;
     if ((input == "u" || input == "U") && c == '+')
       return true;
-    if (input == "u" || input == "U")
-      return false;
     return hex(c) >= 0 && digits(input).size() < 6;
   }
   static std::string decode(std::string_view input) {

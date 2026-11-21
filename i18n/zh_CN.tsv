@@ -175,3 +175,5 @@ setting.UnicodeHotkey	Unicode 码点输入
 unicode.mode	Unicode 码点
 unicode.hint	Unicode：输入 1–6 位十六进制（可带 U+）；空格/回车提交，Esc 退出
 unicode.invalid	无效码点、代理项或控制字符
+setting.UnicodePrefix	u 前缀 Unicode 输入
+hint.unicode_prefix	中文模式下输入 u 和十六进制码点（如 u0020 → 空格），默认开启；与独立 Unicode 快捷键无关。

@@ -131,12 +131,13 @@ def main():
             privacy = self.group('input', 'group.privacy')
             keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
-            groups = {'Emoji': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
+            groups = {'Emoji': general, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
                 'StatisticalModel': pinyin, 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
                 'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
             for key, group in groups.items():
                 row = Adw.SwitchRow(title=tr('setting.' + key))
                 if key == 'Emoji': row.set_subtitle(tr('hint.emoji'))
+                if key == 'UnicodePrefix': row.set_subtitle(tr('hint.unicode_prefix'))
                 if key == 'RememberMode': row.set_subtitle(tr('hint.remember_mode'))
                 if key == 'StatisticalModel': row.set_subtitle(tr('hint.statistical_model'))
                 if key == 'Initials': row.set_subtitle(tr('hint.initials'))
@@ -206,7 +207,9 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 17
+                    assert len(self.pages) == 5 and len(self.controls) == 18
+                    assert self.controls['UnicodePrefix'].get_visible()
+                    assert self.controls['UnicodePrefix'].get_active()
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
                     assert self.controls['StatisticalModel'].get_visible()

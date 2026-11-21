@@ -930,7 +930,7 @@
       "tests/native/unicode-code.cpp"
     ],
     "implementation": "Original CowType Unicode scalar validation and UTF-8 encoding, independent of GB18030/iconv. No external Unicode table, model or upstream code copied.",
-    "features": "Separate per-field mode and shortcut registered alongside language, voice and GB18030. Shared conflict checks include overlapping modifier aliases.",
+    "features": "Separate per-field mode and shortcut registered alongside language, voice and GB18030. Shared conflict checks include overlapping modifier aliases. Original default-on, independently configurable u-prefix entry shares scalar decoding and candidate rendering; no new external data or dependencies.",
     "dependencies": []
   }
 }

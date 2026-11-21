@@ -175,3 +175,5 @@ setting.UnicodeHotkey	Unicode code point input
 unicode.mode	Unicode code point
 unicode.hint	Unicode: 1–6 hex digits, optional U+ prefix; Space/Enter to commit, Escape to exit
 unicode.invalid	Invalid code point, surrogate or control character
+setting.UnicodePrefix	u-prefix Unicode input
+hint.unicode_prefix	In Chinese mode, type u followed by a hex code point (e.g. u0020 for a space). On by default; independent of the Unicode shortcut.

@@ -24,6 +24,7 @@ pub struct Settings {
     pub mode_hotkey: u32,
     pub internal_code_hotkey: u32,
     pub unicode_hotkey: u32,
+    pub unicode_prefix: bool,
     pub voice_modifier_hold: bool,
     pub show_pinyin: bool,
     pub voice_always_resident: bool,
@@ -51,6 +52,7 @@ impl Default for Settings {
             mode_hotkey: shortcut_default_index("ModeHotkey"),
             internal_code_hotkey: shortcut_default_index("InternalCodeHotkey"),
             unicode_hotkey: shortcut_default_index("UnicodeHotkey"),
+            unicode_prefix: true,
             voice_modifier_hold: false,
             show_pinyin: true,
             voice_always_resident: false,
@@ -197,6 +199,7 @@ impl Settings {
             ("RememberMode", &mut settings.remember_mode),
             ("StatisticalModel", &mut settings.statistical_model),
             ("Emoji", &mut settings.emoji),
+            ("UnicodePrefix", &mut settings.unicode_prefix),
             ("Voice", &mut settings.voice),
             ("VoiceResident", &mut settings.voice_resident),
             ("VoiceModifierHold", &mut settings.voice_modifier_hold),
@@ -230,6 +233,21 @@ impl Settings {
 #[cfg(test)]
 mod hotkey_tests {
     use super::*;
+    #[test]
+    fn unicode_prefix_is_default_on_and_independent_of_hotkey() {
+        assert!(
+            Settings::parse("Version=1\nUnicodeHotkey=None\n")
+                .unwrap()
+                .unicode_prefix
+        );
+        let disabled = Settings::parse("Version=1\nUnicodePrefix=False\n").unwrap();
+        assert!(!disabled.unicode_prefix);
+        assert_eq!(
+            disabled.unicode_hotkey,
+            shortcut_default_index("UnicodeHotkey")
+        );
+        assert!(Settings::parse("Version=1\nUnicodePrefix=invalid\n").is_err());
+    }
     #[test]
     fn feature_shortcuts_are_unique_including_disabled_features() {
         let default = Settings::parse("Version=1\n").unwrap();

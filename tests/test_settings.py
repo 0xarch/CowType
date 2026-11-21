@@ -47,6 +47,16 @@ class SettingsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             settings.validate(dict(values, UnicodeHotkey='F9'))
         settings.validate(dict(values, UnicodeHotkey='Control_R', InternalCodeHotkey='Alt_L'))
+    def test_unicode_prefix_defaults_on_and_is_independent(self):
+        values = settings.load()
+        self.assertEqual(values['UnicodePrefix'], 'True')
+        values.update(UnicodeHotkey='None')
+        settings.save(values)
+        self.assertEqual(settings.load()['UnicodePrefix'], 'True')
+        values.update(UnicodePrefix='False', UnicodeHotkey='F9')
+        settings.save(values)
+        self.assertEqual(settings.load()['UnicodePrefix'], 'False')
+        self.assertEqual(settings.load()['UnicodeHotkey'], 'F9')
     def test_emoji_defaults_off_and_roundtrips(self):
         values = settings.load()
         self.assertEqual(values['Emoji'], 'False')

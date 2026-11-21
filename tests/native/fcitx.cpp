@@ -152,6 +152,70 @@ int main(int argc, char **argv) {
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
             type(engine,pinyin,a,"20000");a.inputPanel().candidateList()->candidate(0).select(&a);CHECK(a.committed.back()=="𠀀");
+            // Automatic u-prefix input is default-on and shares only decoding
+            // with the explicit module, not its shortcut or normal composition.
+            for(auto [input,expected] : {std::pair{"u0020"," "}, {"u4e2d","中"}, {"U1F600","😀"}, {"u+20000","𠀀"}}) {
+                const auto beforePrefix=a.committed.size();type(engine,pinyin,a,input);
+                CHECK(a.inputPanel().clientPreedit().toString()==input);
+                CHECK(a.inputPanel().auxUp().empty());
+                CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()==expected);
+                CHECK(a.committed.size()==beforePrefix); // Never commit a shorter intermediate code point.
+                CHECK(press(engine,pinyin,a,FcitxKey_space));
+                CHECK(a.committed.size()==beforePrefix+1 && a.committed.back()==expected);
+                CHECK(a.inputPanel().clientPreedit().empty()); // No suspended u to restore.
+            }
+            for(auto input : {"ud800","u110000","u0000"}) {
+                const auto beforePrefix=a.committed.size();type(engine,pinyin,a,input);
+                CHECK(a.inputPanel().candidateList()->size()==0);
+                CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.size()==beforePrefix);
+                CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            }
+            type(engine,pinyin,a,"u4e2d");a.inputPanel().candidateList()->candidate(0).select(&a);
+            CHECK(a.committed.back()=="中" && a.inputPanel().clientPreedit().empty());
+            type(engine,pinyin,a,"u0");CHECK(press(engine,pinyin,a,FcitxKey_BackSpace));
+            CHECK(a.inputPanel().clientPreedit().toString()=="u");
+            CHECK(press(engine,pinyin,a,FcitxKey_BackSpace));CHECK(a.inputPanel().clientPreedit().empty());
+            for(auto input : {"unicode","ubuntu","abc","shu"}) {
+                type(engine,pinyin,a,input);CHECK(a.inputPanel().clientPreedit().toString()==input);
+                CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            }
+            type(engine,pinyin,a,"shan");
+            auto ordinaryCandidate=a.inputPanel().candidateList()->candidate(0).text().toString();
+            CHECK(press(engine,pinyin,a,FcitxKey_1));CHECK(a.committed.back()==ordinaryCandidate);
+            // A cursor moved before u cannot start an automatic prefix.
+            type(engine,pinyin,a,"u");CHECK(press(engine,pinyin,a,FcitxKey_Home));
+            CHECK(press(engine,pinyin,a,FcitxKey_0));CHECK(a.inputPanel().clientPreedit().toString()=="u");
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            CHECK(press(engine,pinyin,a,FcitxKey_F6));CHECK(press(engine,pinyin,a,FcitxKey_F6,true));
+            for(char c:std::string("u0020"))CHECK(!press(engine,pinyin,a,static_cast<KeySym>(c)));
+            CHECK(a.inputPanel().clientPreedit().empty());
+            CHECK(press(engine,pinyin,a,FcitxKey_F6));CHECK(press(engine,pinyin,a,FcitxKey_F6,true));
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nUnicodeHotkey=None\nEmoji=True\n";}
+            addon->reloadConfig();type(engine,pinyin,a,"u0020");CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()==" ");
+            type(engine,pinyin,a,"u");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="🧲");
+            CHECK(press(engine,pinyin,a,FcitxKey_0));CHECK(press(engine,pinyin,a,FcitxKey_BackSpace));
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="🧲");
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            type(engine,pinyin,a,"u");
+            for(auto key:{FcitxKey_KP_0,FcitxKey_KP_0,FcitxKey_KP_2,FcitxKey_KP_0})CHECK(press(engine,pinyin,a,key));
+            CHECK(press(engine,pinyin,a,FcitxKey_KP_Enter));CHECK(a.committed.back()==" ");
+            CHECK(!press(engine,pinyin,a,FcitxKey_F9));CHECK(!press(engine,pinyin,a,FcitxKey_F9,true));
+            type(engine,pinyin,a,"u4e2d");a.focusOut();a.focusIn();
+            CHECK(a.inputPanel().clientPreedit().empty());
+            type(engine,pinyin,a,"u4e2d");
+            InputContextEvent prefixReset(&a,EventType::InputContextReset);engine->reset(pinyin,prefixReset);
+            CHECK(a.inputPanel().clientPreedit().empty());
+            type(engine,pinyin,a,"u4e2d");a.setCapabilityFlags(CapabilityFlag::Password);
+            CHECK(!press(engine,pinyin,a,FcitxKey_0));CHECK(a.inputPanel().clientPreedit().empty());
+            a.setCapabilityFlags(CapabilityFlag::Preedit);
+            type(engine,pinyin,a,"u4e2d");
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nUnicodePrefix=False\n";}
+            addon->reloadConfig();CHECK(a.inputPanel().clientPreedit().empty());
+            type(engine,pinyin,a,"u0");CHECK(a.inputPanel().clientPreedit().toString()=="u");
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
+            type(engine,pinyin,a,"0020");CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()==" ");
             // The two module hotkeys switch directly without reinterpreting a buffer.
             CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));type(engine,pinyin,a,"d6");
             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
@@ -385,6 +449,8 @@ int main(int argc, char **argv) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(5)); press(engine, wubi, a, FcitxKey_F35);
             }
             CHECK(press(engine, wubi, a, FcitxKey_space)); CHECK(a.committed.back() == "工");
+            a.focusIn();type(engine,wubi,a,"u4e2d");
+            CHECK(press(engine,wubi,a,FcitxKey_Return));CHECK(a.committed.back()=="中");
         }
         dlclose(module);
         std::cout << "Fcitx shared addon: candidate UI, page/click, two fields, focus, switch, sensitive field, mode, Wubi passed\n";
