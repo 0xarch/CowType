@@ -14,18 +14,23 @@ CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。主体受 
 
 基于 libime 并支持以下特性：
 
-1. 同时支持全拼简拼输入
-2. 支持超长句输入和行内修改
-3. 支持自动纠错字母(如v<->b, i<->u等)
-4. 智能学习高频输入词语并优先展示
+1. 同时支持全拼简拼输入和拼音预测
+2. 支持超长句输入和行内修改、部分上屏
+3. 支持邻键纠错(如v<->b, i<->u等)
+4. 支持顺序纠错(缺失、重复等)
+4. 支持动态学习高频词语并优先展示
 5. 支持经典五笔 86 输入
-6. 可开启基于 Unicode CLDR 的表情和符号关键词匹配
+6. 基于 Unicode CLDR 的表情和符号关键词匹配
 7. 更顺手的长词组-词组-单字排列方式
+8. 通过统计模型提高长句预测准确性
 
 尚不支持 WowType 的互译功能和云拼音输入。
 
 拼音优先使用本机 Fcitx/libime 系统词库，以雾凇补充；需要更多词汇时，可在设置里下载万象文本词库。
-支持默认关闭的本地统计语言模型和词库预编译缓存，详见[词库说明](docs/DICTIONARIES.md)。五笔使用五笔词库。
+支持词库预编译缓存，详见[词库说明](docs/DICTIONARIES.md)。五笔使用五笔词库。
+
+本地统计语言模型默认关闭。开启后长句准确率可达 90%/50词 以上。
+> 准确率受语句复杂度等多因素影响，实际使用时可能无法达到预期效果。
 
 ## 语音输入
 
@@ -37,6 +42,8 @@ CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。主体受 
 设置页面可一键下载并启用阿里达摩院 `paraformer-zh-streaming` 模型(开放授权)，自备模型步骤见[语音模型说明](src-voice/paraformer/README.md)。
 
 ## GUI 设置
+
+[![Please do not theme this app](https://stopthemingmy.app/badge.svg)](https://stopthemingmy.app)
 
 打开 CowType 设置或运行 `cowtype-config` 即可调整输入、按键、语音和词库选项。
 
@@ -60,7 +67,9 @@ GitHub Actions 已验证以下 Linux x86_64 目标的构建、安装包和插件
 
 在 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载对应发行版的安装包（下载 Actions 产物需要登录 GitHub）。正式发布的资产见 [Releases](https://github.com/0xarch/CowType/releases)，以该版本实际提供的文件为准。
 
-请使用本发行版的软件包管理器安装对应的包。Debian unstable 为滚动目标，其 Deb 包不保证兼容 Debian 稳定版或 Ubuntu；Ubuntu 目前不在自动构建范围内，版本要求与自行构建方式见[Ubuntu 构建说明](docs/BUILD.md#ubuntu)。
+请使用本发行版的软件包管理器安装对应的包。Debian unstable 为滚动目标，其 Deb 包不保证兼容 Debian 稳定版或 Ubuntu。
+
+由于 Ubuntu 26.04 的 Fcitx5 版本过于老旧，Ubuntu 目前不在自动构建范围内，版本要求与自行构建方式见[Ubuntu 构建说明](docs/BUILD.md#ubuntu)。
 
 ### Arch Linux 从源码构建
 
