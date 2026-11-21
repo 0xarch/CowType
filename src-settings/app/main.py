@@ -1,0 +1,375 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+"""Libadwaita preferences. Changes are saved immediately; downloads are explicit."""
+import argparse
+import importlib.util
+import os
+import signal
+from pathlib import Path
+import subprocess
+import sys
+import threading
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'i18n'))
+from catalog import tr, en
+
+PAGES = [('input', 'preferences-system-symbolic'), ('keys', 'input-keyboard-symbolic'),
+         ('voice', 'audio-input-microphone-symbolic'), ('translate', 'accessories-dictionary-symbolic'),
+         ('words', 'view-list-symbolic')]
+
+def manager_module():
+    path = Path(__file__).resolve().parents[1] / 'dictionaries/manage.py'
+    if not path.exists():
+        path = Path(__file__).resolve().parents[2] / 'src-data-tools/dictionaries/manage.py'
+    spec = importlib.util.spec_from_file_location('cowtype_dictionary_manager', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def settings_module():
+    path = Path(__file__).resolve().parents[1] / 'config/settings.py'
+    spec = importlib.util.spec_from_file_location('cowtype_settings', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def reload_fcitx():
+    try:
+        result = subprocess.run(['gdbus', 'call', '--session', '--dest', 'org.fcitx.Fcitx5',
+                                 '--object-path', '/controller', '--method', 'org.fcitx.Fcitx.Controller1.ReloadAddonConfig',
+                                 'cowtype'], capture_output=True, timeout=8, check=False)
+        return result.returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--page', default='input')
+    parser.add_argument('--smoke-test', action='store_true', help=argparse.SUPPRESS)
+    args = parser.parse_args()
+    try:
+        import gi
+        gi.require_version('Gtk', '4.0')
+        gi.require_version('Adw', '1')
+        from gi.repository import Adw, Gtk, Gio, GLib
+    except (ImportError, ValueError):
+        parser.exit(1, en('error.dependencies') + '\n')
+    manager, config = manager_module(), settings_module()
+    data_home = Path(os.environ.get('XDG_DATA_HOME', Path.home() / '.local/share'))
+
+    class Settings(Adw.Application):
+        def __init__(self):
+            super().__init__(application_id='io.github._0xarch.CowType.Config', flags=Gio.ApplicationFlags.NON_UNIQUE)
+            self.busy = False
+            self.cancel = threading.Event()
+            self.closed = False
+            self.controls = {}
+            self.voice_process = None
+            self.ready = False
+
+        def group(self, page, title, description=None):
+            group = Adw.PreferencesGroup(title=tr(title) if title else '', description=description)
+            self.pages[page].add(group)
+            return group
+
+        def action(self, group, key, callback, subtitle=None, destructive=False):
+            row = Adw.ActionRow(title=tr(key), subtitle=subtitle, activatable=True)
+            icon = Gtk.Image.new_from_icon_name('go-next-symbolic')
+            row.add_suffix(icon)
+            if destructive:
+                row.add_css_class('error')
+            row.connect('activated', callback)
+            group.add(row)
+            return row
+
+        def status_row(self, group, key):
+            row = Adw.ActionRow(title=tr(key))
+            row.set_title_lines(0)
+            group.add(row)
+            return row
+
+        def toast(self, text):
+            if getattr(self, 'last_toast', None): self.last_toast.dismiss()
+            self.last_toast = Adw.Toast.new(text)
+            self.overlay.add_toast(self.last_toast)
+
+        def failure(self, error):
+            self.toast(tr('error.operation', error=str(error)))
+
+        def do_activate(self):
+            Gtk.Window.set_default_icon_name('cowtype')
+            self.window = Adw.ApplicationWindow(application=self, title=tr('app.title'),
+                default_width=760, default_height=680)
+            self.host = self.window
+            self.window.connect('close-request', self.close)
+            self.stack = Adw.ViewStack()
+            toolbar = Adw.ToolbarView()
+            header = Adw.HeaderBar()
+            switcher = Adw.ViewSwitcher(stack=self.stack, policy=Adw.ViewSwitcherPolicy.NARROW)
+            header.set_title_widget(switcher)
+            toolbar.add_top_bar(header)
+            toolbar.set_content(self.stack)
+            self.overlay = Adw.ToastOverlay()
+            self.overlay.set_child(toolbar)
+            self.window.set_content(self.overlay)
+            self.pages = {}
+            for name, icon in PAGES:
+                page = Adw.PreferencesPage(name=name, title=tr('page.' + name), icon_name=icon)
+                stack_page = self.stack.add_titled(page, name, tr('page.' + name))
+                stack_page.set_icon_name(icon)
+                self.pages[name] = page
+            try:
+                self.values = config.load()
+                self.load_error = ''
+            except Exception as error:
+                self.values = config.DEFAULTS.copy()
+                self.load_error = tr('error.load', error=str(error))
+            general = self.group('input', 'group.appearance')
+            pinyin = self.group('input', 'group.pinyin', tr('hint.libime'))
+            privacy = self.group('input', 'group.privacy', tr('hint.learning'))
+            keys = self.group('keys', 'page.keys', tr('hint.hotkey'))
+            voice = self.group('voice', 'group.voice')
+            groups = {'Punctuation': general, 'Horizontal': general, 'ShiftToggle': keys,
+                'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
+                'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
+            for key, group in groups.items():
+                row = Adw.SwitchRow(title=tr('setting.' + key))
+                if key == 'Initials': row.set_subtitle(tr('hint.initials'))
+                if key == 'VoiceResident': row.set_subtitle(tr('hint.resident'))
+                if key == 'VoiceAlwaysResident': row.set_subtitle(tr('hint.always_resident'))
+                row.set_active(self.values[key].lower() == 'true')
+                row.connect('notify::active', self.save)
+                group.add(row)
+                self.controls[key] = row
+            self.page_size = Adw.SpinRow.new_with_range(3, 9, 1)
+            self.page_size.set_title(tr('setting.PageSize'))
+            self.page_size.set_value(int(self.values['PageSize']))
+            self.page_size.connect('notify::value', self.save)
+            general.add(self.page_size)
+            self.hotkey = Adw.ComboRow(title=tr('setting.VoiceHotkey'),
+                model=Gtk.StringList.new([tr('hotkey.' + key) for key in config.VOICE_HOTKEYS]))
+            self.hotkey.set_selected(config.VOICE_HOTKEYS.index(self.values['VoiceHotkey']))
+            self.hotkey.connect('notify::selected', self.save)
+            keys.add(self.hotkey)
+            hold = Adw.SwitchRow(title=tr('setting.VoiceModifierHold'), subtitle=tr('hint.modifier_hold'))
+            hold.set_active(self.values['VoiceModifierHold'].lower() == 'true')
+            hold.connect('notify::active', self.save)
+            keys.add(hold)
+            self.controls['VoiceModifierHold'] = hold
+            self.update_visibility()
+            integration = self.group('input', 'group.integration', tr('hint.fcitx'))
+            self.action(integration, 'action.fcitx', lambda *_: self.spawn(['fcitx5-configtool']))
+            self.action(integration, 'app.about', self.about)
+            self.action(privacy, 'action.clear', self.confirm_clear, destructive=True)
+            model = self.group('voice', 'group.model', tr('hint.model'))
+            self.model_path = Adw.ActionRow(title=tr('group.model'), subtitle=str(config.model_dir()))
+            self.model_path.set_subtitle_lines(0)
+            model.add(self.model_path)
+            buttons = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                margin_top=12)
+            model.add(buttons)
+            def model_button(key, callback):
+                button = Gtk.Button(label=tr(key))
+                button.connect('clicked', callback)
+                buttons.append(button)
+                return button
+            self.choose = model_button('action.choose', self.choose_model)
+            self.check = model_button('action.check', lambda *_: self.voice_action(False))
+            self.prepare = model_button('action.download', self.download_or_cancel)
+            self.preparing = False
+            self.group('translate', 'page.translate', tr('hint.translate'))
+            words = self.group('words', 'group.words', tr('hint.words'))
+            profile = manager.registry()['wanxiang']
+            self.action(words, 'action.words.source', lambda *_: Gtk.UriLauncher.new('https://github.com/' + profile['repository']).launch(self.host, None, None),
+                tr('hint.words.source', revision=profile['revision'], size=sum(r['bytes'] for r in profile['files']) // 1024**2))
+            self.install = self.action(words, 'action.words.install', lambda *_: self.operate(True))
+            self.remove = self.action(words, 'action.words.remove', lambda *_: self.operate(False))
+            self.status = self.status_row(words, 'status.words.absent')
+            self.refresh_status()
+            if self.load_error:
+                error_group = self.group('input', None)
+                error_group.add(Adw.ActionRow(title=self.load_error))
+                for row in [*self.controls.values(), self.page_size, self.hotkey]: row.set_sensitive(False)
+            self.ready = True
+            self.stack.set_visible_child_name(args.page if args.page in self.pages else 'input')
+            self.window.present()
+            if args.smoke_test:
+                self.smoke_passed = False
+                def check_visible():
+                    assert len(self.pages) == 5 and len(self.controls) == 15
+                    assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
+                    assert self.get_windows() == [self.window]
+                    assert self.window.get_mapped() and self.stack.get_mapped()
+                    assert isinstance(self.overlay, Adw.ToastOverlay)
+                    assert not self.controls['VoiceModifierHold'].get_visible()
+                    self.ready = False
+                    self.hotkey.set_selected(3)
+                    self.update_visibility()
+                    assert self.controls['VoiceModifierHold'].get_visible()
+                    self.hotkey.set_selected(0)
+                    self.controls['VoiceResident'].set_active(False)
+                    self.update_visibility()
+                    assert not self.controls['VoiceAlwaysResident'].get_visible()
+                    self.controls['VoiceResident'].set_active(True)
+                    self.update_visibility()
+                    assert self.controls['VoiceAlwaysResident'].get_visible()
+                    assert self.prepare.get_label() == tr('action.download')
+                    self.smoke_passed = True
+                    print('Libadwaita smoke test: single application window and preferences remain mapped after startup', flush=True)
+                    self.window.close()
+                    self.quit()
+                    return False
+                GLib.timeout_add(1000, check_visible)
+
+        def update_visibility(self):
+            self.controls['VoiceModifierHold'].set_visible(self.hotkey.get_selected() >= 3)
+            self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
+
+        def save(self, *_):
+            if not self.ready or self.load_error: return
+            self.update_visibility()
+            try:
+                values = self.values.copy()
+                values['PageSize'] = str(int(self.page_size.get_value()))
+                values['VoiceHotkey'] = config.VOICE_HOTKEYS[self.hotkey.get_selected()]
+                values.update({key: str(row.get_active()) for key, row in self.controls.items()})
+                config.save(values)
+                self.values = values
+                self.toast(tr('status.saved' if reload_fcitx() else 'status.saved.offline'))
+            except Exception as error:
+                self.failure(error)
+
+        def question(self, title, body, confirm, callback, destructive=False):
+            dialog = Adw.AlertDialog(heading=tr(title), body=tr(body))
+            dialog.add_response('cancel', tr('action.cancel'))
+            dialog.add_response('confirm', tr(confirm))
+            dialog.set_close_response('cancel')
+            dialog.set_default_response('cancel')
+            dialog.set_response_appearance('confirm', Adw.ResponseAppearance.DESTRUCTIVE if destructive else Adw.ResponseAppearance.SUGGESTED)
+            dialog.connect('response', lambda _d, response: callback() if response == 'confirm' else None)
+            dialog.present(self.window)
+
+        def confirm_clear(self, *_):
+            def clear():
+                try:
+                    config.clear_learning()
+                    self.toast(tr('status.cleared'))
+                except Exception as error: self.failure(error)
+            self.question('dialog.clear.title', 'dialog.clear.body', 'action.delete', clear, True)
+
+        def choose_model(self, *_):
+            dialog = Gtk.FileDialog(title=tr('model.choose'))
+            def selected(d, result):
+                try:
+                    directory = d.select_folder_finish(result).get_path()
+                    config.select_model(directory)
+                    self.model_path.set_subtitle(str(config.model_dir()))
+                    self.toast(tr('status.model.selected'))
+                    reload_fcitx()
+                except GLib.Error: pass
+                except Exception as error: self.failure(error)
+            dialog.select_folder(self.host, None, selected)
+
+        def download_or_cancel(self, *_):
+            if self.preparing: self.cancel_voice_action()
+            else: self.confirm_download()
+
+        def confirm_download(self, *_):
+            self.question('dialog.download.title', 'dialog.download.body', 'action.continue', lambda: self.voice_action(True))
+
+        def cancel_voice_action(self):
+            if self.voice_process and self.voice_process.poll() is None:
+                try: os.killpg(self.voice_process.pid, signal.SIGTERM)
+                except ProcessLookupError: pass
+
+        def voice_action(self, prepare):
+            if self.voice_process and self.voice_process.poll() is None: return
+            if prepare:
+                script = Path(__file__).resolve().parents[1] / 'paraformer/prepare_paraformer.py'
+                if not script.exists(): script = Path(__file__).resolve().parents[2] / 'src-voice/paraformer/prepare_paraformer.py'
+                command = [sys.executable, str(script), '--disable-enable', '--disable-reload']
+            else:
+                command = ['cowtype-voice', '--check', '--dir', str(config.model_dir())]
+            try:
+                # Third-party preparation output is consumed privately; it is never a host log.
+                env = dict(os.environ, COWTYPE_LANGUAGE='en_US', LANG='C.UTF-8')
+                self.voice_process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True, env=env)
+            except OSError as error:
+                self.failure(error)
+                return
+            process = self.voice_process
+            self.preparing = prepare
+            self.prepare.set_sensitive(prepare)
+            self.prepare.set_label(tr('action.cancel.download' if prepare else 'action.download'))
+            self.check.set_sensitive(False)
+            self.choose.set_sensitive(False)
+            self.toast(tr('status.working'))
+            def work():
+                code = process.wait()
+                def done():
+                    if not self.closed:
+                        self.model_path.set_subtitle(str(config.model_dir()))
+                        self.toast(tr('status.model.done') if code == 0 else tr('status.model.cancelled') if code < 0 else tr('status.model.failed', code=code))
+                        if code == 0: reload_fcitx()
+                        self.preparing = False
+                        self.prepare.set_label(tr('action.download'))
+                        self.prepare.set_sensitive(True)
+                        self.check.set_sensitive(True)
+                        self.choose.set_sensitive(True)
+                    return False
+                GLib.idle_add(done)
+            threading.Thread(target=work, name='cowtype-model-operation').start()
+
+        def refresh_status(self, message=''):
+            installed = manager.managed_path(data_home).exists()
+            self.install.set_sensitive(not self.busy and not installed)
+            self.remove.set_sensitive(not self.busy and installed)
+            self.status.set_title(message or tr('status.words.present' if installed else 'status.words.absent'))
+
+        def operate(self, install):
+            if self.busy: return
+            self.busy = True
+            self.cancel.clear()
+            self.refresh_status(tr('status.working'))
+            def work():
+                try:
+                    if install: manager.install_optional(data_home, cancel=self.cancel)
+                    else: manager.remove_optional(data_home)
+                    reload_fcitx()
+                    text = tr('status.words.done')
+                except Exception as error: text = tr('error.operation', error=str(error))
+                def finish():
+                    self.busy = False
+                    if not self.closed: self.refresh_status(text)
+                    return False
+                GLib.idle_add(finish)
+            threading.Thread(target=work, name='cowtype-dictionary-operation').start()
+
+        def spawn(self, command):
+            try: subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except OSError: self.toast(tr('error.spawn'))
+
+        def about(self, *_):
+            dialog = Adw.AboutDialog(application_name=tr('app.name'), application_icon='cowtype',
+                version='0.1.0-dev.6.3', license_type=Gtk.License.GPL_3_0, comments=tr('about.comments'),
+                website='https://github.com/0xarch/CowType', issue_url='https://github.com/0xarch/CowType/issues')
+            dialog.present(self.window)
+
+        def close(self, *_):
+            self.closed = True
+            self.cancel.set()
+            self.cancel_voice_action()
+            return False
+
+    app = Settings()
+    result = app.run([sys.argv[0]])
+    if args.smoke_test and not getattr(app, 'smoke_passed', False):
+        print('Settings startup test failed: window did not remain mapped', file=sys.stderr)
+        return 1
+    return result
+
+
+if __name__ == '__main__':
+    sys.exit(main())

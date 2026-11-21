@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Newly authored minimal code lookup fixture, not a production table.
+a	工	12
+aa	式	5
+aaa	工	3
+ab	节	0

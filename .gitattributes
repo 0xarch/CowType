@@ -1,0 +1,2 @@
+# Preserve the exact verified upstream license bytes, including CRLF.
+src-model-tools/text-models/LICENSE.Qwen3 -text whitespace=cr-at-eol

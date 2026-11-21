@@ -1,0 +1,394 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Uses the public Fcitx5 5.1.23 API.
+#include "cowtype2.h"
+#include "messages.h"
+#include "diagnostics.h"
+#include "voice.h"
+#include "level.h"
+#include "libime.h"
+#include <fcitx/addonfactory.h>
+#include <fcitx/addonmanager.h>
+#include <fcitx/candidatelist.h>
+#include <fcitx/inputcontext.h>
+#include <fcitx/inputcontextmanager.h>
+#include <fcitx/inputcontextproperty.h>
+#include <fcitx/inputmethodengine.h>
+#include <fcitx/inputpanel.h>
+#include <fcitx/instance.h>
+#include <fcitx/surroundingtext.h>
+#include <fcitx-utils/capabilityflags.h>
+#include <fcitx-utils/key.h>
+#include <array>
+#include <chrono>
+#include <cstdlib>
+#include <filesystem>
+#include <future>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+namespace {
+using EnginePtr = std::unique_ptr<Cowtype2Engine, decltype(&cowtype2_engine_free)>;
+using SessionPtr = std::unique_ptr<Cowtype2Session, decltype(&cowtype2_session_free)>;
+using namespace fcitx;
+std::string environment(const char *name, const std::string &fallback) {
+    const char *value = std::getenv(name); return value && *value ? value : fallback;
+}
+struct State : InputContextProperty {
+    SessionPtr session{cowtype2_session_new(nullptr), cowtype2_session_free};
+    unsigned generation = 0;
+    int scheme = -1;
+    unsigned configGeneration = 0;
+    uint64_t shiftPressed = 0, voicePressed = 0;
+    bool active=false;
+    bool voiceStarted = false, shiftRepeated = false, voiceChord = false;
+    std::unique_ptr<EventSourceTime> voiceHold;
+    VoiceLevel voiceLevel;
+    std::string voiceStatus, voicePartial;
+};
+class Cowtype;
+class Word final : public CandidateWord {
+public:
+    Word(std::string text, std::string reading, Cowtype *owner, size_t index)
+        : CandidateWord(Text(std::move(text))), owner_(owner), index_(index) { if(!reading.empty()) setComment(Text(std::move(reading))); }
+    void select(InputContext *) const override;
+private:
+    Cowtype *owner_; size_t index_;
+};
+class Page final : public CommonCandidateList {
+public:
+    Page(Cowtype *owner, InputContext *ic, bool previous, bool next)
+        : owner_(owner), ic_(ic), previous_(previous), next_(next) {}
+    bool hasPrev() const override { return previous_; }
+    bool hasNext() const override { return next_; }
+    void prev() override;
+    void next() override;
+private:
+    Cowtype *owner_; InputContext *ic_; bool previous_, next_;
+};
+struct Resource {
+    EnginePtr engine{nullptr, cowtype2_engine_free};
+    std::future<std::pair<EnginePtr, std::string>> pending;
+    unsigned generation = 0;
+    bool reload = false;
+    std::string failure, requestedStamp;
+};
+
+class Cowtype final : public InputMethodEngineV2 {
+public:
+    explicit Cowtype(Instance *instance) : instance_(instance), factory_([](InputContext &) { return new State; }), voice_(instance->eventLoop(), [this](InputContext *ic,char kind,const std::string &text) {
+        auto *state=ic->propertyFor(&factory_);
+        if(kind=='F'){state->voicePartial.clear();state->voiceStatus=text.empty()?ct_tr("message.9f30c9b3ac26"):"";if(!text.empty() && ic->hasFocus() && !ic->capabilityFlags().testAny(CapabilityFlag::PasswordOrSensitive)){ic->commitString(text);}}
+        else if(kind=='E'){state->voicePartial.clear();state->voiceStatus=text;}
+        else if(kind=='P'){state->voicePartial=text;}
+        else if(kind=='R'){state->voiceLevel.clear();state->voiceStatus=state->voiceLevel.push("0");}
+        else if(kind=='V'){auto value=state->voiceLevel.push(text);if(!value.empty()) state->voiceStatus=std::move(value);}
+        else {state->voiceStatus=text;}
+        render(ic,false);
+    }) {
+        if (!runtime_) { throw std::runtime_error("CowType settings runtime allocation failed"); }
+        if (cowtype2_abi_version() / 1000 != 2) { throw std::runtime_error("CowType ABI major mismatch"); }
+        instance_->inputContextManager().registerProperty("cowtype-v2-session", &factory_);
+        focus_ = instance_->watchEvent(EventType::InputContextFocusOut, EventWatcherPhase::PreInputMethod,
+            [this](Event &event) { auto *ic = static_cast<InputContextEvent &>(event).inputContext();
+                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->shiftPressed=0;state->voicePressed=0; cowtype2_session_reset(state->session.get(), false); render(ic, false); });
+        resourceTimer_=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+20000,1000,
+            [this](EventSourceTime *timer,uint64_t) {
+                for(int scheme=0;scheme<2;++scheme) {
+                    if(!finishResource(scheme)) continue;
+                    instance_->inputContextManager().foreach([this,scheme](InputContext *ic) {
+                        auto *state=ic->propertyFor(&factory_);
+                        if(state->scheme==scheme) {
+                            attach(ic,scheme);
+                            if(ic->hasFocus() && state->active) render(ic,false);
+                        }
+                        return true;
+                    });
+                }
+                if(resources_[0].pending.valid() || resources_[1].pending.valid()) {timer->setNextInterval(20000);timer->setOneShot();}
+                return true;
+            });
+        resourceTimer_->setEnabled(false);
+        reloadConfig();
+        ctDiagnostic("event=addon_ready version=0.1.0-dev.6.3 elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
+    }
+    void reloadConfig() override {
+        const auto began=now(CLOCK_MONOTONIC);
+        if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}voice_.cancelAll();
+        cowtype2_runtime_reload(runtime_.get());++configGeneration_;
+        voice_.setResident(cowtype2_runtime_option(runtime_.get(),4));
+        if(!cowtype2_runtime_option(runtime_.get(),3)){if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}}
+        if(cowtype2_runtime_option(runtime_.get(),3) && cowtype2_runtime_option(runtime_.get(),4) && cowtype2_runtime_option(runtime_.get(),8))
+            voice_.prepare(environment("COWTYPE_VOICE_HELPER",COWTYPE_VOICE_EXECUTABLE));
+        for (int scheme = 0; scheme < 2; ++scheme) start(scheme);
+        ctDiagnostic("event=config_reload elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
+    }
+    void activate(const InputMethodEntry &entry, InputContextEvent &event) override {
+        const auto began=now(CLOCK_MONOTONIC);
+        const int scheme=entry.uniqueName()=="cowtype-wubi"?1:0;
+        event.inputContext()->propertyFor(&factory_)->active=true;
+        attach(event.inputContext(),scheme); render(event.inputContext(), false);
+        ctDiagnostic("event=activate scheme="+std::to_string(scheme)+" ready="+std::to_string(bool(resources_[scheme].engine))+" elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
+    }
+    void deactivate(const InputMethodEntry &, InputContextEvent &event) override {
+        event.inputContext()->propertyFor(&factory_)->active=false;
+        cancelVoice(event.inputContext());
+        bool commit = event.type() == EventType::InputContextSwitchInputMethod;
+        if (commit) { commit = static_cast<InputContextSwitchInputMethodEvent &>(event).reason() != InputMethodSwitchedReason::CapabilityChanged; }
+        cowtype2_session_reset(event.inputContext()->propertyFor(&factory_)->session.get(), commit);
+        render(event.inputContext(), true);
+    }
+    void reset(const InputMethodEntry &, InputContextEvent &event) override {
+        cancelVoice(event.inputContext());
+        cowtype2_session_reset(event.inputContext()->propertyFor(&factory_)->session.get(), false); render(event.inputContext(), false);
+    }
+    std::string subMode(const InputMethodEntry &, InputContext &ic) override {
+        return cowtype2_session_mode(ic.propertyFor(&factory_)->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6");
+    }
+    void keyEvent(const InputMethodEntry &entry, KeyEvent &event) override {
+        CtSlowEvent latency;
+        auto *ic = event.inputContext();
+        if (ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive) | CapabilityFlag::Disable)) {
+            cancelVoice(ic);
+            cowtype2_session_reset(ic->propertyFor(&factory_)->session.get(), false); render(ic, false); return;
+        }
+        attach(ic, entry.uniqueName() == "cowtype-wubi" ? 1 : 0);
+        uint32_t code = 0xffffffff;
+        auto sym = event.key().sym();
+        auto *state=ic->propertyFor(&factory_);
+        const auto modifiers=event.key().states().toInteger() | event.rawKey().states().toInteger();
+        const auto time=fcitx::now(CLOCK_MONOTONIC);
+        static constexpr std::array<KeySym,7> voiceKeys{FcitxKey_F8,FcitxKey_F9,FcitxKey_F10,FcitxKey_Alt_L,FcitxKey_Alt_R,FcitxKey_ISO_Level3_Shift,FcitxKey_Control_R};
+        auto voiceIndex=cowtype2_runtime_option(runtime_.get(),5);
+        if(voiceIndex>=voiceKeys.size()) voiceIndex=0;
+        const bool modifierKey=voiceIndex>=3;
+        const bool holdModifier=modifierKey && cowtype2_runtime_option(runtime_.get(),6);
+        const uint32_t ownMask=voiceIndex==5?128:voiceIndex==6?4:modifierKey?8:0;
+        if(sym==voiceKeys[voiceIndex] && cowtype2_runtime_option(runtime_.get(),3)) {
+            if(!event.isRelease()) {
+                if(!state->voicePressed && !(modifiers & ((1|4|8|64|128)&~ownMask))) {
+                    state->voicePressed=time;
+                    state->voiceChord=false;
+                    state->voiceStarted=false;
+                    if(holdModifier) {
+                        state->voiceHold=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,time+300000,1000,
+                            [this,ic,generation=configGeneration_](EventSourceTime *source,uint64_t) {
+                                source->setEnabled(false);
+                                auto *s=ic->propertyFor(&factory_);
+                                if(generation==configGeneration_ && s->voicePressed && !s->voiceChord && ic->hasFocus() && !ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable)) { toggleVoice(ic);render(ic,false); }
+                                return true;
+                            });
+                        state->voiceHold->setOneShot();
+                    }
+                    if(!modifierKey) { state->voiceStarted=!voice_.active(); toggleVoice(ic); }
+                    if(!modifierKey) event.filterAndAccept();
+                }
+            } else {
+                const auto pressed=state->voicePressed;
+                state->voicePressed=0;
+                state->voiceHold.reset();
+                if(pressed && !state->voiceChord) {
+                    if(modifierKey && !state->voiceStarted && time-pressed<(holdModifier?300000u:500000u)) toggleVoice(ic);
+                    else if(modifierKey && state->voiceStarted && voice_.owns(ic)) {
+                        voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");
+                    }
+                    else if(!modifierKey && time-pressed>=300000 && state->voiceStarted && voice_.owns(ic)) {
+                        voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");
+                    }
+                    render(ic,false);
+                    if(!modifierKey) event.filterAndAccept();
+                }
+            }
+            return; // Alt/AltGr keys and all modifier chords are passed to the application.
+        }
+        if(!event.isRelease() && state->voicePressed) {
+            state->voiceChord=true;state->voiceHold.reset();
+            if(state->voiceStarted && voice_.owns(ic)) {cancelVoice(ic);render(ic,false);}
+        }
+        if(state->voiceChord && (modifiers & (8|128))) return;
+        if(modifierKey && sym!=voiceKeys[voiceIndex] && (modifiers & (8|128))) return;
+        if(voice_.owns(ic) && !event.isRelease()){
+            cancelVoice(ic);render(ic,false);
+            if(sym==FcitxKey_Escape){event.filterAndAccept();return;}
+        }
+        if((sym==FcitxKey_Shift_L || sym==FcitxKey_Shift_R) && cowtype2_runtime_option(runtime_.get(),2)){
+            if(!event.isRelease()){if(state->shiftPressed){state->shiftRepeated=true;}else if(!state->shiftRepeated && !(modifiers & (4|8|64))){state->shiftPressed=time;}}
+            else {const auto pressed=state->shiftRepeated?0:state->shiftPressed;state->shiftPressed=0;state->shiftRepeated=false;if(pressed && time-pressed<500000 && !(modifiers & (4|8|64))){cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);render(ic,true);instance_->showCustomInputMethodInformation(ic,subMode(entry,*ic));event.filterAndAccept();return;}}
+            return;
+        }
+        if(state->shiftPressed){state->shiftRepeated=true;}state->shiftPressed=0;
+        if(!event.isRelease() && (sym==FcitxKey_Delete || sym==FcitxKey_BackSpace) && !(modifiers & (8|64)) && ((modifiers & 4) || (sym==FcitxKey_Delete && (modifiers & 1)))){
+            const char *preedit=cowtype2_session_preedit(state->session.get());
+            if(preedit && *preedit){cowtype2_session_forget(state->session.get());render(ic,false);event.filterAndAccept();return;}
+        }
+        if(!event.isRelease()){state->voiceStatus.clear();}
+        switch (sym) {
+        case FcitxKey_space: case FcitxKey_KP_Space: code = CT2_SPACE; break;
+        case FcitxKey_Return: case FcitxKey_KP_Enter: code = CT2_ENTER; break;
+        case FcitxKey_Escape: code = CT2_ESCAPE; break;
+        case FcitxKey_BackSpace: code = CT2_BACKSPACE; break;
+        case FcitxKey_Delete: case FcitxKey_KP_Delete: code = CT2_DELETE; break;
+        case FcitxKey_Left: case FcitxKey_KP_Left: code = CT2_LEFT; break;
+        case FcitxKey_Right: case FcitxKey_KP_Right: code = CT2_RIGHT; break;
+        case FcitxKey_Up: case FcitxKey_KP_Up: code = CT2_PREVIOUS; break;
+        case FcitxKey_Down: case FcitxKey_KP_Down: code = CT2_NEXT; break;
+        case FcitxKey_Home: case FcitxKey_KP_Home: code = CT2_HOME; break;
+        case FcitxKey_End: case FcitxKey_KP_End: code = CT2_END; break;
+        case FcitxKey_Page_Up: case FcitxKey_KP_Page_Up: code = CT2_PAGE_UP; break;
+        case FcitxKey_Page_Down: case FcitxKey_KP_Page_Down: code = CT2_PAGE_DOWN; break;
+        case FcitxKey_F6: code = CT2_TOGGLE; break;
+        default:
+            code = Key::keySymToUnicode(sym);
+            if (sym >= FcitxKey_KP_0 && sym <= FcitxKey_KP_9) { code = '0' + sym - FcitxKey_KP_0; }
+        }
+        // Paging shortcuts only apply to a visible candidate list in Chinese mode.
+        if(!event.isRelease() && !(modifiers & (1|4|8|64|128)) && !cowtype2_session_mode(state->session.get()) && ic->inputPanel().candidateList()) {
+            if(cowtype2_runtime_option(runtime_.get(),9) && (sym==FcitxKey_bracketleft || sym==FcitxKey_bracketright))
+                code=sym==FcitxKey_bracketleft?CT2_PAGE_UP:CT2_PAGE_DOWN;
+            if(cowtype2_runtime_option(runtime_.get(),10) && (sym==FcitxKey_minus || sym==FcitxKey_equal))
+                code=sym==FcitxKey_minus?CT2_PAGE_UP:CT2_PAGE_DOWN;
+        }
+        uint32_t previous = 0xffffffff;
+        // Only ASCII numeric context is needed for the current punctuation guard.
+        const auto &surrounding = ic->surroundingText();
+        if (ic->capabilityFlags().test(CapabilityFlag::SurroundingText) && surrounding.isValid()
+            && surrounding.cursor() == surrounding.anchor() && surrounding.cursor()) {
+            const auto &text = surrounding.text(); size_t offset = 0; unsigned count = 0;
+            while (offset < text.size() && count < surrounding.cursor()) {
+                size_t start = offset++; while (offset < text.size() && (static_cast<unsigned char>(text[offset]) & 0xc0) == 0x80) { ++offset; }
+                if (++count == surrounding.cursor() && offset - start == 1) { previous = static_cast<unsigned char>(text[start]); }
+            }
+        }
+        auto *session = ic->propertyFor(&factory_)->session.get();
+        bool handled = cowtype2_session_key(session, code, event.key().states().toInteger(), event.isRelease(), previous);
+        render(ic, true); if (handled) { event.filterAndAccept(); }
+    }
+    void choose(InputContext *ic, size_t index) { cowtype2_session_select(ic->propertyFor(&factory_)->session.get(), index); render(ic, true); }
+    void page(InputContext *ic, bool next) {
+        cowtype2_session_key(ic->propertyFor(&factory_)->session.get(), next ? CT2_PAGE_DOWN : CT2_PAGE_UP, 0, false, 0xffffffff); render(ic, true);
+    }
+private:
+    void toggleVoice(InputContext *ic) {
+        auto *state=ic->propertyFor(&factory_);state->voiceStarted=!voice_.active();
+        if(voice_.owns(ic)) { voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c"); }
+        else if(voice_.active()) state->voiceStatus=ct_tr("message.3a1b85f91ecc");
+        else if(const char *p=cowtype2_session_preedit(state->session.get());p && *p) state->voiceStatus=ct_tr("message.fae536a183cb");
+        else {state->voiceStatus=ct_tr("message.71cea6a7bc11");if(!voice_.start(ic,environment("COWTYPE_VOICE_HELPER",COWTYPE_VOICE_EXECUTABLE))) state->voiceStatus=ct_tr("message.f1e43bff56c4");}
+    }
+    void cancelVoice(InputContext *ic){
+        voice_.cancel(ic);auto *state=ic->propertyFor(&factory_);state->voiceHold.reset();state->voiceLevel.clear();state->voiceStatus.clear();state->voicePartial.clear();state->voicePressed=0;
+    }
+    void start(int scheme) {
+        auto &resource = resources_[scheme];
+        auto data = environment("COWTYPE_DATA_DIR", COWTYPE_SYSTEM_DATA_DIR);
+        std::string home = environment("XDG_DATA_HOME", environment("HOME", "") + "/.local/share");
+        std::string path = data + (scheme ? "/wubi/lexicon.tsv" : "/ice/lexicon.tsv");
+        std::string optional = scheme ? "" : home + "/cowtype/dictionaries/wanxiang/lexicon.tsv";
+        std::string stamp;
+        for(const auto &file:{path,optional}) {
+            std::error_code error;
+            const auto size=std::filesystem::file_size(file,error);
+            const auto modified=std::filesystem::last_write_time(file,error);
+            stamp+=file+":"+(error?"missing":std::to_string(size)+":"+std::to_string(modified.time_since_epoch().count()))+";";
+        }
+        if(resource.requestedStamp==stamp && (resource.engine || resource.pending.valid())) {
+            ctDiagnostic("event=dictionary_reuse scheme="+std::to_string(scheme));return;
+        }
+        if(resource.pending.valid()) {resource.reload=true;return;}
+        resource.requestedStamp=std::move(stamp);
+        ctDiagnostic("event=dictionary_start scheme="+std::to_string(scheme));
+        resourceTimer_->setTime(now(CLOCK_MONOTONIC)+20000);resourceTimer_->setOneShot();
+        resource.pending = std::async(std::launch::async, [path, optional, scheme] {
+            const auto began=now(CLOCK_MONOTONIC);
+            EnginePtr engine(cowtype2_engine_new(path.c_str(), optional.c_str(), scheme?1:2), cowtype2_engine_free);
+            std::string error = engine ? "" : cowtype2_last_error();
+            ctDiagnostic("event=dictionary_stage scheme="+std::to_string(scheme)+" stage=rust elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
+            const auto decoderBegan=now(CLOCK_MONOTONIC);
+            if(engine && !scheme) {
+                try {
+                    auto decoder=std::make_unique<LibimeDecoder>(path,optional);
+                    if(!cowtype2_engine_set_decoder(engine.get(),decoder.get(),LibimeDecoder::query,LibimeDecoder::destroy)) throw std::runtime_error("Decoder attachment failed");
+                    decoder.release();
+                } catch(const std::exception &e) { error=e.what(); engine.reset(); }
+            }
+            ctDiagnostic("event=dictionary_built scheme="+std::to_string(scheme)+" ready="+std::to_string(bool(engine))+" libime_ms="+std::to_string((now(CLOCK_MONOTONIC)-decoderBegan)/1000)+" total_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
+            return std::make_pair(std::move(engine), error);
+        });
+    }
+    bool finishResource(int scheme) {
+        auto &resource = resources_[scheme];
+        if (resource.pending.valid() && resource.pending.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+            const auto began=now(CLOCK_MONOTONIC);
+            auto result = resource.pending.get(); resource.failure = std::move(result.second);
+            if (result.first) { resource.engine = std::move(result.first); ++resource.generation; }
+            if (resource.reload) { resource.reload = false; start(scheme); }
+            ctDiagnostic("event=dictionary_attached scheme="+std::to_string(scheme)+" elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
+            return true;
+        }
+        return false;
+    }
+    void attach(InputContext *ic, int scheme) {
+        finishResource(scheme);
+        auto &resource=resources_[scheme];
+        const auto began=now(CLOCK_MONOTONIC);
+        auto *state = ic->propertyFor(&factory_);
+        if (state->scheme != scheme) {
+            state->session.reset(cowtype2_session_new(resource.engine.get())); state->scheme = scheme; state->generation = resource.generation; state->configGeneration=0;
+        } else if (state->generation != resource.generation) {
+            cowtype2_session_set_engine(state->session.get(), resource.engine.get()); state->generation = resource.generation;
+        }
+        if(state->configGeneration!=configGeneration_){cowtype2_session_configure(state->session.get(),runtime_.get());state->configGeneration=configGeneration_;}
+        const auto elapsed=(now(CLOCK_MONOTONIC)-began)/1000;
+        if(elapsed>=20) ctDiagnostic("event=slow_session_attach scheme="+std::to_string(scheme)+" elapsed_ms="+std::to_string(elapsed));
+    }
+    void render(InputContext *ic, bool consumeCommit) {
+        auto *state = ic->propertyFor(&factory_); auto *session = state->session.get();
+        if (!session) { return; }
+        if (consumeCommit) { const char *commit = cowtype2_session_commit(session); if (commit && *commit) { ic->commitString(commit); } }
+        auto &panel = ic->inputPanel(); panel.reset();
+        Text preedit;
+        if (const char *value = cowtype2_session_preedit(session); value && *value) {
+            preedit.append(value, TextFormatFlags(TextFormatFlag::Underline) | TextFormatFlag::DontCommit);
+        }
+        preedit.setCursor(cowtype2_session_cursor(session));
+        if(voice_.owns(ic) && !state->voicePartial.empty()){preedit=Text();preedit.append(state->voicePartial,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);preedit.setCursor(state->voicePartial.size());}
+        if (ic->capabilityFlags().test(CapabilityFlag::Preedit)) { panel.setClientPreedit(preedit); }
+        else { panel.setPreedit(preedit); }
+        if (state->scheme >= 0 && !preedit.empty()) {
+            auto &resource = resources_[state->scheme];
+            if (!resource.engine) { panel.setAuxUp(Text(resource.failure.empty() ? ct_tr("message.c28e670cc9d0") : ct_tr("message.b016e0472c97"))); }
+            else if (const char *warning = cowtype2_engine_warning(resource.engine.get()); warning && *warning) { panel.setAuxUp(Text(warning)); }
+        }
+        if (cowtype2_session_count(session)) {
+            auto list = std::make_unique<Page>(this, ic, cowtype2_session_has_page(session, false), cowtype2_session_has_page(session, true));
+            const auto pageSize=cowtype2_runtime_option(runtime_.get(),0);
+            list->setPageSize(pageSize); list->setLayoutHint(cowtype2_runtime_option(runtime_.get(),1)?CandidateLayoutHint::Horizontal:CandidateLayoutHint::Vertical);
+            std::vector<Key> selectionKeys;for(unsigned n=0;n<pageSize;++n){selectionKeys.emplace_back(static_cast<KeySym>(FcitxKey_1+n));}list->setSelectionKey(selectionKeys);
+            for (size_t i = 0; i < cowtype2_session_count(session); ++i) {
+                list->append<Word>(cowtype2_session_word(session, i), (state->scheme==0 && !cowtype2_runtime_option(runtime_.get(),7))?"":cowtype2_session_reading(session, i), this, i);
+            }
+            list->setGlobalCursorIndex(cowtype2_session_candidate_cursor(session)); panel.setCandidateList(std::move(list));
+        }
+        if(!state->voiceStatus.empty()){panel.setAuxDown(Text(state->voiceStatus));}
+        else if(const char *warning=cowtype2_runtime_warning(runtime_.get());warning && *warning){panel.setAuxDown(Text(warning));}
+        ic->updatePreedit(); ic->updateUserInterface(UserInterfaceComponent::InputPanel);
+    }
+    uint64_t initializedAt_=[]{const auto began=now(CLOCK_MONOTONIC);ctDiagnostic("event=addon_start version=0.1.0-dev.6.3");return began;}();
+    std::unique_ptr<Cowtype2Runtime,decltype(&cowtype2_runtime_free)> runtime_{cowtype2_runtime_new(),cowtype2_runtime_free};
+    unsigned configGeneration_=0;
+    Instance *instance_;
+    FactoryFor<State> factory_;
+    VoiceWorker voice_;
+    std::array<Resource, 2> resources_;
+    std::unique_ptr<HandlerTableEntry<EventHandler>> focus_;
+    std::unique_ptr<EventSourceTime> resourceTimer_;
+};
+void Word::select(InputContext *ic) const { owner_->choose(ic, index_); }
+void Page::prev() { if (previous_) { owner_->page(ic_, false); } }
+void Page::next() { if (next_) { owner_->page(ic_, true); } }
+class Factory final : public AddonFactory {
+    AddonInstance *create(AddonManager *manager) override { return new Cowtype(manager->instance()); }
+};
+} // namespace
+FCITX_ADDON_FACTORY_V2(cowtype, Factory)

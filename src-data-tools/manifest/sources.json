@@ -1,0 +1,266 @@
+{
+  "format": 1,
+  "reviewed_on": "2026-11-18",
+  "profiles": {
+    "ice": {
+      "repository": "iDvel/rime-ice",
+      "revision": "927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6",
+      "license": "GPL-3.0-only",
+      "authors": "iDvel and rime-ice contributors; Huandeep; Lithium-7; original source authors credited in retained Credits.md and table headers",
+      "root": "rime_ice.dict.yaml",
+      "tables": [
+        "cn_dicts/8105.dict.yaml",
+        "cn_dicts/base.dict.yaml",
+        "cn_dicts/ext.dict.yaml",
+        "cn_dicts/others.dict.yaml"
+      ],
+      "notices": [
+        "LICENSE",
+        "README.md",
+        "others/docs/Credits.md"
+      ],
+      "excluded_imports": {
+        "cn_dicts/tencent.dict.yaml": "No explicit readings; Rime auto-pronunciation is not implemented."
+      },
+      "scheme": "pinyin",
+      "default": true,
+      "files": [
+        {
+          "path": "rime_ice.dict.yaml",
+          "sha256": "30fa643eec7af585cffacdd9bb6556ce4d17a0e848b83ea1fca3fdcfc5891595",
+          "bytes": 1407,
+          "git_blob_sha1": "3ecce19ad1a5bb0ef443b25cdc5b564e91df6806",
+          "version": "2026-01-26",
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/rime_ice.dict.yaml"
+        },
+        {
+          "path": "cn_dicts/8105.dict.yaml",
+          "sha256": "1f9a42b91dea6982baee2551981780271aeffd78876662b9c9f324e56b37b120",
+          "bytes": 115728,
+          "git_blob_sha1": "b2e80ec5231c972898e573b412f0378320b08adb",
+          "version": "2026-08-16",
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/cn_dicts/8105.dict.yaml"
+        },
+        {
+          "path": "cn_dicts/base.dict.yaml",
+          "sha256": "c1f07daa4680a437a04169211e4a80b19923fd61cff322753d3ee98a7e1bffc8",
+          "bytes": 16609062,
+          "git_blob_sha1": "459b42f03909402b5b6ae74e1cdc9b1c169fbae9",
+          "version": "2026-11-01",
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/cn_dicts/base.dict.yaml"
+        },
+        {
+          "path": "cn_dicts/ext.dict.yaml",
+          "sha256": "f713d82f5a3c38bf955fef631353c6bd08c3e1ae6674d7db0c4f286480d760a1",
+          "bytes": 11923503,
+          "git_blob_sha1": "8bfaa9d17cc14a19a3f6cc0e55d8fb158e1755e2",
+          "version": "2026-11-01",
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/cn_dicts/ext.dict.yaml"
+        },
+        {
+          "path": "cn_dicts/others.dict.yaml",
+          "sha256": "c7475d773e619f61b88d47fa8ec789aba02aa0d1c98edaed309e53487b048b32",
+          "bytes": 17454,
+          "git_blob_sha1": "e300d40b1ccf91fc410be6ac8d008b9fc8f1ec9e",
+          "version": "2026-08-08",
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/cn_dicts/others.dict.yaml"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+          "bytes": 35149,
+          "git_blob_sha1": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "sha256": "818e752e0e4bc38eadd17fd11e4139d31379aa0193476f3885b9f40e3a95f37e",
+          "bytes": 20494,
+          "git_blob_sha1": "924ffc7bd68a193203e6bd9fb2d5d5de2c31e620",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/README.md"
+        },
+        {
+          "path": "others/docs/Credits.md",
+          "sha256": "3fddb596e5bbd3c9997fbf1d382819632c5ed3d22d58a16bf100e97fe05dae14",
+          "bytes": 2224,
+          "git_blob_sha1": "18e49f81809846dfd7b73dc86dfd3ed2604519be",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/iDvel/rime-ice/927e1cf1d3eeb9bf4be85e3f684dba4dd485b6f6/others/docs/Credits.md"
+        }
+      ]
+    },
+    "wubi": {
+      "repository": "rime/rime-wubi",
+      "revision": "152a0d3f3efe40cae216d1e3b338242446848d07",
+      "license": "LGPL-3.0-only",
+      "authors": "Wozy; Chen Xing; Yu Yuwei (acevery); Gong Chen; Wang Yongmin; see retained AUTHORS and original table header",
+      "root": "wubi86.dict.yaml",
+      "tables": [
+        "wubi86.dict.yaml"
+      ],
+      "notices": [
+        "LICENSE",
+        "AUTHORS",
+        "README.md"
+      ],
+      "excluded_imports": {},
+      "scheme": "wubi86",
+      "default": true,
+      "files": [
+        {
+          "path": "wubi86.dict.yaml",
+          "sha256": "f833d86b72341fe82e069a425b6625f29ef85f1bc0f34f6fb7975fe514888b5a",
+          "bytes": 2289545,
+          "git_blob_sha1": "58d8f794577ebedacb4b7ce71a8b885aca75a8eb",
+          "version": "0.7",
+          "url": "https://raw.githubusercontent.com/rime/rime-wubi/152a0d3f3efe40cae216d1e3b338242446848d07/wubi86.dict.yaml"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+          "bytes": 7651,
+          "git_blob_sha1": "65c5ca88a67c30becee01c5a8816d964b03862f9",
+          "version": "a) under this License, provided that you make a good faith effort to",
+          "url": "https://raw.githubusercontent.com/rime/rime-wubi/152a0d3f3efe40cae216d1e3b338242446848d07/LICENSE"
+        },
+        {
+          "path": "AUTHORS",
+          "sha256": "4e4ca0e3ae6763a7cd5913f92c3b28091a7ec97d5cf4fc96c8f1a294e43f2839",
+          "bytes": 260,
+          "git_blob_sha1": "b9faa5c0114bd57e8d5f7a6bc1d596540198bf1a",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/rime/rime-wubi/152a0d3f3efe40cae216d1e3b338242446848d07/AUTHORS"
+        },
+        {
+          "path": "README.md",
+          "sha256": "05dc392a3f6b2b93ea61411a909380615a2d99d018c6a041c4a6ee96ba74132e",
+          "bytes": 399,
+          "git_blob_sha1": "2c3e0ac3ce2062d1556bdd93dfde794953ac5e80",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/rime/rime-wubi/152a0d3f3efe40cae216d1e3b338242446848d07/README.md"
+        }
+      ]
+    },
+    "wanxiang": {
+      "repository": "amzxyz/rime-wanxiang",
+      "revision": "3f605f800b0a5cf4acf2d9a965850bd970cba8f4",
+      "license": "CC-BY-4.0",
+      "authors": "amzxyz and rime-wanxiang / rime-wanxiang-data contributors; original headers retained",
+      "root": "wanxiang.dict.yaml",
+      "tables": [
+        "dicts/zi.dict.yaml",
+        "dicts/jichu.dict.yaml",
+        "dicts/cuoyin.dict.yaml",
+        "dicts/duoyin.dict.yaml",
+        "dicts/diming.dict.yaml",
+        "dicts/mingren.dict.yaml",
+        "dicts/yiren.dict.yaml"
+      ],
+      "notices": [
+        "LICENSE",
+        "README.md"
+      ],
+      "excluded_imports": {},
+      "scheme": "pinyin-toned",
+      "default": false,
+      "files": [
+        {
+          "path": "wanxiang.dict.yaml",
+          "sha256": "8c61a89f522a911eecfbe7807c44d06f17845c5859358992d80023b69402a092",
+          "bytes": 1311,
+          "git_blob_sha1": "621a4032d57181447b5aaa003354731b8921ba59",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/wanxiang.dict.yaml"
+        },
+        {
+          "path": "dicts/zi.dict.yaml",
+          "sha256": "f321215a3aa7eef6317ec3b9e9725bf777480627488f5b6a42febaf7687e4924",
+          "bytes": 616568,
+          "git_blob_sha1": "a284bf99570f58dfba5bb7a40d0a89d08a754e98",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/zi.dict.yaml"
+        },
+        {
+          "path": "dicts/jichu.dict.yaml",
+          "sha256": "f832098b142fef94fbde4d8de32bc8f960c7b2ea61f2853fdc4f29f47b2f18bf",
+          "bytes": 51372657,
+          "git_blob_sha1": "cdc354a250e46c8012ab976391c915fccbfdd01e",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/jichu.dict.yaml"
+        },
+        {
+          "path": "dicts/cuoyin.dict.yaml",
+          "sha256": "fdb1bfdf72abcc9f506964582915ee48608de7be60d1d05ac3732161f04d58ac",
+          "bytes": 8148,
+          "git_blob_sha1": "a785a9e6af8141bc4704f9c14a4e5f9a96aa9429",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/cuoyin.dict.yaml"
+        },
+        {
+          "path": "dicts/duoyin.dict.yaml",
+          "sha256": "85c2fe78121a05c50511e8defa473bd801c9697be79c4a548bb2f265c45f15f2",
+          "bytes": 137535,
+          "git_blob_sha1": "721341cedf340c2720060dd0d860a76c9a5cfb04",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/duoyin.dict.yaml"
+        },
+        {
+          "path": "dicts/diming.dict.yaml",
+          "sha256": "030f074d8cd95e002816d37e1f9665dd252e676b05d924993541afee53f22625",
+          "bytes": 3306886,
+          "git_blob_sha1": "5e21a8f693e95311669ffb0e820a259c6fc88cec",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/diming.dict.yaml"
+        },
+        {
+          "path": "dicts/mingren.dict.yaml",
+          "sha256": "9684bbabdd782fea8816bb3b5c8ddcfd7dd40362360dde554dd534201fb412d6",
+          "bytes": 671361,
+          "git_blob_sha1": "4ee167126adf36ed9c7388b5cbf38d67c65637ec",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/mingren.dict.yaml"
+        },
+        {
+          "path": "dicts/yiren.dict.yaml",
+          "sha256": "ab041efdaf32af2f799c545244c8575cc5d871eccf6f0317a9a1c6182e61ea98",
+          "bytes": 423823,
+          "git_blob_sha1": "2f71ff177c2104ace8276283ea21905fc524f896",
+          "version": "LTS",
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/dicts/yiren.dict.yaml"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+          "bytes": 18656,
+          "git_blob_sha1": "4ea99c213c5c0c005ae4e80df8e52169d06896ec",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "sha256": "f7a511cc8e907eef347ee0ccb6ecd2f00db452f01facb7ec1c25fc323c07c6a6",
+          "bytes": 6834,
+          "git_blob_sha1": "6091ee39b29200538bb1aab1a726302d3fe3b554",
+          "version": null,
+          "url": "https://raw.githubusercontent.com/amzxyz/rime-wanxiang/3f605f800b0a5cf4acf2d9a965850bd970cba8f4/README.md"
+        }
+      ]
+    }
+  },
+  "supplementary_notices": [
+    {
+      "path": "src-data-tools/manifest/notices/THUOCL-LICENSE",
+      "repository": "thunlp/THUOCL",
+      "revision": "a30ce79d895d01ab5132a5c74c29703ff7efb4cc",
+      "url": "https://github.com/thunlp/THUOCL/blob/a30ce79d895d01ab5132a5c74c29703ff7efb4cc/LICENSE",
+      "sha256": "db4b8cca414db4cf487b933d07a0514f77caf44f9f3d392f2bc9d7ba0d511c58",
+      "bytes": 1063,
+      "license": "MIT",
+      "purpose": "Additional original MIT copyright/permission notice for THUOCL-derived content credited by Ice base table",
+      "acquired_on": "2026-11-18",
+      "method": "GitHub code page rawLines, currentOid verified"
+    }
+  ]
+}

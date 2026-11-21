@@ -1,0 +1,90 @@
+{
+  "format": 1,
+  "verified": [
+    {
+      "url": "https://aclanthology.org/W11-2123/",
+      "verified_on": "2026-11-18",
+      "sha256": "b98c1304319b11c7b930a236530b7f4f5e499c9f5ccee33242ff17a7d888842b",
+      "scope": "Reference/license text only; no implementation or model downloaded"
+    },
+    {
+      "url": "https://arxiv.org/abs/1706.03762",
+      "verified_on": "2026-11-18",
+      "sha256": "29e42a996471db9c019f1122825cdac0e6d64c96767d9ee5c0b8891de6204bee",
+      "scope": "Reference/license text only; no implementation or model downloaded"
+    },
+    {
+      "url": "https://www.unicode.org/license.txt",
+      "verified_on": "2026-11-18",
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+      "scope": "Reference/license text only; no implementation or model downloaded"
+    },
+    {
+      "url": "https://modelscope.cn/api/v1/models/Qwen/Qwen3-0.6B-GGUF/repo?Revision=32d6327dd2a5b42f7ce0fe5e6b6f25346b0ee8f9&FilePath=LICENSE",
+      "verified_on": "2026-11-18",
+      "sha256": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd",
+      "size": 11544,
+      "license": "Apache-2.0",
+      "saved_as": "src-model-tools/text-models/LICENSE.Qwen3",
+      "scope": "Official license text; model weight metadata separately verified, no weights downloaded"
+    }
+  ],
+  "reference_only": [
+    {
+      "url": "https://raw.githubusercontent.com/BYVoid/OpenCC/master/LICENSE",
+      "status": "reference-only; network verification failed on 2026-11-18"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/rime/rime-wubi/master/LICENSE",
+      "status": "reference-only; network verification failed on 2026-11-18"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/iDvel/rime-ice/main/LICENSE",
+      "status": "reference-only; network verification failed on 2026-11-18"
+    }
+  ],
+  "model_metadata": [
+    {
+      "repository": "Qwen/Qwen3-0.6B-GGUF",
+      "provider": "modelscope",
+      "revision": "32d6327dd2a5b42f7ce0fe5e6b6f25346b0ee8f9",
+      "license": "Apache-2.0",
+      "license_evidence": "Full official LICENSE verified and retained",
+      "readme": {
+        "size": 6236,
+        "sha256": "44adabae2153c3a7bb741b86fbffd48736bc95118831935fdfc4d3cc1854f2f5"
+      },
+      "weight": {
+        "name": "Qwen3-0.6B-Q8_0.gguf",
+        "size": 639446688,
+        "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+        "basis": "Official repo/files SHA-256 metadata, not downloaded"
+      },
+      "verified_on": "2026-11-18",
+      "limits": "General causal language model, no IME quality or adapter verification",
+      "metadata_url": "https://modelscope.cn/api/v1/models/Qwen/Qwen3-0.6B-GGUF/repo/files?Revision=32d6327dd2a5b42f7ce0fe5e6b6f25346b0ee8f9&Recursive=true",
+      "model_card_url": "https://modelscope.cn/api/v1/models/Qwen/Qwen3-0.6B-GGUF/repo?Revision=32d6327dd2a5b42f7ce0fe5e6b6f25346b0ee8f9&FilePath=README.md"
+    },
+    {
+      "repository": "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online",
+      "provider": "modelscope",
+      "revision": "70e272c03055313e90f34db80bef9c19745e41cf",
+      "license": "Apache-2.0",
+      "license_evidence": "Official model-card frontmatter; no standalone LICENSE at this snapshot",
+      "readme": {
+        "size": 13440,
+        "sha256": "e424224c75e4d803f2177d916ea614e40b19345bb080b0edb9cc28b45b33133c"
+      },
+      "weight": {
+        "name": "model.pt",
+        "size": 880716041,
+        "sha256": "4fdfb48ed4471777c9a511e96a2acae17f77cac9d709cc756634622769192a64",
+        "basis": "Official repo/files SHA-256 metadata, not downloaded"
+      },
+      "verified_on": "2026-11-18",
+      "limits": "Do not conflate model-card license with FunASR MIT. HF unavailable this round; retained downloader has previously pinned HF hashes, not re-verified in this round.",
+      "metadata_url": "https://modelscope.cn/api/v1/models/iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online/repo/files?Revision=70e272c03055313e90f34db80bef9c19745e41cf&Recursive=true",
+      "model_card_url": "https://modelscope.cn/api/v1/models/iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online/repo?Revision=70e272c03055313e90f34db80bef9c19745e41cf&FilePath=README.md"
+    }
+  ]
+}

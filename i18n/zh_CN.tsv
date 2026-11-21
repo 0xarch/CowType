@@ -1,0 +1,149 @@
+about.comments	Linux 中文输入法。
+action.cancel	取消
+action.cancel.download	取消下载并准备
+action.check	校验模型
+action.choose	选择目录
+action.clear	清除学习记录
+action.continue	下载
+action.delete	清除
+action.download	下载并准备
+action.fcitx	打开 Fcitx5 配置
+action.words.install	启用万象
+action.words.remove	移除万象
+action.words.source	来源与许可
+app.about	关于 CowType
+app.name	CowType
+app.title	CowType 设置
+dialog.clear.body	删除本机选词偏好
+dialog.clear.title	确认清除学习记录？
+dialog.download.body	将连接 ModelScope 或 Hugging Face 及 Python 软件源，下载约 880 MB Paraformer 权重和工具环境并导出模型。
+dialog.download.title	确认下载语音模型？
+error.dependencies	CowType 设置需要 Libadwaita、GTK4 和 Python GObject。
+error.load	读取设置失败，已禁止覆盖原文件：{error}
+error.operation	操作失败：{error}
+error.spawn	无法打开 Fcitx5 配置，请检查配置工具是否已安装。
+group.appearance	候选与模式
+group.integration	系统集成
+group.model	语音模型
+group.pinyin	拼音
+group.privacy	学习与隐私
+group.voice	语音输入
+group.words	附加词库
+hint.always_resident	CowType 加载时即准备模型，约占用 0.9 GB 内存。需同时启用语音输入。
+hint.fcitx	在 Fcitx5 中添加牛打字·拼音或牛打字·五笔86。更改会自动保存。
+hint.hotkey	功能键支持点按切换或长按录音；Alt/AltGr 可单独开启长按。组合键正常传递；Esc 或失焦取消。
+hint.initials	例如 kn → 可能
+hint.learning	只保存在本机。仅确认选词会学习；五笔保持码表顺序。
+hint.libime	使用 libime 分词与选词，词频来自雾凇词库。#remove
+hint.model	模型由用户下载，安装包不含权重。继续使用原有模型目录。
+hint.modifier_hold	按住 300 毫秒开始录音，松开停止；短按仍可切换。
+hint.resident	首次使用后保留约 0.9 GB 内存。
+hint.translate	尚未接入翻译后端。
+hint.words	默认包含雾凇拼音与五笔86。
+hint.words.source	固定版本 {revision}；下载约 {size} MiB。
+hotkey.Alt_L	左 Alt
+hotkey.Alt_R	右 Alt
+hotkey.Control_R	右 Ctrl
+hotkey.F10	F10
+hotkey.F8	F8
+hotkey.F9	F9
+hotkey.ISO_Level3_Shift	AltGr
+message.13a0d20bc448	设置文件过大
+message.15350d9cee46	语音消息超出长度限制
+message.171805c518e6	语音控制消息过长
+message.2271656204e4	语音处理超时，已取消
+message.228d321b266f	学习保存失败；本次偏好仅在内存中保留
+message.2b0bac73ff4a	录音读取失败
+message.348ea84c6046	英文
+message.37a87a9cf26d	模型来源清单缺少文件摘要
+message.3a1b85f91ecc	另一个输入框正在使用语音
+message.50698e404b8c	结束录音，正在提交尾部…
+message.518a5c4b7dd3	无效的常驻语音控制协议
+message.599d9125c1b0	拒绝写入符号链接：
+message.5adaeff16361	录音管道无法设为非阻塞
+message.5b95106f776a	需要不超过120秒的16k单声道S16LE PCM
+message.5c7e93923246	语音进程已退出，未提交结果
+message.5f53e12c4429	不支持的模型来源；请使用随附官方准备工具
+message.6d29fedd26ae	录音停止超时；未提交不完整结果
+message.71cea6a7bc11	正在启动本地语音…
+message.72726d8818f6	中文
+message.7e0c52d08c6e	--pcm 缺少文件
+message.81f954a8dff5	录音中；再次按 {shortcut} 停止，Esc 取消
+message.8c1f2492bb4b	无法启动 parecord；请安装 libpulse 并检查音频服务
+message.8eb75ca37861	语音通道读取失败
+message.90b0f30f9ed4	缺少或损坏 SOURCE.json；请用随附准备工具导出模型
+message.95c892b2b067	候选数量必须为 3–9
+message.97f37ac9ae4a	不是受支持的官方双图导出
+message.9bcf5a1e4f0b	语音文本编码无效
+message.9f30c9b3ac26	未识别到文字
+message.a02910fcb9c1	--serve 不接受单次诊断参数
+message.a3f8ce85d454	学习文件无法读取，已禁用保存；原文件未覆盖
+message.a68c094df355	录音轮询失败
+message.a8b2debdc671	录音设备关闭或无权限；请检查 PulseAudio/PipeWire 默认麦克风
+message.b016e0472c97	词典不可用；Enter 可提交原文
+message.c225acbf3176	识别中…再次按 {shortcut} 停止，Esc 取消
+message.c28e670cc9d0	词典载入中；Enter 可提交原文
+message.c9ecf7403c6a	可选词库无法读取，使用基础词库
+message.cafaa54a21bf	语音消息类型无效
+message.cd99eb09686c	可选词库无效，使用基础词库
+message.cf9746cec391	语音进程提前退出；请检查模型与音频服务
+message.d5553e1cedd2	无效设置：
+message.d984cc090e22	模型文件摘要不匹配：{name}
+message.dbcff5ab2a46	--dir 缺少目录
+message.de3a048a1ebc	不支持的设置版本
+message.e3bbd74cca85	语音协议无效
+message.e6575bb6801f	语音后端异常；请检查 ONNX Runtime 与模型版本
+message.f1e43bff56c4	无法启动 cowtype-voice，请检查安装
+message.f84fffe2c588	无法打开录音管道
+message.fae536a183cb	请先完成当前拼音，再启动语音
+message.fd6955acd5d1	未知语音参数
+message.ff19b914000e	模型来源清单过大
+message.ffc05e0f887f	设置必须包含单独的 CowType 分组
+model.choose	选择 Paraformer 双图目录
+page.general	常规
+page.input	输入
+page.keys	按键
+page.translate	互译
+page.voice	语音
+page.words	词库
+setting.Completion	拼音补全
+setting.Correction	拼音纠错
+setting.Horizontal	横向排列候选
+setting.Initials	简拼与全拼混输
+setting.Learning	学习选词偏好
+setting.PageBrackets	使用 [ 和 ] 翻页
+setting.PageMinusEqual	使用 - 和 = 翻页
+setting.PageSize	每页候选数
+setting.Punctuation	中文标点
+setting.Sentence	长句分词
+setting.ShiftToggle	单按 Shift 切换中英文
+setting.ShowPinyin	候选词旁显示拼音
+setting.Voice	启用本地语音输入
+setting.VoiceAlwaysResident	始终保留实例
+setting.VoiceHotkey	语音快捷键
+setting.VoiceModifierHold	Alt 快捷键支持长按录音
+setting.VoiceResident	保留语音模型实例
+status.cleared	已请求清除学习记录。
+status.model.cancelled	模型操作已取消。
+status.model.done	操作完成，请校验后启用语音。
+status.model.failed	操作失败或已取消（退出状态：{code}）。
+status.model.selected	已选择模型目录。
+status.saved	已保存并应用。
+status.saved.offline	已保存，Fcitx5 下次启动生效。
+status.words.absent	万象未安装，基础词库可离线使用。
+status.words.done	词库已更新。
+status.words.present	万象已安装。
+status.working	正在处理…
+voice.level.symbols	▁▁▂▃▄▅▆▇█
+voice.paraformer.cmvn	模型的 CMVN 统计无效（需要 560 维 AddShift / Rescale）
+voice.paraformer.config	不支持的 Paraformer 配置；需要 16k 流式 SANM、80维 Mel、LFR 7/6 和 512维编码器
+voice.paraformer.decoder	Paraformer 解码器执行失败
+voice.paraformer.encoder	Paraformer 编码器执行失败
+voice.paraformer.files	缺少流式 Paraformer ONNX 模型文件；请在设置中选择完整导出目录
+voice.paraformer.interface	ONNX 接口不匹配，请使用官方流式 Paraformer 双图导出（model.onnx / decoder.onnx）
+voice.paraformer.limit	单次语音不能超过 120 秒
+voice.paraformer.lock	Paraformer 模型状态锁不可用
+voice.paraformer.manual	模型由用户自行下载；用 --model-url 查看官方地址，再用 --dir 指定 ONNX 导出目录
+voice.paraformer.pointer	模型文件为空或仍是 Git LFS 指针，请先下载真实文件
+voice.paraformer.runtime	无法加载系统 ONNX Runtime（需要 1.22 或更高版本）
+voice.paraformer.shape	ONNX 输出形状或数值无效，模型、词表和缓存配置可能不匹配

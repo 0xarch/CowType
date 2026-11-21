@@ -1,0 +1,20 @@
+[package]
+name = "cowtype"
+version = "0.1.0-dev.6.3"
+edition = "2021"
+license = "GPL-3.0-or-later"
+description = "Linux input engine and session library"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib", "staticlib"]
+
+[features]
+native-ffi = []
+
+[[bin]]
+name = "cowtype"
+path = "src/bin/cowtype.rs"
+
+[dependencies]

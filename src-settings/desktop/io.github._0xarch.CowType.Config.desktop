@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=CowType Preferences
+Name[zh_CN]=CowType 设置
+Comment=Configure the independent CowType input method
+Exec=cowtype-config
+Icon=cowtype
+Terminal=false
+Categories=Settings;Utility;
+StartupNotify=true

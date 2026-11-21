@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Independently authored malformed data for strict/fallback tests.
+invalid row without TSV columns

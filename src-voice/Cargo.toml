@@ -1,0 +1,24 @@
+[package]
+name = "cowtype-voice"
+version = "0.1.0-dev.6.3"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+
+[[bin]]
+name = "cowtype-voice"
+path = "main.rs"
+
+[features]
+default = ["capture"]
+capture = []
+
+[dependencies]
+anyhow = "1"
+ort = { version = "=2.0.0-rc.12", default-features = false, features = ["std", "load-dynamic", "api-22"] }
+rustfft = "6.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+libc = "0.2"
+sha2 = "0.10"

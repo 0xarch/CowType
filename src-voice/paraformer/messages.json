@@ -1,0 +1,50 @@
+{
+  "voice.paraformer.cmvn": {
+    "zh_CN": "模型的 CMVN 统计无效（需要 560 维 AddShift / Rescale）",
+    "en": "Invalid CMVN statistics (expected 560-dimensional AddShift / Rescale)"
+  },
+  "voice.paraformer.config": {
+    "zh_CN": "不支持的 Paraformer 配置；需要 16k 流式 SANM、80维 Mel、LFR 7/6 和 512维编码器",
+    "en": "Unsupported Paraformer configuration; expected 16k streaming SANM, 80 Mel bins, LFR 7/6 and a 512-dimensional encoder"
+  },
+  "voice.paraformer.decoder": {
+    "zh_CN": "Paraformer 解码器执行失败",
+    "en": "Paraformer decoder execution failed"
+  },
+  "voice.paraformer.encoder": {
+    "zh_CN": "Paraformer 编码器执行失败",
+    "en": "Paraformer encoder execution failed"
+  },
+  "voice.paraformer.files": {
+    "zh_CN": "缺少流式 Paraformer ONNX 模型文件；请在设置中选择完整导出目录",
+    "en": "Missing streaming Paraformer ONNX files; select a complete exported directory in settings"
+  },
+  "voice.paraformer.interface": {
+    "zh_CN": "ONNX 接口不匹配，请使用官方流式 Paraformer 双图导出（model.onnx / decoder.onnx）",
+    "en": "Incompatible ONNX interface; use the official streaming Paraformer two-graph export (model.onnx / decoder.onnx)"
+  },
+  "voice.paraformer.limit": {
+    "zh_CN": "单次语音不能超过 120 秒",
+    "en": "A voice utterance cannot exceed 120 seconds"
+  },
+  "voice.paraformer.lock": {
+    "zh_CN": "Paraformer 模型状态锁不可用",
+    "en": "Paraformer model state lock is unavailable"
+  },
+  "voice.paraformer.manual": {
+    "zh_CN": "模型由用户自行下载；用 --model-url 查看官方地址，再用 --dir 指定 ONNX 导出目录",
+    "en": "Download models separately; use --model-url for the official source and --dir for the ONNX export directory"
+  },
+  "voice.paraformer.pointer": {
+    "zh_CN": "模型文件为空或仍是 Git LFS 指针，请先下载真实文件",
+    "en": "Model file is empty or a Git LFS pointer; download the actual file first"
+  },
+  "voice.paraformer.runtime": {
+    "zh_CN": "无法加载系统 ONNX Runtime（需要 1.22 或更高版本；可用 ORT_DYLIB_PATH 指定库）",
+    "en": "Cannot load system ONNX Runtime (1.22 or newer required; set ORT_DYLIB_PATH to select the library)"
+  },
+  "voice.paraformer.shape": {
+    "zh_CN": "ONNX 输出形状或数值无效，模型、词表和缓存配置可能不匹配",
+    "en": "Invalid ONNX output shape or value; model, tokens and cache configuration may not match"
+  }
+}

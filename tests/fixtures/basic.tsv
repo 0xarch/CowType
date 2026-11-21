@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Synthetic fixture written for deterministic tests; not a production lexicon.
+shan	山	12
+shan	衫	8
+shan	杉	6
+shan	珊	5
+shan	删	4
+shan	栅	3
+shan	跚	2
+hai	海	15
+shan hai	山海	20
+xi	西	10
+an	安	10
+xi an	西安	18
+xian	先	19
+lin	林	10
+lin	临	10
+lv	吕	10
+ke neng	可能	80

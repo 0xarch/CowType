@@ -1,0 +1,13 @@
+[Addon]
+Name=CowType
+Name[zh_CN]=牛打字
+Category=InputMethod
+Type=SharedLibrary
+Library=libcowtype-fcitx5
+Version=@PROJECT_VERSION@
+OnDemand=True
+Configurable=True
+ExternalConfig=cowtype-config
+
+[Addon/Dependencies]
+0=core:5.1.23

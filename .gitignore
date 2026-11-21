@@ -1,0 +1,25 @@
+# Local build and user resources never belong to project source.
+/target/
+/build/
+/dist/
+/resources/
+/.venv/
+/.cargo-home/
+__pycache__/
+*.py[cod]
+*.onnx
+*.onnx.data
+*.pt
+*.pth
+*.bin
+*.gguf
+*.safetensors
+*.wcache
+*.log
+*.part
+/**/venv/
+
+/.agents/
+/.aws/
+/.codex/
+/cowtype-state
