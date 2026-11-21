@@ -4,7 +4,8 @@
 
 # CowType
 
-CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。主体受 WowType 启发，并旨在用完全自由的代码消除 WowType 逆向破解微信输入法带来的风险。
+CowType(牛子输入法) 是基于 Fcitx5 的 Linux 拼音输入法。
+主体受 WowType 启发，并旨在用完全自由的代码消除 [WowType 逆向破解微信输入法](https://0xarch.github.io/posts/wowtype-audit)带来的项目持续性与法律风险。
 
 支持拼音、五笔、语音输入。
 
