@@ -194,6 +194,15 @@ impl Model {
         let open = |name: &str| -> Result<Session> {
             let mut builder = Session::builder()?
                 .with_intra_threads(threads)
+                .map_err(|e| anyhow::anyhow!(e.to_string()))?
+                // Streaming tensors change shape between chunks. Avoid retaining
+                // per-session arena high-water allocations between utterances;
+                // weights and prepacked kernels remain resident and unchanged.
+                .with_execution_providers([ort::ep::CPU::default()
+                    .with_arena_allocator(false)
+                    .build()])
+                .map_err(|e| anyhow::anyhow!(e.to_string()))?
+                .with_memory_pattern(false)
                 .map_err(|e| anyhow::anyhow!(e.to_string()))?;
             Ok(builder
                 .commit_from_file(dir.join(name))

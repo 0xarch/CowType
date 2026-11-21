@@ -20,8 +20,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "ecbe4d6a481933085b4de57c3698701386685b00eba10ca98bf3142ec4097d2d",
-      "bytes": 2268
+      "sha256": "64e2357d8a30678d9426d5efdfcc6c6453fce6eddd7e197756e3706c8abd4a98",
+      "bytes": 2818
     },
     {
       "path": "CMakeLists.txt",
@@ -70,8 +70,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "92f7703473d7e7d65dfdc6a92909effe1b243525f1d450a6dd72ee288e16a5dd",
-      "bytes": 3512
+      "sha256": "51db5387a5d8f9d7845de15468208cbc424a593d95450dfa30ac5da25becc9c0",
+      "bytes": 3536
     },
     {
       "path": "STRUCTURES.md",
@@ -120,8 +120,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "e9d4d8cfd8327dfeb5338d7e45b139febd4cf8963ece61e8123757bf3e7c7c89",
-      "bytes": 35271
+      "sha256": "d69d494895db42447e139292c78087eed477a995c6f28982cfd2396e0ff1e34b",
+      "bytes": 35815
     },
     {
       "path": "docs/USAGE.md",
@@ -150,7 +150,7 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "18344ddb7e3011dfe0fe08e8012c0625734730a358816f9857059b8b810fdf82",
+      "sha256": "023e6372c61e2b36bb46e9e7bdd0087070d305977d8eaafbf60087d301745bd3",
       "bytes": 1541
     },
     {
@@ -365,8 +365,8 @@
     },
     {
       "path": "src-voice/paraformer/README.md",
-      "sha256": "b23c8e8fbd17926cb58c3a30920145ff1b44ab9d5012087c3670345ddae35558",
-      "bytes": 1621
+      "sha256": "d3e5ce24787f2217fbcc7bab5ba67575b09d5be4acad0669c2f9b77ee4202be2",
+      "bytes": 2820
     },
     {
       "path": "src-voice/paraformer/download_paraformer.py",
@@ -405,8 +405,8 @@
     },
     {
       "path": "src-voice/paraformer/runtime/model.rs",
-      "sha256": "90e082902d8aabf8763ed5674e1ed6659d17fdbcfe71f8b2f87ecc1122f69e71",
-      "bytes": 10611
+      "sha256": "f1634cb1cbbe75ced7c4f7b8b36490785eae85e2785ce7cfa0313e2d829a01cc",
+      "bytes": 11168
     },
     {
       "path": "src-voice/paraformer/tests/test_prepare_paraformer.py",
@@ -640,8 +640,8 @@
     },
     {
       "path": "tests/voice_resident.py",
-      "sha256": "56e5dcf1533f2b10a4c8551032008d2a423bec1a2db3580f666cb9280fcd8ad7",
-      "bytes": 4186
+      "sha256": "6eadc8ab6c8ae478cf1c2f8c06038c7f17db34c6fdaf10096f82ed618c305240",
+      "bytes": 4314
     },
     {
       "path": "tests/wubi.rs",

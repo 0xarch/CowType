@@ -848,5 +848,14 @@
       "upstream": "https://gitlab.gnome.org/GNOME/librsvg",
       "use": "Installed build-time SVG renderer only. No upstream code is vendored."
     }
+  },
+  "voice_memory_2026_11_21": {
+    "paths": [
+      "src-voice/paraformer/runtime/model.rs"
+    ],
+    "implementation": "Original session configuration using installed ort 2.0.0-rc.12 public CPU execution-provider arena and memory-pattern APIs. No model changes or upstream code copied.",
+    "reference": "https://docs.rs/ort/2.0.0-rc.12/ort/",
+    "validation": "Locally selected existing model, isolated temporary XDG paths and synthetic PCM only. No microphone or personal recordings; no accuracy claims.",
+    "new_dependencies": []
   }
 }

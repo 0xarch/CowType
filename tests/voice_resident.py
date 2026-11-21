@@ -15,12 +15,14 @@ import time
 
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--binary',type=Path,required=True)
-parser.add_argument('--model-dir',type=Path)
+parser.add_argument('--model-dir',type=Path,required=True)
 args=parser.parse_args()
 with tempfile.TemporaryDirectory(prefix='cowtype-resident-test-') as temporary:
     tools=Path(temporary)
     (tools/'parecord').symlink_to(Path(__file__).resolve().parent/'native/fake-parecord.py')
     env=os.environ|{'PATH':str(tools)+':'+os.environ['PATH']}
+    for kind in ('CONFIG', 'DATA', 'STATE', 'CACHE'):
+        env[f'XDG_{kind}_HOME'] = str(tools / kind.lower())
     if args.model_dir:
         env['COWTYPE_VOICE_MODEL_DIR']=str(args.model_dir.resolve())
     process=subprocess.Popen([str(args.binary.resolve()),'--serve'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env,bufsize=0)
