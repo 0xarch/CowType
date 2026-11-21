@@ -152,3 +152,13 @@ hint.statistical_model	默认关闭。启用后使用本机已安装的 libime �
 warning.dictionary_optional	可选词库或本地统计模型不可用，基本输入仍可使用。
 setting.Emoji	表情与符号候选
 hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词，默认关闭。
+setting.ModeHotkey	切换中英文
+setting.InternalCodeHotkey	GB18030-2022 内码输入
+hint.shortcuts	CowType 内统一分配快捷键；包括关闭的功能在内，各功能须使用不同按键。
+hotkey.disabled	禁用
+error.shortcut.unsupported	不支持的功能快捷键
+error.shortcut.conflict	快捷键冲突：中英文、语音和内码输入须使用不同按键。
+gb18030.mode	GB18030-2022 内码
+gb18030.hint	GB18030-2022：输入 4 或 8 位十六进制；上下选词，空格/回车提交，Esc 退出
+gb18030.invalid	无效或未分配的 GB18030 内码
+gb18030.unavailable	系统 GB18030 转换器不支持所需的 2022 映射。

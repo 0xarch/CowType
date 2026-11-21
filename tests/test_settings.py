@@ -20,6 +20,12 @@ class SettingsTests(unittest.TestCase):
     def tearDown(self):
         self.env.stop()
         self.temporary.cleanup()
+    def test_shortcut_conflicts_and_disabled_bindings(self):
+        for changes in [dict(ModeHotkey='F7'), dict(InternalCodeHotkey='F8'), dict(VoiceHotkey='F6'), dict(InternalCodeHotkey='F13')]:
+            with self.assertRaises(ValueError):
+                settings.validate(dict(settings.DEFAULTS, **changes))
+        settings.validate(dict(settings.DEFAULTS, ModeHotkey='None', InternalCodeHotkey='None'))
+        settings.validate(dict(settings.DEFAULTS, ModeHotkey='F11', InternalCodeHotkey='F12'))
     def test_emoji_defaults_off_and_roundtrips(self):
         values = settings.load()
         self.assertEqual(values['Emoji'], 'False')

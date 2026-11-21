@@ -105,6 +105,60 @@ int main(int argc, char **argv) {
             CHECK(press(engine,pinyin,a,FcitxKey_asciicircum));CHECK(a.committed.back()=="……");
             const auto configPath = std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v1.ini";
             std::filesystem::create_directories(configPath.parent_path());
+            // Internal code mode suspends normal composition and is per field.
+            a.focusIn();
+            type(engine,pinyin,a,"shan");
+            CHECK(press(engine,pinyin,a,FcitxKey_F7)); CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
+            type(engine,pinyin,a,"d6d0");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="中");
+            CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="中");
+            CHECK(a.inputPanel().clientPreedit().toString()=="shan");
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            CHECK(press(engine,pinyin,a,FcitxKey_F7)); CHECK(press(engine,pinyin,a,FcitxKey_F7,true));type(engine,pinyin,a,"9439fc36");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="😀");
+            CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="😀");
+            CHECK(press(engine,pinyin,a,FcitxKey_F7)); CHECK(press(engine,pinyin,a,FcitxKey_F7,true));type(engine,pinyin,a,"817f");
+            CHECK(a.inputPanel().candidateList()->size()==0);
+            CHECK(press(engine,pinyin,a,FcitxKey_Return));
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            // Click selection and keypad input use the same guarded commit path.
+            CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
+            type(engine,pinyin,a,"b9fa");
+            a.inputPanel().candidateList()->candidate(0).select(&a);CHECK(a.committed.back()=="国");
+            CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
+            CHECK(press(engine,pinyin,a,FcitxKey_D));CHECK(press(engine,pinyin,a,FcitxKey_KP_6));
+            CHECK(press(engine,pinyin,a,FcitxKey_D));CHECK(press(engine,pinyin,a,FcitxKey_KP_0));
+            CHECK(press(engine,pinyin,a,FcitxKey_KP_Enter));CHECK(a.committed.back()=="中");
+            // Key-repeat cannot toggle twice; release ends the trigger latch.
+            const auto committedBeforeInternal=a.committed.size();
+            CHECK(press(engine,pinyin,a,FcitxKey_F7));
+            CHECK(press(engine,pinyin,a,FcitxKey_F7));
+            CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
+            CHECK(a.committed.size()==committedBeforeInternal);
+            type(engine,pinyin,a,"d6d");
+            CHECK(press(engine,pinyin,a,FcitxKey_Down));
+            auto expectedInternal=a.inputPanel().candidateList()->candidate(1).text().toString();
+            CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()==expectedInternal);
+            // Focus loss clears internal mode instead of exposing it in another field.
+            CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
+            type(engine,pinyin,a,"d6d0");a.focusOut();a.focusIn();
+            type(engine,pinyin,a,"shan");
+            CHECK(a.inputPanel().clientPreedit().toString()=="shan");
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            a.setCapabilityFlags(CapabilityFlag::Password);
+            CHECK(!press(engine,pinyin,a,FcitxKey_F7));
+            CHECK(a.inputPanel().clientPreedit().empty());
+            a.setCapabilityFlags(CapabilityFlag::Preedit);
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nModeHotkey=F11\nInternalCodeHotkey=F12\n";}
+            addon->reloadConfig();
+            CHECK(!press(engine,pinyin,a,FcitxKey_F7));
+            CHECK(press(engine,pinyin,a,FcitxKey_F12));CHECK(press(engine,pinyin,a,FcitxKey_F12,true));
+            type(engine,pinyin,a,"d6d0");CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="中");
+            CHECK(press(engine,pinyin,a,FcitxKey_F11));CHECK(press(engine,pinyin,a,FcitxKey_F11,true));
+            CHECK(!press(engine,pinyin,a,FcitxKey_a));
+            CHECK(press(engine,pinyin,a,FcitxKey_F11));CHECK(press(engine,pinyin,a,FcitxKey_F11,true));
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nInternalCodeHotkey=None\n";}
+            addon->reloadConfig();CHECK(!press(engine,pinyin,a,FcitxKey_F7));
             // CLDR candidates travel through the real native decoder/session ABI.
             { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=True\nLearning=False\n"; }
             addon->reloadConfig();

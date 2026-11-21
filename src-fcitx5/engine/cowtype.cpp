@@ -6,6 +6,8 @@
 #include "voice.h"
 #include "level.h"
 #include "libime.h"
+#include "shortcuts.h"
+#include "../gb18030/decoder.h"
 #include <fcitx-config/configuration.h>
 #include <fcitx/addonfactory.h>
 #include <fcitx/addonmanager.h>
@@ -50,8 +52,19 @@ struct State : InputContextProperty {
     bool active=false;
     bool voiceStarted = false, shiftRepeated = false, voiceChord = false;
     std::unique_ptr<EventSourceTime> voiceHold;
+    KeySym featurePressed=FcitxKey_None;
+    bool internalCode = false;
+    std::string internalBuffer;
+    int internalCursor = 0;
     VoiceLevel voiceLevel;
     std::string voiceStatus, voicePartial;
+};
+class InternalWord final : public CandidateWord {
+    std::function<void(InputContext *)> select_;
+public:
+    InternalWord(const cowtype::InternalCodeCandidate &candidate, std::function<void(InputContext *)> select)
+        : CandidateWord(Text(candidate.text)), select_(std::move(select)) { setComment(Text(candidate.code)); }
+    void select(InputContext *ic) const override { select_(ic); }
 };
 class Cowtype;
 class Word final : public CandidateWord {
@@ -98,7 +111,7 @@ public:
         instance_->inputContextManager().registerProperty("cowtype-v2-session", &factory_);
         focus_ = instance_->watchEvent(EventType::InputContextFocusOut, EventWatcherPhase::PreInputMethod,
             [this](Event &event) { auto *ic = static_cast<InputContextEvent &>(event).inputContext();
-                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->shiftPressed=0;state->voicePressed=0; cowtype2_session_reset(state->session.get(), false); render(ic, false); });
+                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->internalCode=false;state->internalBuffer.clear();state->featurePressed=FcitxKey_None;state->shiftPressed=0;state->voicePressed=0; cowtype2_session_reset(state->session.get(), false); render(ic, false); });
         resourceTimer_=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+20000,1000,
             [this](EventSourceTime *timer,uint64_t) {
                 for(int scheme=0;scheme<2;++scheme) {
@@ -124,6 +137,12 @@ public:
         const auto began=now(CLOCK_MONOTONIC);
         if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}voice_.cancelAll();
         cowtype2_runtime_reload(runtime_.get());++configGeneration_;
+        instance_->inputContextManager().foreach([this](InputContext *ic) {
+            auto *state=ic->propertyFor(&factory_);
+            state->featurePressed=FcitxKey_None;
+            if(state->internalCode){state->internalCode=false;state->internalBuffer.clear();render(ic,false);}
+            return true;
+        });
         voice_.setResident(cowtype2_runtime_option(runtime_.get(),4));
         if(!cowtype2_runtime_option(runtime_.get(),3)){if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}}
         if(cowtype2_runtime_option(runtime_.get(),3) && cowtype2_runtime_option(runtime_.get(),4) && cowtype2_runtime_option(runtime_.get(),8))
@@ -145,6 +164,8 @@ public:
     }
     void deactivate(const InputMethodEntry &, InputContextEvent &event) override {
         event.inputContext()->propertyFor(&factory_)->active=false;
+        event.inputContext()->propertyFor(&factory_)->internalCode=false;
+        event.inputContext()->propertyFor(&factory_)->internalBuffer.clear();
         cancelVoice(event.inputContext());
         bool commit = event.type() == EventType::InputContextSwitchInputMethod;
         if (commit) { commit = static_cast<InputContextSwitchInputMethodEvent &>(event).reason() != InputMethodSwitchedReason::CapabilityChanged; }
@@ -153,9 +174,12 @@ public:
     }
     void reset(const InputMethodEntry &, InputContextEvent &event) override {
         cancelVoice(event.inputContext());
+        event.inputContext()->propertyFor(&factory_)->internalCode=false;
+        event.inputContext()->propertyFor(&factory_)->internalBuffer.clear();
         cowtype2_session_reset(event.inputContext()->propertyFor(&factory_)->session.get(), false); render(event.inputContext(), false);
     }
     std::string subMode(const InputMethodEntry &, InputContext &ic) override {
+        if(ic.propertyFor(&factory_)->internalCode) return ct_tr("gb18030.mode");
         return cowtype2_session_mode(ic.propertyFor(&factory_)->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6");
     }
     void keyEvent(const InputMethodEntry &entry, KeyEvent &event) override {
@@ -163,6 +187,7 @@ public:
         auto *ic = event.inputContext();
         if (ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive) | CapabilityFlag::Disable)) {
             cancelVoice(ic);
+            ic->propertyFor(&factory_)->internalCode=false;ic->propertyFor(&factory_)->internalBuffer.clear();
             cowtype2_session_reset(ic->propertyFor(&factory_)->session.get(), false); render(ic, false); return;
         }
         attach(ic, entry.uniqueName() == "cowtype-wubi" ? 1 : 0);
@@ -171,13 +196,41 @@ public:
         auto *state=ic->propertyFor(&factory_);
         const auto modifiers=event.key().states().toInteger() | event.rawKey().states().toInteger();
         const auto time=fcitx::now(CLOCK_MONOTONIC);
-        static constexpr std::array<KeySym,7> voiceKeys{FcitxKey_F8,FcitxKey_F9,FcitxKey_F10,FcitxKey_Alt_L,FcitxKey_Alt_R,FcitxKey_ISO_Level3_Shift,FcitxKey_Control_R};
+
         auto voiceIndex=cowtype2_runtime_option(runtime_.get(),5);
-        if(voiceIndex>=voiceKeys.size()) voiceIndex=0;
+        if(voiceIndex>=7) voiceIndex=0;
         const bool modifierKey=voiceIndex>=3;
         const bool holdModifier=modifierKey && cowtype2_runtime_option(runtime_.get(),6);
         const uint32_t ownMask=voiceIndex==5?128:voiceIndex==6?4:modifierKey?8:0;
-        if(sym==voiceKeys[voiceIndex] && cowtype2_runtime_option(runtime_.get(),3)) {
+        if(event.isRelease() && sym==state->featurePressed) {
+            state->featurePressed=FcitxKey_None;event.filterAndAccept();return;
+        }
+        if(!event.isRelease() && sym==state->featurePressed) {event.filterAndAccept();return;}
+        if(!event.isRelease())state->featurePressed=FcitxKey_None;
+        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),voiceIndex,cowtype2_runtime_option(runtime_.get(),3));
+        if(action==Shortcuts::Action::InternalCode || action==Shortcuts::Action::Mode) {
+            if(!event.isRelease()) {
+                state->featurePressed=sym;
+                cancelVoice(ic);state->shiftPressed=0;state->voicePressed=0;
+                state->internalBuffer.clear();state->internalCursor=0;
+                if(action==Shortcuts::Action::InternalCode) {
+                    if(!cowtype::InternalCode::supported()) {
+                        state->voiceStatus=ct_tr("gb18030.unavailable");
+                        ctDiagnostic("event=gb18030_unavailable reason=system_mapping");
+                    } else {
+                        // Do not commit or discard the user's normal composition.
+                        state->internalCode=!state->internalCode;
+                    }
+                } else {
+                    state->internalCode=false;
+                    cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
+                }
+                render(ic,action==Shortcuts::Action::Mode);
+            }
+            event.filterAndAccept();return;
+        }
+        if(state->internalCode) { internalKey(ic,event,modifiers);return; }
+        if(action==Shortcuts::Action::Voice) {
             if(!event.isRelease()) {
                 if(!state->voicePressed && !(modifiers & ((1|4|8|64|128)&~ownMask))) {
                     state->voicePressed=time;
@@ -219,7 +272,7 @@ public:
             if(state->voiceStarted && voice_.owns(ic)) {cancelVoice(ic);render(ic,false);}
         }
         if(state->voiceChord && (modifiers & (8|128))) return;
-        if(modifierKey && sym!=voiceKeys[voiceIndex] && (modifiers & (8|128))) return;
+        if(modifierKey && sym!=Shortcuts::voice(voiceIndex) && (modifiers & (8|128))) return;
         if(voice_.owns(ic) && !event.isRelease()){
             cancelVoice(ic);render(ic,false);
             if(sym==FcitxKey_Escape){event.filterAndAccept();return;}
@@ -249,7 +302,6 @@ public:
         case FcitxKey_End: case FcitxKey_KP_End: code = CT2_END; break;
         case FcitxKey_Page_Up: case FcitxKey_KP_Page_Up: code = CT2_PAGE_UP; break;
         case FcitxKey_Page_Down: case FcitxKey_KP_Page_Down: code = CT2_PAGE_DOWN; break;
-        case FcitxKey_F6: code = CT2_TOGGLE; break;
         default:
             code = Key::keySymToUnicode(sym);
             if (sym >= FcitxKey_KP_0 && sym <= FcitxKey_KP_9) { code = '0' + sym - FcitxKey_KP_0; }
@@ -281,6 +333,52 @@ public:
         cowtype2_session_key(ic->propertyFor(&factory_)->session.get(), next ? CT2_PAGE_DOWN : CT2_PAGE_UP, 0, false, 0xffffffff); render(ic, true);
     }
 private:
+    void chooseInternal(InputContext *ic,size_t index) {
+        auto *state=ic->propertyFor(&factory_);
+        if(!state->internalCode || !ic->hasFocus() || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable)) return;
+        auto candidates=cowtype::InternalCode::candidates(state->internalBuffer);
+        if(index>=candidates.size())return;
+        ic->commitString(candidates[index].text);
+        state->internalCode=false;state->internalBuffer.clear();state->internalCursor=0;
+        render(ic,false);
+    }
+    void internalKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
+        auto *state=ic->propertyFor(&factory_);
+        if(event.isRelease())return;
+        if(modifiers&(4|8|64|128))return;
+        auto sym=event.key().sym();
+        if(sym==FcitxKey_Escape) {state->internalCode=false;state->internalBuffer.clear();}
+        else if(sym==FcitxKey_BackSpace) {if(!state->internalBuffer.empty())state->internalBuffer.pop_back();state->internalCursor=0;}
+        else if(sym==FcitxKey_space || sym==FcitxKey_KP_Space || sym==FcitxKey_Return || sym==FcitxKey_KP_Enter) {
+            chooseInternal(ic,state->internalCursor);event.filterAndAccept();return;
+        } else if(sym==FcitxKey_Up || sym==FcitxKey_Down) {
+            auto candidates=cowtype::InternalCode::candidates(state->internalBuffer);
+            if(!candidates.empty())state->internalCursor=std::clamp(state->internalCursor+(sym==FcitxKey_Down?1:-1),0,int(candidates.size())-1);
+        } else {
+            uint32_t code=Key::keySymToUnicode(sym);
+            if(sym>=FcitxKey_KP_0 && sym<=FcitxKey_KP_9)code='0'+sym-FcitxKey_KP_0;
+            if(code<128 && cowtype::InternalCode::accepts(char(code)) && state->internalBuffer.size()<8) {
+                state->internalBuffer+=char(std::tolower(code));state->internalCursor=0;
+            }
+        }
+        render(ic,false);event.filterAndAccept();
+    }
+    void renderInternal(InputContext *ic) {
+        auto *state=ic->propertyFor(&factory_);auto &panel=ic->inputPanel();panel.reset();
+        panel.setAuxUp(Text(ct_tr("gb18030.hint")));
+        Text preedit(state->internalBuffer,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);
+        preedit.setCursor(state->internalBuffer.size());
+        if(ic->capabilityFlags().test(CapabilityFlag::Preedit))panel.setClientPreedit(preedit);else panel.setPreedit(preedit);
+        auto candidates=cowtype::InternalCode::candidates(state->internalBuffer);
+        auto list=std::make_unique<CommonCandidateList>();list->setPageSize(16);
+        for(size_t i=0;i<candidates.size();++i) {
+            list->append<InternalWord>(candidates[i],[this,i](InputContext *context){chooseInternal(context,i);});
+        }
+        if(!candidates.empty())list->setGlobalCursorIndex(state->internalCursor);
+        if(candidates.empty() && (state->internalBuffer.size()==4 || state->internalBuffer.size()==8))panel.setAuxDown(Text(ct_tr("gb18030.invalid")));
+        panel.setCandidateList(std::move(list));
+        ic->updatePreedit();ic->updateUserInterface(UserInterfaceComponent::InputPanel);
+    }
     void toggleVoice(InputContext *ic) {
         auto *state=ic->propertyFor(&factory_);state->voiceStarted=!voice_.active();
         if(voice_.owns(ic)) { voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c"); }
@@ -365,7 +463,9 @@ private:
         if(elapsed>=20) ctDiagnostic("event=slow_session_attach scheme="+std::to_string(scheme)+" elapsed_ms="+std::to_string(elapsed));
     }
     void render(InputContext *ic, bool consumeCommit) {
-        auto *state = ic->propertyFor(&factory_); auto *session = state->session.get();
+        auto *state = ic->propertyFor(&factory_);
+        if(state->internalCode){renderInternal(ic);return;}
+        auto *session = state->session.get();
         if (!session) { return; }
         if (consumeCommit) { const char *commit = cowtype2_session_commit(session); if (commit && *commit) { ic->commitString(commit); } }
         auto &panel = ic->inputPanel(); panel.reset();

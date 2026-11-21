@@ -21,6 +21,8 @@ pub struct Settings {
     pub voice: bool,
     pub voice_resident: bool,
     pub voice_hotkey: u32,
+    pub mode_hotkey: u32,
+    pub internal_code_hotkey: u32,
     pub voice_modifier_hold: bool,
     pub show_pinyin: bool,
     pub voice_always_resident: bool,
@@ -44,7 +46,9 @@ impl Default for Settings {
             emoji: false,
             voice: false,
             voice_resident: true,
-            voice_hotkey: 0,
+            voice_hotkey: shortcut_default_index("VoiceHotkey"),
+            mode_hotkey: shortcut_default_index("ModeHotkey"),
+            internal_code_hotkey: shortcut_default_index("InternalCodeHotkey"),
             voice_modifier_hold: false,
             show_pinyin: true,
             voice_always_resident: false,
@@ -52,6 +56,30 @@ impl Default for Settings {
             page_minus_equal: true,
         }
     }
+}
+// Stable ordering is shared with the native ABI and GTK settings. New actions
+// must register here before getting their own key-event dispatch branch.
+fn shortcut_default_index(action: &str) -> u32 {
+    let default = include_str!("shortcuts.tsv")
+        .lines()
+        .find_map(|line| {
+            let mut columns = line.split('\t');
+            (columns.next()? == action).then(|| columns.next().unwrap())
+        })
+        .expect("registered shortcut action");
+    shortcut_choices(action)
+        .iter()
+        .position(|key| *key == default)
+        .expect("registered default") as u32
+}
+fn shortcut_choices(action: &str) -> Vec<&'static str> {
+    include_str!("shortcuts.tsv")
+        .lines()
+        .find_map(|line| {
+            let mut columns = line.split('\t');
+            (columns.next()? == action).then(|| columns.nth(1).unwrap().split(',').collect())
+        })
+        .expect("registered shortcut action")
 }
 pub fn path() -> PathBuf {
     std::env::var_os("XDG_CONFIG_HOME")
@@ -83,18 +111,33 @@ impl Settings {
             }
         }
         if let Some(value) = values.get("VoiceHotkey") {
-            settings.voice_hotkey = [
-                "F8",
-                "F9",
-                "F10",
-                "Alt_L",
-                "Alt_R",
-                "ISO_Level3_Shift",
-                "Control_R",
-            ]
-            .iter()
-            .position(|name| name == value)
-            .ok_or("unsupported voice shortcut")? as u32;
+            settings.voice_hotkey = shortcut_choices("VoiceHotkey")
+                .iter()
+                .position(|name| name == value)
+                .ok_or("unsupported voice shortcut")? as u32;
+        }
+        for (name, target) in [
+            ("ModeHotkey", &mut settings.mode_hotkey),
+            ("InternalCodeHotkey", &mut settings.internal_code_hotkey),
+        ] {
+            if let Some(value) = values.get(name) {
+                *target = shortcut_choices(name)
+                    .iter()
+                    .position(|key| key == value)
+                    .ok_or("unsupported feature shortcut")? as u32;
+            }
+        }
+        let mut assigned = std::collections::BTreeSet::new();
+        for (action, index) in [
+            ("ModeHotkey", settings.mode_hotkey),
+            ("InternalCodeHotkey", settings.internal_code_hotkey),
+            ("VoiceHotkey", settings.voice_hotkey),
+        ] {
+            let choices = shortcut_choices(action);
+            let key = choices[index as usize];
+            if key != "None" && !assigned.insert(key) {
+                return Err("feature shortcut conflict");
+            }
         }
         for (name, target) in [
             ("Punctuation", &mut settings.punctuation),
@@ -141,6 +184,25 @@ impl Settings {
 #[cfg(test)]
 mod hotkey_tests {
     use super::*;
+    #[test]
+    fn feature_shortcuts_are_unique_including_disabled_features() {
+        let default = Settings::parse("Version=1\n").unwrap();
+        assert_eq!(default.mode_hotkey, 5);
+        assert_eq!(default.internal_code_hotkey, 6);
+        for text in [
+            "ModeHotkey=F7",
+            "InternalCodeHotkey=F8",
+            "VoiceHotkey=F6",
+            "InternalCodeHotkey=F13",
+        ] {
+            assert!(Settings::parse(&format!("Version=1\n{text}\n")).is_err());
+        }
+        assert!(Settings::parse("Version=1\nModeHotkey=None\nInternalCodeHotkey=None\n").is_ok());
+        assert!(Settings::parse(
+            "Version=1\nModeHotkey=F11\nInternalCodeHotkey=F12\nVoiceHotkey=Alt_L\n"
+        )
+        .is_ok());
+    }
     #[test]
     fn cldr_symbols_are_explicit_and_default_off() {
         assert!(!Settings::parse("Version=1\n").unwrap().emoji);

@@ -11,3 +11,5 @@ CowType 自身实现使用 GPL-3.0 许可。
 PUBLIC-SOURCES.json 记录部分公开资源的核实范围和限制。新增第三方实现、数据或模型均保留其真实来源与适用许可。
 
 - 表情与符号关键词：Unicode CLDR 48（简体中文、英文）与 Unicode Emoji 17.0，版权归 Unicode, Inc. 及相应贡献者所有，按 Unicode-3.0 使用。许可原文位于 `LICENSES/Unicode-3.0.txt`，固定版本及摘要见 `src-data-tools/emoji/sources.json`。
+
+- GB18030 内码模式的交互参考 openKylin fcitx5-gb18030（KylinSoft Co., Ltd., 2023）；CowType 独立实现，未复制上游代码，审阅版本、源码 GPL-3.0-or-later 声明及上游 LICENSE 差异见[参考通知](../src-fcitx5/gb18030/NOTICE.md)。

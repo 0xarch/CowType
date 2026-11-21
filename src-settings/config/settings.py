@@ -12,8 +12,19 @@ from catalog import tr
 
 DEFAULTS = dict(Version='1', PageSize='5', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
-                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', Emoji='False', Voice='False', VoiceResident='True', VoiceHotkey='F8', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
-VOICE_HOTKEYS = ('F8', 'F9', 'F10', 'Alt_L', 'Alt_R', 'ISO_Level3_Shift', 'Control_R')
+                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', Emoji='False', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
+def shortcut_registry():
+    path = Path(__file__).with_name('shortcuts.tsv')
+    if not path.exists():
+        path = Path(__file__).resolve().parents[2] / 'src/config/shortcuts.tsv'
+    rows = [line.split('\t') for line in path.read_text().splitlines()]
+    return {name: (default, tuple(keys.split(','))) for name, default, keys in rows}
+
+SHORTCUTS = shortcut_registry()
+FEATURE_HOTKEYS = SHORTCUTS['ModeHotkey'][1]
+VOICE_HOTKEYS = SHORTCUTS['VoiceHotkey'][1]
+for _action, (_default, _choices) in SHORTCUTS.items():
+    DEFAULTS[_action] = _default
 
 def config_home():
     return Path(os.environ.get('XDG_CONFIG_HOME') or Path.home() / '.config') / 'cowtype'
@@ -52,7 +63,14 @@ def validate(values):
         values['VoiceHotkey'] = DEFAULTS['VoiceHotkey']
     if values.get('VoiceHotkey') not in VOICE_HOTKEYS:
         raise ValueError('Unsupported voice shortcut')
-    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'VoiceHotkey'}:
+    for key in ('ModeHotkey', 'InternalCodeHotkey'):
+        values.setdefault(key, DEFAULTS[key])
+        if values[key] not in FEATURE_HOTKEYS:
+            raise ValueError(tr('error.shortcut.unsupported'))
+    reserved = [values[key] for key in ('ModeHotkey', 'InternalCodeHotkey', 'VoiceHotkey') if values[key] != 'None']
+    if len(reserved) != len(set(reserved)):
+        raise ValueError(tr('error.shortcut.conflict'))
+    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'VoiceHotkey', 'ModeHotkey', 'InternalCodeHotkey'}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values

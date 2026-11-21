@@ -879,5 +879,39 @@
       ]
     },
     "models": "No voice or statistical models downloaded or distributed."
+  },
+  "gb18030_2026_11_21": {
+    "paths": [
+      "src-fcitx5/gb18030/decoder.h",
+      "src-fcitx5/engine/shortcuts.h",
+      "src/config/shortcuts.tsv"
+    ],
+    "implementation": "Original CowType strict iconv adapter and internal-code mode, inspired by the upstream hexadecimal prefix candidate interaction. No upstream implementation copied.",
+    "reference": {
+      "repository": "https://github.com/openkylin/fcitx5-gb18030",
+      "revision": "e9d69af71876d832da4929ebe98b019705123454",
+      "author": "KylinSoft Co., Ltd. (Copyright 2023)",
+      "source_header_license": "GPL-3.0-or-later",
+      "root_license_text": "LGPL-3.0; differs from source header, retained as an audit observation",
+      "files": [
+        {
+          "path": "src/gb18030.cpp",
+          "sha256": "4a692ac475e8d280de0f1a9ace5ee138df092be824470198fc9dab8a612efeac",
+          "bytes": 10730
+        },
+        {
+          "path": "src/gb18030.h",
+          "sha256": "6f85c376fd51c36f169590411a47f537aec8b42cb2e4137b13c96a2864b80e76",
+          "bytes": 2725
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "ea7d049c7705dc13afc202dd18e1827f3484f8212fd3fa7b82fc4a0c363432c9",
+          "bytes": 7816
+        }
+      ]
+    },
+    "notice": "src-fcitx5/gb18030/NOTICE.md",
+    "runtime_dependency": "System libc iconv GB18030 mapping with 2022 probe checks; no bundled models or mapping tables."
   }
 }

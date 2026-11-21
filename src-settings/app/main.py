@@ -156,6 +156,15 @@ def main():
             self.hotkey.set_selected(config.VOICE_HOTKEYS.index(self.values['VoiceHotkey']))
             self.hotkey.connect('notify::selected', self.save)
             keys.add(self.hotkey)
+            self.feature_hotkeys = {}
+            for name in ('ModeHotkey', 'InternalCodeHotkey'):
+                shortcut = Adw.ComboRow(title=tr('setting.' + name),
+                    model=Gtk.StringList.new([tr('hotkey.disabled') if key == 'None' else key for key in config.FEATURE_HOTKEYS]))
+                shortcut.set_subtitle(tr('hint.shortcuts'))
+                shortcut.set_selected(config.FEATURE_HOTKEYS.index(self.values[name]))
+                shortcut.connect('notify::selected', self.save)
+                self.feature_hotkeys[name] = shortcut
+                keys.add(shortcut)
             hold = Adw.SwitchRow(title=tr('setting.VoiceModifierHold'), subtitle=tr('hint.modifier_hold'))
             hold.set_active(self.values['VoiceModifierHold'].lower() == 'true')
             hold.connect('notify::active', self.save)
@@ -194,7 +203,7 @@ def main():
             if self.load_error:
                 error_group = self.group('input', None)
                 error_group.add(Adw.ActionRow(title=self.load_error))
-                for row in [*self.controls.values(), self.page_size, self.hotkey]: row.set_sensitive(False)
+                for row in [*self.controls.values(), *self.feature_hotkeys.values(), self.page_size, self.hotkey]: row.set_sensitive(False)
             self.ready = True
             self.stack.set_visible_child_name(args.page if args.page in self.pages else 'input')
             self.window.present()
@@ -206,6 +215,8 @@ def main():
                     assert not self.controls['Emoji'].get_active()
                     assert self.controls['StatisticalModel'].get_visible()
                     assert not self.controls['StatisticalModel'].get_active()
+                    assert len(self.feature_hotkeys) == 2
+                    assert self.feature_hotkeys['InternalCodeHotkey'].get_selected() == 6
                     assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
                     assert self.get_windows() == [self.window]
                     assert self.window.get_mapped() and self.stack.get_mapped()
@@ -249,6 +260,7 @@ def main():
                 values = self.values.copy()
                 values['PageSize'] = str(int(self.page_size.get_value()))
                 values['VoiceHotkey'] = config.VOICE_HOTKEYS[self.hotkey.get_selected()]
+                values.update({name: config.FEATURE_HOTKEYS[row.get_selected()] for name, row in self.feature_hotkeys.items()})
                 values.update({key: str(row.get_active()) for key, row in self.controls.items()})
                 config.save(values)
                 self.values = values

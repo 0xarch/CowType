@@ -34,7 +34,7 @@ set(RUST_TARGET "${CMAKE_BINARY_DIR}/rust-target")
 file(GLOB_RECURSE RUST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.rs")
 add_custom_command(OUTPUT "${RUST_TARGET}/release/libcowtype.a" "${RUST_TARGET}/release/cowtype"
     COMMAND ${CMAKE_COMMAND} -E env "CARGO_TARGET_DIR=${RUST_TARGET}" ${CARGO_EXECUTABLE} build --release --offline --locked --features native-ffi
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" DEPENDS ${RUST_SOURCES} ${I18N_RESOURCES} src-data-tools/emoji/keywords.tsv Cargo.toml Cargo.lock VERBATIM)
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" DEPENDS ${RUST_SOURCES} ${I18N_RESOURCES} src-data-tools/emoji/keywords.tsv src/config/shortcuts.tsv Cargo.toml Cargo.lock VERBATIM)
 add_custom_target(cowtype-rust ALL DEPENDS "${RUST_TARGET}/release/libcowtype.a" "${RUST_TARGET}/release/cowtype")
 add_library(cowtype-core STATIC IMPORTED GLOBAL)
 set_target_properties(cowtype-core PROPERTIES IMPORTED_LOCATION "${RUST_TARGET}/release/libcowtype.a")
@@ -83,6 +83,10 @@ if(EXISTS "${COWTYPE_DICTIONARY_DIR}/ice/lexicon.tsv")
     install(DIRECTORY "${CMAKE_BINARY_DIR}/compiled-dictionaries/" DESTINATION ${CMAKE_INSTALL_DATADIR}/cowtype/dictionaries/compiled FILES_MATCHING PATTERN "*.ctdict")
 endif()
 if(BUILD_TESTING)
+    add_executable(cowtype-internal-code-probe tests/native/internal-code.cpp)
+    target_link_libraries(cowtype-internal-code-probe PRIVATE Fcitx5::Core)
+    target_compile_options(cowtype-internal-code-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+    add_test(NAME gb18030-shortcuts COMMAND cowtype-internal-code-probe)
     add_executable(cowtype-dictionary-benchmark tests/native/dictionary-benchmark.cpp)
     target_include_directories(cowtype-dictionary-benchmark PRIVATE src-fcitx5/engine src-fcitx5/include)
     target_link_libraries(cowtype-dictionary-benchmark PRIVATE cowtype-pinyin)
@@ -148,6 +152,7 @@ add_custom_command(OUTPUT "${VOICE_TARGET}/release/cowtype-voice"
 add_custom_target(cowtype-voice-build ALL DEPENDS "${VOICE_TARGET}/release/cowtype-voice")
 install(PROGRAMS "${VOICE_TARGET}/release/cowtype-voice" DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY src-voice/paraformer/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/paraformer PATTERN __pycache__ EXCLUDE)
+install(FILES src/config/shortcuts.tsv DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/config)
 install(FILES src-settings/config/settings.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/config)
 
 # Preserve upstream notices for compiled voice dependencies as well as full source archive.
