@@ -241,3 +241,24 @@ setting.EmojiDefaultSkinTone	Default skin tone
 error.emoji_skin_tone	Invalid default emoji skin tone.
 setting.EmojiFirst	Prefer Emoji
 hint.emoji_first	Prefer emoji when enabled, or ordinary symbols when disabled.
+learning.manage	View and edit memory
+learning.title	Learning Memory
+learning.search	Search words or pinyin
+learning.previous	Previous
+learning.next	Next
+learning.refresh	Refresh
+learning.summary	{total} records, {matched} matches · Page {page}/{pages}
+learning.details	{reading} · Current weight {weight} · Stored count {count} · Last confirmed {date}
+learning.edit	Edit Memory
+learning.edit_hint	Higher weights move matching candidates forward. Weights halve about every 30 days. Edited weights start decaying from now. Memory only ranks existing candidates; it does not create dictionary entries.
+learning.reading	Pinyin (space-separated syllables)
+learning.text	Word or phrase
+learning.weight	Preference weight
+learning.save	Save Changes
+learning.applying	Applying changes…
+learning.applied	Memory updated.
+learning.pending	Changes are queued for an updated CowType to apply. Refresh to check the result.
+learning.error.conflict	The record changed or the target already exists. Refresh and try again.
+learning.error.data	Memory could not be read or changed. Existing records were preserved.
+learning.error.value	Enter valid pinyin, a word or phrase, and a positive integer weight.
+learning.error.writer	Another instance owns the learning writer. This instance will not overwrite it.

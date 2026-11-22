@@ -1181,5 +1181,18 @@
         "sha256": "1dba52d9c22c303e832bc18fe22b1d7412089e7c6086fdfcf1631a663899a46b"
       }
     ]
+  },
+  "learning_memory_editor": {
+    "date": "2026-11-22",
+    "license": "GPL-3.0-or-later",
+    "paths": [
+      "src/learning/edits.rs",
+      "src-settings/app/memory.py",
+      "src-settings/config/memory.py",
+      "tests/learning_edits.rs",
+      "tests/test_memory.py"
+    ],
+    "implementation": "Original CowType searchable learning editor, optimistic private request queue and Linux flock single-writer coordination. Uses public Linux file locking API; no external implementation or personal learning data included.",
+    "validation": "Synthetic temporary-XDG editing, conflicts, reset, corruption, locking and GTK dialog tests. Read-only native candidate audit used a temporary copy of local learning data; private snapshots and audit helper removed."
   }
 }

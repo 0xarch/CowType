@@ -18,6 +18,9 @@ class StartupTests(unittest.TestCase):
             env = dict(os.environ, XDG_RUNTIME_DIR=temporary,
                 XDG_CONFIG_HOME=temporary + '/config', XDG_DATA_HOME=temporary + '/data',
                 XDG_STATE_HOME=temporary + '/state', GDK_BACKEND='broadway', BROADWAY_DISPLAY=':72')
+            memory = Path(temporary) / 'data/cowtype/learning-v1.tsv'
+            memory.parent.mkdir(parents=True)
+            memory.write_text('# cowtype-learning-v1\n# reset-token\t\nce shi\t测试记忆\t8\t100\n')
             server = subprocess.Popen(['gtk4-broadwayd', '--port=0', ':72'], env=env,
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             try:
@@ -32,6 +35,7 @@ class StartupTests(unittest.TestCase):
                 log = Path(temporary + '/state/cowtype/settings.log')
                 self.assertEqual(result.returncode, 0, log.read_text() if log.exists() else result.stderr)
                 self.assertIn('remain mapped after startup', result.stdout)
+                self.assertIn('Memory editor opened with synthetic record', result.stdout)
                 self.assertEqual(log.stat().st_mode & 0o777, 0o600)
                 self.assertIn('Settings starting', log.read_text())
             finally:

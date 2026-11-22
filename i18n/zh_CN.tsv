@@ -241,3 +241,24 @@ setting.EmojiDefaultSkinTone	默认肤色
 error.emoji_skin_tone	无效的默认表情肤色。
 setting.EmojiFirst	优先匹配 Emoji
 hint.emoji_first	开启后优先匹配 Emoji，关闭后优先匹配普通符号。
+learning.manage	查看与修改记忆
+learning.title	学习记忆
+learning.search	搜索词句或拼音
+learning.previous	上一页
+learning.next	下一页
+learning.refresh	刷新
+learning.summary	共 {total} 条，匹配 {matched} 条 · 第 {page}/{pages} 页
+learning.details	{reading} · 当前权重 {weight} · 保存值 {count} · 最近确认 {date}
+learning.edit	修改记忆
+learning.edit_hint	权重越高，同类候选越靠前；约每 30 天减半。修改后的权重从现在起计算。只影响已有候选，不会创建词库词条。
+learning.reading	拼音（音节间用空格）
+learning.text	词句
+learning.weight	偏好权重
+learning.save	保存修改
+learning.applying	正在应用修改…
+learning.applied	记忆已更新。
+learning.pending	修改已排队，等待新版 CowType 应用；请刷新查看结果。
+learning.error.conflict	记录已变化或目标词条已存在，请刷新后重试。
+learning.error.data	无法读取或修改记忆，原记录已保留。
+learning.error.value	请填写有效的拼音、词句和正整数权重。
+learning.error.writer	学习记录正由另一实例保存，当前实例不会覆盖它。

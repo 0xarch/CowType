@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! Explicit-file CLI: no XDG probing, history, downloads or background service.
+//! Explicit-file diagnostics; private learning edits require an explicit command.
 use cowtype::{
     dictionary::Dictionary,
     engine::{wubi::WubiTable, Engine},
@@ -20,6 +20,10 @@ fn main() {
 
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
+    if args == ["--apply-learning-edits"] {
+        cowtype::learning::edits::apply_once(&cowtype::learning::path())?;
+        return Ok(());
+    }
     if args == ["--version"] {
         println!("cowtype {} (Linux input method)", env!("CARGO_PKG_VERSION"));
         return Ok(());

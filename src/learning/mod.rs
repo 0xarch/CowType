@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Confirmed pinyin selections only. Versioned TSV, decay and conflict-safe undo.
 use std::os::unix::fs::OpenOptionsExt;
+pub mod edits;
 pub mod service;
 use std::{
     collections::BTreeMap,
@@ -28,6 +29,7 @@ pub struct Learning {
     pub dirty: bool,
     pub read_error: bool,
     pub reset_token: String,
+    edit_token: String,
 }
 pub type SharedLearning = Arc<Mutex<Learning>>;
 pub fn now() -> u64 {
@@ -112,6 +114,7 @@ impl Learning {
     }
     pub fn clear(&mut self) {
         self.records.clear();
+        self.edit_token.clear();
         self.dirty = true;
     }
     pub fn load(path: &Path) -> Self {
@@ -130,10 +133,19 @@ impl Learning {
                 return Err("unrecognized learning data".into());
             }
             let mut state = Self::default();
-            for line in lines.take(20000) {
+            for line in lines.take(20003) {
+                if state.records.len() >= 20000 {
+                    break;
+                }
                 let Ok(line) = std::str::from_utf8(line) else {
                     continue;
                 };
+                if let Some(token) = line.strip_prefix("# edit-token\t") {
+                    if token.len() == 32 && token.bytes().all(|b| b.is_ascii_hexdigit()) {
+                        state.edit_token = token.into();
+                    }
+                    continue;
+                }
                 if let Some(token) = line.strip_prefix("# reset-token\t") {
                     if token.len() <= 128 {
                         state.reset_token = token.into();
@@ -180,6 +192,9 @@ impl Learning {
             "# cowtype-learning-v1\n# reset-token\t{}\n",
             self.reset_token
         );
+        if !self.edit_token.is_empty() {
+            text.push_str(&format!("# edit-token\t{}\n", self.edit_token));
+        }
         for ((r, t), v) in &self.records {
             text.push_str(&format!("{r}\t{t}\t{}\t{}\n", v.count, v.last));
         }

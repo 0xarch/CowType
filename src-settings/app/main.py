@@ -12,6 +12,7 @@ import threading
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'i18n'))
 from catalog import tr, en
 from translation import build as build_translation
+from memory import show as show_memory
 
 PAGES = [('input', 'preferences-system-symbolic'), ('keys', 'input-keyboard-symbolic'),
          ('voice', 'audio-input-microphone-symbolic'), ('translate', 'accessories-dictionary-symbolic'),
@@ -31,6 +32,15 @@ def settings_module():
     path = Path(__file__).resolve().parents[1] / 'config/settings.py'
     spec = importlib.util.spec_from_file_location('cowtype_settings', path)
     module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def memory_store_module():
+    path = Path(__file__).resolve().parents[1] / 'config/memory.py'
+    spec = importlib.util.spec_from_file_location('cowtype_memory_store', path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
 
@@ -191,6 +201,7 @@ def main():
             integration = self.group('input', 'group.integration', tr('hint.fcitx'))
             self.action(integration, 'action.fcitx', lambda *_: self.spawn(['fcitx5-configtool']))
             self.action(integration, 'app.about', self.about)
+            self.memory_action = self.action(privacy, 'learning.manage', lambda *_: show_memory(self, memory_store_module(), config, Adw, Gtk, GLib, tr))
             self.action(privacy, 'action.clear', self.confirm_clear, destructive=True)
             model = self.group('voice', 'group.model', tr('hint.model'))
             self.model_path = Adw.ActionRow(title=tr('group.model'), subtitle=str(config.model_dir()))
@@ -235,6 +246,7 @@ def main():
                     assert not self.translation_key.get_visible()
                     assert self.controls['UnicodePrefix'].get_visible()
                     assert self.controls['UnicodePrefix'].get_active()
+                    assert self.memory_action.get_visible()
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
                     assert self.emoji_options.get_visible()
@@ -309,6 +321,25 @@ def main():
                     self.update_visibility()
                     assert self.controls['VoiceAlwaysResident'].get_visible()
                     assert self.prepare.get_label() == tr('action.download')
+                    memory_dialog = show_memory(self, memory_store_module(), config, Adw, Gtk, GLib, tr)
+                    assert memory_dialog.get_visible()
+                    def memory_row(widget):
+                        if isinstance(widget, Adw.ActionRow):
+                            return widget
+                        child = widget.get_first_child()
+                        while child:
+                            found = memory_row(child)
+                            if found: return found
+                            child = child.get_next_sibling()
+                        return None
+                    record_row = memory_row(memory_dialog)
+                    if record_row is not None:
+                        record_row.emit('activated')
+                        editor = self.window.get_visible_dialog()
+                        assert editor.get_title() == tr('learning.edit')
+                        editor.close()
+                        print('Memory editor opened with synthetic record', flush=True)
+                    memory_dialog.close()
                     self.smoke_passed = True
                     print('Libadwaita smoke test: single application window and preferences remain mapped after startup', flush=True)
                     self.window.close()
