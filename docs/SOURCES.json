@@ -965,5 +965,30 @@
       "Index-Translate-9B",
       "Index-Translate-35B-A3B"
     ]
+  },
+  "platform_trials_2026_11_22": {
+    "paths": [
+      ".github/workflows/platform-trials.yml",
+      "tooling/platform_trials.py",
+      "tooling/platform-probe.sh"
+    ],
+    "implementation": "Original CowType image-platform inspection, native dependency gating, per-stage trial logs and report aggregation. Native ARM64 Fedora/Debian targets reuse original packaging. No upstream implementation copied.",
+    "new_dependencies": [],
+    "build_environment_references": [
+      {
+        "repository": "https://github.com/deepin-community/deepin-docker",
+        "revision": "89c6874e827eaace16000eb403d1e1ef5ef07eff",
+        "path": ".github/workflows/build-docker.yml",
+        "use": "Public container image identifiers only: linuxdeepin/deepin:23, :25, :crimson-arm64 and :crimson-loong64."
+      },
+      {
+        "image": "openkylin/openkylin:latest",
+        "version_observed": "openKylin 3.0 (huanghe)",
+        "use": "Registry platform inspection and disposable build container; rootfs is not redistributed in CowType.",
+        "upstream_rootfs": "https://github.com/openkylin/openkylin-rootfs"
+      }
+    ],
+    "validation": "2026-11-22 GitHub Actions run 44978388218: six full build/install passes, eight native Fcitx5 minimum-version failures, zero skipped. Deepin loong64 ran through QEMU; no full LoongArch64 compilation or microphone validation claimed.",
+    "models": "No model downloads or bundled models."
   }
 }

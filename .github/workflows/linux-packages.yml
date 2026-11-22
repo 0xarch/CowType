@@ -39,18 +39,20 @@ jobs:
             dist/PKGBUILD
           if-no-files-found: error
   packages:
-    name: Package ${{ matrix.distro }}
+    name: Package ${{ matrix.distro }} ${{ matrix.arch }}
     needs: source
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     container: ${{ matrix.image }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - {distro: arch, image: 'archlinux:latest', format: arch}
-          - {distro: fedora45, image: 'fedora:45', format: rpm}
-          - {distro: debianunstable, image: 'debian:unstable', format: deb}
-          - {distro: opensusetumbleweed, image: 'opensuse/tumbleweed:latest', format: rpm}
+          - {distro: arch, image: 'archlinux:latest', format: arch, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: fedora45, image: 'fedora:45', format: rpm, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: debianunstable, image: 'debian:unstable', format: deb, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: opensusetumbleweed, image: 'opensuse/tumbleweed:latest', format: rpm, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: fedora45, image: 'fedora:45', format: rpm, arch: arm64, runner: ubuntu-24.04-arm}
+          - {distro: debianunstable, image: 'debian:unstable', format: deb, arch: arm64, runner: ubuntu-24.04-arm}
     defaults:
       run:
         shell: bash
@@ -67,13 +69,13 @@ jobs:
           COWTYPE_VOICE_HELPER: ${{ github.workspace }}/tests/native/fake-voice.py
       - uses: actions/upload-artifact@v4
         with:
-          name: package-${{ matrix.distro }}-x86_64
+          name: package-${{ matrix.distro }}-${{ matrix.arch }}
           path: dist/packages/*
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: diagnostics-${{ matrix.distro }}
+          name: diagnostics-${{ matrix.distro }}-${{ matrix.arch }}
           path: |
             build/ci-test/Testing/Temporary/LastTest.log
             build/ci-ldd.txt

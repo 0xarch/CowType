@@ -90,7 +90,7 @@ PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 
 ## 多发行版与 GitHub Actions
 
-Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
+Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。常规矩阵包含四个 x86_64 目标及 Fedora 45、Debian unstable 两个 ARM64 目标，ARM64 使用原生 runner。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。新增及暂缓系统的手动试构建流程、容器镜像和完整结果见[平台报告](PLATFORM-TRIALS-2026-11-22.md)。
 
 ## openSUSE Tumbleweed
 
@@ -114,20 +114,23 @@ python3 tooling/package_linux.py --source . --format rpm --distro opensusetumble
 
 ## Ubuntu
 
-Ubuntu 暂不列入自动构建支持范围。2026-11-21 的 GitHub Actions 实测中，Ubuntu 26.04 官方仓库提供 Fcitx5 5.1.19，而 CowType 当前需要 Fcitx5 >= 5.1.23，CMake 因版本不足拒绝配置。Debian unstable 生成的 Deb 包面向其原生库版本，不应直接视作 Ubuntu 兼容包。
+Ubuntu 暂不列入自动构建支持范围。2026-11-22 的 GitHub Actions 重试中（x86_64 和 ARM64），Ubuntu 26.04 官方仓库提供 Fcitx5 5.1.19，而 CowType 当前需要 Fcitx5 >= 5.1.23，编译前的依赖检查因版本不足停止。Debian unstable 生成的 Deb 包面向其原生库版本，不应直接视作 Ubuntu 兼容包。
 
 需要在 Ubuntu 自行构建的用户，应自行准备满足版本要求的 Fcitx5 运行库及开发包，确保它们的版本与安装路径一致，并满足 libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、OpenSSL、Boost、librsvg、Rust/Cargo（语音依赖要求 Rust >= 1.88）等条件。Debian 系的 libime 开发包拆分为 `libimecore-dev` 与 `libimepinyin-dev`，并没有本项目可用的统一 `libime-dev` 包。
 
 准备依赖后，按上面的通用 CMake 开发步骤构建并运行测试，指定适合本机 Fcitx5 的 `CMAKE_INSTALL_LIBDIR`。不要仅修改最低版本检查来绕过配置失败；本项目不自动添加软件源或替换系统 Fcitx5。Ubuntu 的依赖升级、原生打包和桌面兼容性由使用者自行处理。
 
-## Deepin 和 openSUSE Leap
+## Deepin、openSUSE Leap 和 openKylin
 
-2026-11-22 的 [GitHub Actions 容器试构建](https://github.com/0xarch/CowType/actions/runs/44924899805) 中，以下官方镜像都在 CMake 的 Fcitx5 最低版本检查处失败，因此暂不提供自动构建包：
+2026-11-22 的 [GitHub Actions 容器重试](https://github.com/0xarch/CowType/actions/runs/44978388218) 中，以下镜像都在安装原生开发包后的 Fcitx5 最低版本预检查处失败，未进入完整编译，因此暂不提供自动构建包：
 
 | 发行版 | 容器镜像 | 实际 Fcitx5 版本 | CowType 最低要求 |
 |---|---|---|---|
 | Deepin 23 | `linuxdeepin/deepin:23` | 5.1.11 | 5.1.23 |
 | Deepin 25 | `linuxdeepin/deepin:25` | 5.1.12 | 5.1.23 |
 | openSUSE Leap 16.0 | `registry.opensuse.org/opensuse/leap:16.0` | 5.1.13 | 5.1.23 |
+| openKylin 3.0 | `openkylin/openkylin:latest` | 5.1.19 | 5.1.23 |
 
 这些版本记录对应本次试构建，不代表后续软件源永远不变。自行构建需要先准备满足要求且版本一致的 Fcitx5 运行库和开发包，并核对 libime、GTK、libadwaita 及 Rust 等其他依赖；不要降低版本检查来绕过失败。Debian unstable 的 Deb 包或其他发行版的 RPM 不应视作这些系统的兼容包。
+
+Deepin 25 的 ARM64（`linuxdeepin/deepin:crimson-arm64`）与 LoongArch64（`linuxdeepin/deepin:crimson-loong64`）镜像均存在且可运行，原生 Fcitx5 同为 5.1.12，因依赖不足继续暂缓；不能据此断言其架构代码编译失败。完整 14 项结果、验证边界和日志入口见[本轮报告](PLATFORM-TRIALS-2026-11-22.md)。

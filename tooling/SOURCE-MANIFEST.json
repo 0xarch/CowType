@@ -10,8 +10,8 @@
     },
     {
       "path": ".github/workflows/linux-packages.yml",
-      "sha256": "5702a2ccca9b476dcd59a2b213ee83489405b41422c26fc04df6f2cbcf7d83f6",
-      "bytes": 2983
+      "sha256": "ab33f10bc87a17a7e0f0f7a97d7fd1a675270eeb6e202cd0479b88e3db0c087f",
+      "bytes": 3403
     },
     {
       "path": ".github/workflows/platform-trials.yml",
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "3ed9c052fac8510531b91eee91929948e3c03f6c629a2978ed06a30b3309488e",
-      "bytes": 9130
+      "sha256": "ac8fabd32882e49e388ff870817a8d4e7b8377b391259f998b6bddeeb789c328",
+      "bytes": 9677
     },
     {
       "path": "CMakeLists.txt",
@@ -113,13 +113,18 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "bcbafa63a3e3998a048b2c8aab1d932bc9a3a903aa8c5267d49046543fbdc2a5",
-      "bytes": 9095
+      "sha256": "713c265094b0b13741bc4bb13c9ac74f924aae1ae553a86f6179cc8056fdaaf1",
+      "bytes": 9845
     },
     {
       "path": "docs/DICTIONARIES.md",
       "sha256": "012014b0526ff7a13874698f67a7716eb21973e50ff11467a0368f1c10734fa5",
       "bytes": 4343
+    },
+    {
+      "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
+      "sha256": "c28ab05fc938fa68661b8f22b0f3b638916a520823e627686ba945445e598c51",
+      "bytes": 5358
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -133,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "e900598947404ede5e83fa304ca54f1eebcceffaf392d50567eefab6d721ddad",
-      "bytes": 41687
+      "sha256": "bedd08ffe7cb59224f586f57ec1b0b0c054fec680315607725a7d05340d658c3",
+      "bytes": 43127
     },
     {
       "path": "docs/USAGE.md",
@@ -158,8 +163,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "8df639951c9381b019cda284a1297d7a5b7f81780337f103556a5a4b9ebb0031",
-      "bytes": 3513
+      "sha256": "0bcb92b75a1d4d0c147bab048533aa599763ea9ed05be85521fa9ba06cecf1b9",
+      "bytes": 4894
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
@@ -768,8 +773,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "20549c68403435b73712c4e87087b4c18c5005d6ddde9e650158663443b0a16e",
-      "bytes": 1114
+      "sha256": "6819ab1c6963af08c689bf8939dbe30543d7d66b7074ced615d11802db484d4e",
+      "bytes": 1520
     },
     {
       "path": "tooling/ci-linux.sh",
@@ -818,8 +823,8 @@
     },
     {
       "path": "tooling/prepare_release.py",
-      "sha256": "39fd75628acdf89f18831c90cf9745f8289bb685fc53fcee45c47a06c5a0c2c1",
-      "bytes": 1637
+      "sha256": "14027a9f6deccecab44fb1e05c4cf891590aa272c3501346a1f6c9e2f56a100d",
+      "bytes": 1747
     },
     {
       "path": "tooling/release_notes.py",

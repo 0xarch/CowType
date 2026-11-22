@@ -1,5 +1,11 @@
 # 更新日志
 
+## 未发布
+
+- 新增 Debian unstable、Fedora 45 的原生 ARM64 容器构建、安装包和安装验证，纳入常规 GitHub Actions；下次发布附件校验同步要求两个 ARM64 包。
+- 新增可手动运行的 14 项平台试构建，覆盖 openKylin、Ubuntu、Deepin、openSUSE Leap 和 Deepin LoongArch64，保留镜像、依赖版本和分阶段日志。
+- [2026-11-22 构建报告](docs/PLATFORM-TRIALS-2026-11-22.md)：6 项通过，8 项因 Fcitx5 低于 5.1.23 暂缓，0 项跳过；已有四个 x86_64 目标全部通过。
+
 ## 0.4.0 — 2026-11-22
 
 相较 0.3.0 的增量修改：

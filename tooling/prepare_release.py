@@ -14,8 +14,10 @@ def prepare(directory, version):
     expected = {
         f'cowtype-{version}-1-x86_64.pkg.tar.zst',
         f'cowtype-{version}-1.fedora45.x86_64.rpm',
+        f'cowtype-{version}-1.fedora45.aarch64.rpm',
         f'cowtype-{version}-1.opensusetumbleweed.x86_64.rpm',
         f'cowtype_{version}-1.debianunstable_amd64.deb',
+        f'cowtype_{version}-1.debianunstable_arm64.deb',
         f'cowtype-{version}-source.tar.gz',
         'PKGBUILD',
     }
