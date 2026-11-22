@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "9d23e736befbe5cb26683248ad3537a3618a27453b859e30f12c20243e8e559f",
-      "bytes": 13105
+      "sha256": "a4f1e466bc2f469228560daa290a6d21e09cba9d654e92d3921a72568be40bed",
+      "bytes": 13390
     },
     {
       "path": "CMakeLists.txt",
@@ -118,8 +118,8 @@
     },
     {
       "path": "docs/DICTIONARIES.md",
-      "sha256": "73ccb421155876706047c86f461f1d2d7c7c1ace7d19babbe608c42965f86992",
-      "bytes": 6272
+      "sha256": "212b7585273ed5293efb5b39f04324d88809c82c8f6d4049fcad853217f96329",
+      "bytes": 8110
     },
     {
       "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "02c79203357fbffd9680d640df11e1b6477d2c684712df27bca1301ef391f8da",
-      "bytes": 56010
+      "sha256": "052ddd774f9f57b569a8b4bd0168da58d54b4a27f1bc4a2ad5175b259d4d8efe",
+      "bytes": 57120
     },
     {
       "path": "docs/USAGE.md",
@@ -253,8 +253,8 @@
     },
     {
       "path": "src-fcitx5/README.md",
-      "sha256": "ce586a752b66e8475f464bb4f880b076f8cc69c1c0bca7cbdf3426b8dacab65d",
-      "bytes": 2213
+      "sha256": "c4849a9d7c051eb29649546e5b4fc02f914ef2060d28f751956429c81cb12370",
+      "bytes": 2571
     },
     {
       "path": "src-fcitx5/compat/addon.h",
@@ -308,8 +308,8 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "3e7ca6de71145bcb5e5bd811f4cb215755766fde755404b208e22fff058d20b9",
-      "bytes": 7159
+      "sha256": "ddaed9dc4bb7caa87fcbf84df2e765fb63fa44bb64f3bca3a993339b6b4b392f",
+      "bytes": 9810
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
@@ -693,8 +693,8 @@
     },
     {
       "path": "tests/fixtures/correction.tsv",
-      "sha256": "8323734394ca3ca8a2f91f5d99194a149721e9575a03e61c742d476b8634bb9c",
-      "bytes": 204
+      "sha256": "cff3b584ccacc8164915906f1ee0a69127fde8e2892478245d1d9f359aaaed03",
+      "bytes": 328
     },
     {
       "path": "tests/fixtures/invalid.tsv",
@@ -723,8 +723,8 @@
     },
     {
       "path": "tests/native/correction.cpp",
-      "sha256": "9618760fb6140bd55cb34d4c305c1754514fe1320c5d7749a379b109111dbfd4",
-      "bytes": 1421
+      "sha256": "cc0a513b6997e1366c38f634b055af0dc8832d2b0e9b8cedb8edf8bd7dc76141",
+      "bytes": 2946
     },
     {
       "path": "tests/native/data.c",

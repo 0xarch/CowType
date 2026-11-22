@@ -1207,5 +1207,16 @@
     ],
     "implementation": "Original CowType explicit letter-trigger index, private atomic autosave editor, optimistic per-record conflict checks and background file reload. Uses Rust standard BTreeMap and Python/Linux flock public API; no external code, data or user phrases included. Custom candidates remain separate from native dictionaries and learned history.",
     "validation": "Synthetic temporary-XDG CRUD, escaped multiline content, weights, concurrency, last-good-file recovery, GTK autosave/deletion, native external-decoder shortcut and implicit-Unicode precedence tests. Opt-in synthetic 10,000-entry Release parse/index and lookup measurement documented in docs/DICTIONARIES.md."
+  },
+  "native_typing_query": {
+    "date": "2026-11-22",
+    "license": "GPL-3.0-or-later",
+    "paths": [
+      "src-fcitx5/engine/libime.h",
+      "tests/native/correction.cpp",
+      "tests/fixtures/correction.tsv"
+    ],
+    "implementation": "Original CowType adaptation of installed public libime APIs: isolated stateless query workspaces for typo/plain graphs, append/erase reuse, on-demand literal sentence recovery for corrected or composed best paths which can prune literal alternatives, node source memoization, and complete-consumption candidate ordering. No WowType implementation copied or read by the implementing primary agent; high-level comparison findings only. libime dependency provenance is recorded separately.",
+    "validation": "Synthetic fixture regression for literal/initial protection, complete typo ordering, literal sentence recovery and fresh-versus-reused results across edits and options. Independent fixed synthetic offline query benchmarks record the baseline commit and optimized native header digest, without personal history, GUI, microphone or remote service calls."
   }
 }

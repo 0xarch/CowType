@@ -11,11 +11,13 @@
 #include <libime/core/userlanguagemodel.h>
 #include <libime/core/lattice.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <fstream>
 #include <mutex>
 #include <set>
 #include <sstream>
+#include <unordered_map>
 #include <stdexcept>
 
 #ifndef COWTYPE_LIBIME_MODEL_FILE
@@ -25,6 +27,10 @@ class LibimeDecoder {
     std::mutex mutex_;
     std::unique_ptr<libime::PinyinIME> ime_;
     const libime::PinyinDictionary *dictionary_ = nullptr;
+    // Stateless query workspace only: never select, learn or set context words.
+    // Reuse append/backspace graphs; unrelated inputs and option changes reset it.
+    std::array<std::unique_ptr<libime::PinyinContext>,2> contexts_;
+    std::array<uint32_t,2> contextFlags_{};
 public:
     static constexpr unsigned ModelUnavailable = 4;
     unsigned warnings = 0;
@@ -62,66 +68,105 @@ public:
         std::transform(raw.begin(),raw.end(),raw.begin(),[](unsigned char c){return std::tolower(c);});
         if(raw.find_first_not_of("abcdefghijklmnopqrstuvwxyz' ")!=std::string::npos) return;
         std::replace(raw.begin(),raw.end(),' ','\'');
-        // Decode without typo edges first. Correction frequency must never
-        // displace an available literal reading, sentence or intentional initials.
-        std::set<std::pair<std::string,size_t>> seen;
-        for(unsigned pass=0;pass<((flags&2)?2u:1u);++pass) {
-        libime::PinyinFuzzyFlags fuzzy;
-        if(pass) fuzzy |= libime::PinyinFuzzyFlags(libime::PinyinFuzzyFlag::CommonTypo) | libime::PinyinFuzzyFlag::AdvancedTypo | libime::PinyinFuzzyFlag::Correction;
-        if(flags&4) fuzzy |= libime::PinyinFuzzyFlag::PartialFinal;
-        ime_->setFuzzyFlags(fuzzy);
-        libime::PinyinContext context(ime_.get());context.setMaxSentenceLength(128);context.type(raw);
-        auto candidates=context.candidates();
-        auto literal=[&](const libime::SentenceResult &candidate) {
-            auto reading=context.candidateFullPinyin(candidate);
-            reading.erase(std::remove(reading.begin(),reading.end(),'\''),reading.end());
-            auto typed=raw;typed.erase(std::remove(typed.begin(),typed.end(),'\''),typed.end());
-            return !reading.empty() && reading==typed && !candidate.sentence().empty() && candidate.sentence().back()->to()->index()==raw.size();
+        auto workspace = [&](bool correction) -> libime::PinyinContext & {
+            const unsigned slot=correction?1:0;
+            const uint32_t options=(flags&~2u)|(correction?2u:0u);
+            libime::PinyinFuzzyFlags fuzzy;
+            if(correction) fuzzy |= libime::PinyinFuzzyFlags(libime::PinyinFuzzyFlag::CommonTypo) | libime::PinyinFuzzyFlag::AdvancedTypo | libime::PinyinFuzzyFlag::Correction;
+            if(flags&4) fuzzy |= libime::PinyinFuzzyFlag::PartialFinal;
+            // libime clears every attached Context on optionChanged, even
+            // when a setter receives the existing value.
+            if(ime_->fuzzyFlags()!=fuzzy) ime_->setFuzzyFlags(fuzzy);
+            auto &context=contexts_[slot];
+            if(!context || contextFlags_[slot]!=options ||
+               (!raw.starts_with(context->userInput()) && !context->userInput().starts_with(raw))) {
+                context=std::make_unique<libime::PinyinContext>(ime_.get());
+                context->setMaxSentenceLength(128);
+                contextFlags_[slot]=options;
+            }
+            const auto previous=context->userInput();
+            if(raw.size()<previous.size()) context->erase(raw.size(),previous.size());
+            else if(raw.size()>previous.size()) context->type(raw.substr(previous.size()));
+            return *context;
         };
-        // Decorate once: full literal matches first, then source tier. Keep the
-        // decoder's statistical/frequency order inside each tier. A composed
-        // sentence belongs to its least preferred constituent dictionary.
+        auto hasCorrection=[](const libime::SentenceResult &candidate) {
+            return std::any_of(candidate.sentence().begin(),candidate.sentence().end(),[](const auto *node) {
+                const auto *pinyin=dynamic_cast<const libime::PinyinLatticeNode *>(node);
+                return pinyin && pinyin->isCorrection();
+            });
+        };
+        auto &primary=workspace(flags&2);
+        const auto &primaryCandidates=primary.candidates();
+        // Typo edges can prune a literal sentence even when the surviving
+        // multiword path has no correction marker. Preserve the plain sentence
+        // search for composed best paths, as well as explicit corrections.
+        const bool recover=(flags&2) && !primaryCandidates.empty() &&
+            (hasCorrection(primaryCandidates.front()) || primaryCandidates.front().size()>1);
+        std::string typed=raw;
+        typed.erase(std::remove(typed.begin(),typed.end(),'\''),typed.end());
+        // Lattice nodes recur in sentence candidates: identify each source once.
+        std::unordered_map<const libime::LatticeNode *,unsigned> sources;
         auto tier = [&](const libime::SentenceResult &candidate) {
             unsigned result = 0;
-            for (const auto *node : candidate.sentence()) {
-                const auto *pinyin = dynamic_cast<const libime::PinyinLatticeNode *>(node);
-                unsigned source = 2;
-                if (pinyin && !pinyin->encodedPinyin().empty()) {
-                    const auto &encoded = pinyin->encodedPinyin();
-                    const auto reading = libime::PinyinEncoder::decodeFullPinyin(encoded.data(), encoded.size());
-                    for (unsigned i = 0; i < 3; ++i) {
-                        if (dictionary_->lookupWord(i, reading, node->word()).has_value()) { source = i; break; }
+            for(const auto *node:candidate.sentence()) {
+                auto [entry,inserted]=sources.try_emplace(node,2);
+                if(inserted) {
+                    const auto *pinyin=dynamic_cast<const libime::PinyinLatticeNode *>(node);
+                    if(pinyin && !pinyin->encodedPinyin().empty()) {
+                        const auto &encoded=pinyin->encodedPinyin();
+                        const auto reading=libime::PinyinEncoder::decodeFullPinyin(encoded.data(),encoded.size());
+                        for(unsigned i=0;i<3;++i) {
+                            if(dictionary_->lookupWord(i,reading,node->word()).has_value()) {entry->second=i;break;}
+                        }
                     }
                 }
-                result = std::max(result, source);
+                result=std::max(result,entry->second);
             }
             return result;
         };
-        struct Ranked { size_t index; bool full; unsigned source; };
+        struct Ranked {std::string text,reading;size_t consumed;bool corrected,literal,recovered;unsigned source;};
         std::vector<Ranked> ranked;
-        for (size_t i = 0; i < candidates.size(); ++i) ranked.push_back({i, literal(candidates[i]), tier(candidates[i])});
-        std::stable_sort(ranked.begin(), ranked.end(), [](const auto &a, const auto &b) {
-            if (a.full != b.full) return a.full > b.full;
-            return a.source < b.source;
-        });
-        for(const auto &rank:ranked) {
-            const auto &candidate = candidates[rank.index];
-            if(candidate.sentence().empty() || (!(flags&1) && candidate.size()>1)) continue;
-            auto reading=context.candidateFullPinyin(candidate);
-            if(reading.empty()) continue; // libime's literal fallback is handled by the session.
-            const size_t consumed=candidate.sentence().back()->to()->index();
-            // libime permits initials intrinsically. Enforce the independent user option
-            // against the decoded reading, including mixed full/initial syllables.
-            if(!(flags&8)) {
-                std::string full;for(char c:reading) if(c!='\'') full+=c;
-                std::string typed;for(char c:raw.substr(0,consumed)) if(c!='\'') typed+=c;
-                if(full!=typed && !((flags&4) && full.starts_with(typed))) continue;
+        for(unsigned pass=0;pass<(recover?2u:1u);++pass) {
+            auto &context=pass?workspace(false):primary;
+            // Changing fuzzy options clears the other lattice: node addresses
+            // are valid only within this pass, never across the mode switch.
+            sources.clear();
+            const auto &candidates=context.candidates();
+            ranked.reserve(ranked.size()+candidates.size());
+            for(const auto &candidate:candidates) {
+                if(candidate.sentence().empty() || (!(flags&1) && candidate.size()>1)) continue;
+                auto reading=context.candidateFullPinyin(candidate);
+                if(reading.empty()) continue;
+                const size_t consumed=candidate.sentence().back()->to()->index();
+                std::string full=reading;
+                full.erase(std::remove(full.begin(),full.end(),'\''),full.end());
+                const bool literal=full==typed && consumed==raw.size();
+                if(pass && !literal) continue;
+                const bool corrected=hasCorrection(candidate);
+                if(!(flags&8)) {
+                    auto prefix=raw.substr(0,consumed);
+                    prefix.erase(std::remove(prefix.begin(),prefix.end(),'\''),prefix.end());
+                    if(full!=prefix && !((flags&4) && full.starts_with(prefix))) continue;
+                }
+                std::replace(reading.begin(),reading.end(),'\'',' ');
+                ranked.push_back({candidate.toString(),std::move(reading),consumed,corrected,literal,bool(pass),tier(candidate)});
             }
-            auto text=candidate.toString();
-            if(!seen.emplace(text,consumed).second) continue;
-            std::replace(reading.begin(),reading.end(),'\'',' ');
-            emit(output,text.c_str(),reading.c_str(),consumed,pass);
         }
+        // Full non-corrections protect intentional readings/initials; complete
+        // corrections precede partial words instead of trailing thousands of them.
+        std::stable_sort(ranked.begin(),ranked.end(),[&](const auto &a,const auto &b) {
+            if((a.consumed==raw.size())!=(b.consumed==raw.size())) return a.consumed==raw.size();
+            if(a.corrected!=b.corrected) return a.corrected<b.corrected;
+            if(a.literal!=b.literal) return a.literal>b.literal;
+            if(a.source!=b.source) return a.source<b.source;
+            // Equal literal/source candidates retain the plain search's order:
+            // extra typo edges must not change intentional word segmentation.
+            return a.recovered>b.recovered;
+        });
+        std::set<std::pair<std::string,size_t>> seen;
+        for(const auto &candidate:ranked) {
+            if(seen.emplace(candidate.text,candidate.consumed).second)
+                emit(output,candidate.text.c_str(),candidate.reading.c_str(),candidate.consumed,candidate.corrected);
         }
     }
 };
