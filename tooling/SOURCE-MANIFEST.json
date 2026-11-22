@@ -403,8 +403,8 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "28bd9d2f539d59757253ab48600ad908387c4b69168584f08c4b73a823466561",
-      "bytes": 31415
+      "sha256": "33df683a3cc7a636cb2697d9da1edf99c721328c91e5c8b8225972d9097c11b0",
+      "bytes": 31722
     },
     {
       "path": "src-settings/app/memory.py",

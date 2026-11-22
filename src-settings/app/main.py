@@ -9,6 +9,7 @@ from pathlib import Path
 import subprocess
 import sys
 import threading
+import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'i18n'))
 from catalog import tr, en
 from translation import build as build_translation
@@ -378,9 +379,13 @@ def main():
                     find_custom(custom_editor, lambda w: isinstance(w, Adw.EntryRow)).set_text('smoketest')
                     find_custom(custom_editor, lambda w: isinstance(w, Gtk.TextView)).get_buffer().set_text('合成自定义词条\n第二行')
                     find_custom(custom_editor, lambda w: isinstance(w, Adw.SpinRow)).set_value(321)
-                    custom_editor.close()  # flush pending autosave on close
+                    custom_editor.close()  # older libadwaita emits closed after its animation
                     saved_custom = custom_store.Record('smoketest', '合成自定义词条\n第二行', 321)
-                    assert saved_custom in custom_store.load(config.data_home())
+                    deadline = time.monotonic() + 3
+                    while saved_custom not in custom_store.load(config.data_home()):
+                        assert time.monotonic() < deadline, 'Custom editor did not flush its synthetic record'
+                        GLib.MainContext.default().iteration(False)
+                        time.sleep(0.005)
                     entry_custom = find_custom(custom_dialog, lambda w: isinstance(w, Adw.ActionRow) and w.get_title() == 'smoketest')
                     entry_custom.emit('activated')
                     custom_editor = self.window.get_visible_dialog()
