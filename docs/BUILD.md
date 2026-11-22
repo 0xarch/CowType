@@ -78,14 +78,15 @@ cargo vendor --locked --versioned-dirs --manifest-path src-voice/Cargo.toml buil
 准备好后，确认源码改动并更新清单，再打包。直接使用根目录脚本会自动准备依赖并校验清单。
 
 ```sh
-python3 tooling/development.py --refresh
-python3 tooling/development.py
+./tooling/update-source-manifest.sh
 python3 tooling/package_arch.py
 cd build/arch
 PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 ```
 
 源码清单在 tooling/SOURCE-MANIFEST.json，可随正常代码修改更新，不再绑定阶段性快照或冻结组件。它仍排除用户日志、模型、Git 元数据及构建目录，并验证文件摘要和文档链接。根目录 README.md 仅登记路径，不校验内容哈希或字节数；其文件存在性、文档链接检查和源码归档保留。Arch 源码归档另行校验词库的锁定输入/输出和 build/voice-vendor 依赖摘要。发行包不包含模型。
+
+`tooling/update-source-manifest.sh` 会先更新清单，再重新校验；可从任意工作目录通过脚本路径运行。仅检查而不更新时仍使用 `python3 tooling/development.py`。
 
 ## 多发行版与 GitHub Actions
 
