@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "48fdccf7eafd481141b2f1da351f3561919e5faf7a460035ed84a0688c43ef67",
-      "bytes": 12447
+      "sha256": "7e05f566c9af12b8eaf2130fcd1d5f37190a4d1c5bd0a2376cde872b5327e548",
+      "bytes": 12615
     },
     {
       "path": "CMakeLists.txt",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "de43f20680baefe5c52690310cba2405e7f0617e3e737aea9ce31ee1a8f4f3eb",
-      "bytes": 51632
+      "sha256": "2f48d80f1fcda020fd94ee53eba9fa6f8a22e2178e50f2369af0ddd61b2923e4",
+      "bytes": 52912
     },
     {
       "path": "docs/USAGE.md",
@@ -283,8 +283,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "828c8788afe745add8c0d98072751988b7891e149506732592e7c6d950b402d1",
-      "bytes": 44981
+      "sha256": "2d8c11ef026bda68dcfb6337da1f55f35bfc139d3ab83a06fce499bd5b093204",
+      "bytes": 45223
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -718,8 +718,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "7e16ae5cd48af2287dff380f607c5c7d60aa6acb43deb74fca56a2df9ba1a3ab",
-      "bytes": 39591
+      "sha256": "a538be94f9618528fb648f877c078f9d534d2e877a560aa3662ecac6a8671e4d",
+      "bytes": 40275
     },
     {
       "path": "tests/native/internal-code.cpp",

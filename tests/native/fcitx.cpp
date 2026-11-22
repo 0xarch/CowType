@@ -19,6 +19,12 @@
 #include "isolation.h"
 #define CHECK(x) do { if (!(x)) { throw std::runtime_error("Fcitx check failed at line " + std::to_string(__LINE__)); } } while(0)
 using namespace fcitx;
+// New Fcitx stores mode notifications as overlays; the old supported versions
+// use auxUp. Observe the real framework result on either API generation.
+template<typename Panel> std::string modeNotification(const Panel &panel) {
+    if constexpr(requires { panel.overlayMessage(); }) return panel.overlayMessage().toString();
+    else return panel.auxUp().toString();
+}
 struct Field : InputContext {
     explicit Field(InputContextManager &manager) : InputContext(manager, "cowtype-test") { created(); setEnablePreedit(true); }
     ~Field() override { destroy(); }
@@ -106,8 +112,12 @@ int main(int argc, char **argv) {
             CHECK(!press(engine, pinyin, a, FcitxKey_a));
             CHECK(a.inputPanel().preedit().empty());
             a.setCapabilityFlags(CapabilityFlag::Preedit);
-            CHECK(press(engine, pinyin, a, FcitxKey_F6)); CHECK(!press(engine, pinyin, a, FcitxKey_a));
             CHECK(press(engine, pinyin, a, FcitxKey_F6));
+            CHECK(modeNotification(a.inputPanel())==engine->subMode(pinyin,a));
+            CHECK(!modeNotification(a.inputPanel()).empty());
+            CHECK(!press(engine, pinyin, a, FcitxKey_a));
+            CHECK(press(engine, pinyin, a, FcitxKey_F6));
+            CHECK(modeNotification(a.inputPanel())==engine->subMode(pinyin,a));
             // F6 is the sole default binding; a legacy Shift flag cannot add a second trigger.
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
             CHECK(press(engine,pinyin,a,FcitxKey_a));CHECK(press(engine,pinyin,a,FcitxKey_Escape));
@@ -117,6 +127,7 @@ int main(int argc, char **argv) {
             addon->reloadConfig();
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            CHECK(modeNotification(a.inputPanel())==engine->subMode(pinyin,a));
             CHECK(!press(engine,pinyin,a,FcitxKey_a));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));

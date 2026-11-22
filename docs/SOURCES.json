@@ -1124,5 +1124,29 @@
     "implementation": "Original CowType optional Emoji-first allocation before the shared 12-family cap, retaining round-robin turns within the preferred class and native word ranking. Classification uses only fully-qualified sequences from the existing pinned Unicode emoji-test; generated output provenance and digest recorded in emoji/sources.json. GTK settings consolidate Emoji controls into one group and move learning/privacy immediately before integration. Final supplementary candidates now form a single class-ranked block after the first matching word; source word order no longer overrides the selected priority across different keywords. Native word relative order is retained.",
     "configuration": "EmojiFirst boolean defaults false (symbols first); applied by session reconfiguration without changing raw input.",
     "dependencies": "No new upstream data versions, libraries, models or services."
+  },
+  "mode_notification_restore_2026_11_22": {
+    "paths": [
+      "src-fcitx5/engine/cowtype.cpp",
+      "tests/native/fcitx.cpp"
+    ],
+    "implementation": "Restore the existing public Instance::showCustomInputMethodInformation call after rendering in the shared mode shortcut action. The earlier shortcut unification removed the old Shift-only call without transferring it. Framework owns transient display and timeout; no new timer or upstream implementation copied. Native probes assert the real overlay/auxUp matches the resulting submode.",
+    "api_baseline": "showCustomInputMethodInformation exists since Fcitx5 5.1.11; no newer API required in the addon.",
+    "reviewed_sources": [
+      {
+        "upstream": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.11",
+        "path": "src/lib/fcitx/instance.cpp",
+        "sha256": "f744362fe9f0730181c20582e60b37f9f2bba2418448b13bd9a1aac47c463056",
+        "use": "Public API lifecycle inspection only."
+      },
+      {
+        "upstream": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.23",
+        "path": "src/lib/fcitx/instance.cpp",
+        "sha256": "0836b1d8d8ba257d3d5699bad0f6e42a9033f2b2b403df9babee301a827bb853",
+        "use": "Public API lifecycle inspection only."
+      }
+    ]
   }
 }

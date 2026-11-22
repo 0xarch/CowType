@@ -526,6 +526,10 @@ private:
             state->internalCode=false;state->unicodeCode=false;cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
         }
         render(ic,action==Shortcuts::Action::Mode);
+        if(action==Shortcuts::Action::Mode) {
+            instance_->showCustomInputMethodInformation(ic,
+                cowtype2_session_mode(state->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6"));
+        }
     }
     void toggleVoice(InputContext *ic) {
         auto *state=ic->propertyFor(&factory_);
