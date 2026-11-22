@@ -149,6 +149,8 @@ if(BUILD_TESTING)
     target_link_libraries(cowtype-fcitx-probe PRIVATE Fcitx5::Core cowtype-fcitx-compat ${CMAKE_DL_LIBS})
     add_executable(cowtype-translate-probe tests/native/translate.cpp)
     target_link_libraries(cowtype-translate-probe PRIVATE Fcitx5::Core cowtype-fcitx-compat ${CMAKE_DL_LIBS})
+    target_include_directories(cowtype-translate-probe PRIVATE "${CMAKE_BINARY_DIR}")
+    add_dependencies(cowtype-translate-probe cowtype-i18n)
     add_test(NAME fcitx-translation COMMAND ${Python3_EXECUTABLE}
         "${CMAKE_SOURCE_DIR}/tests/native/isolated.py"
         --root "${CMAKE_BINARY_DIR}/translate-test" --prefix "${CMAKE_BINARY_DIR}/translate-test/prefix"

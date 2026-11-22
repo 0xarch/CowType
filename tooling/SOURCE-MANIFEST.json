@@ -10,8 +10,8 @@
     },
     {
       "path": ".github/workflows/linux-packages.yml",
-      "sha256": "f14c128b3a6ee9e1c954d64a2f5f1944d44983893e81d6cf1d40554dc64eac14",
-      "bytes": 4225
+      "sha256": "7a46578f8210a6576c4b48793343a91f1ff0e212dc425b94669f3d749b55345f",
+      "bytes": 5808
     },
     {
       "path": ".github/workflows/platform-trials.yml",
@@ -35,13 +35,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "c5cb90914eeb7611da16ac236b77780e6d832b911f65c2cb33d91795e2cc515f",
-      "bytes": 11159
+      "sha256": "853592216e678a5d4cbd47a48adf7d13f7d42d86176d2283fec98bb5e552994d",
+      "bytes": 11365
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "8020c86b9a3a60eec5882a8af2c8dbc0878cdebcd2350568ef5c2b350ee408ef",
-      "bytes": 16969
+      "sha256": "ccdf7acd14fc8670f0ec294635fa768c53c8559b7e10ecf80f5bde8d2d0a049e",
+      "bytes": 17114
     },
     {
       "path": "Cargo.lock",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "73cec54f77be0018881a7ecb64bdc48b9d64bd33862cc19ecd5892ebcac3d8b0",
-      "bytes": 48925
+      "sha256": "d57876605926c48276ca3f0c7faebea78598391cd7768b5939910ff1eb0e6d1e",
+      "bytes": 49171
     },
     {
       "path": "docs/USAGE.md",
@@ -688,8 +688,8 @@
     },
     {
       "path": "tests/native/fake-translate.py",
-      "sha256": "645d7614bfed675f81992501aaa99eb55110e48e94396c8bffd39586fbeaa204",
-      "bytes": 733
+      "sha256": "2ef1cb4cb7cddcbcf5aba76ae07772db07696046baa2a1b89c5ae8fb0168b567",
+      "bytes": 790
     },
     {
       "path": "tests/native/fake-voice.py",
@@ -728,8 +728,8 @@
     },
     {
       "path": "tests/native/translate.cpp",
-      "sha256": "443609e411d1a5c782502d3eafb12a7e006b89d6c814caaeca3372a14d94f118",
-      "bytes": 8459
+      "sha256": "e92c90778e24f613f6d3ffd3c8715124097a531f5a60298cd1b854ef1ae57f46",
+      "bytes": 9339
     },
     {
       "path": "tests/native/unicode-code.cpp",
@@ -848,8 +848,8 @@
     },
     {
       "path": "tooling/prepare_release.py",
-      "sha256": "59ebb37e44544fbf81f3aa49e5649fd33295d062f45fbb13184862a2642cda27",
-      "bytes": 2120
+      "sha256": "91ef9760e7da0dfbe00dcb16866608da7b550be28443312d1cca542423799acc",
+      "bytes": 2173
     },
     {
       "path": "tooling/release_notes.py",

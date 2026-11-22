@@ -10,7 +10,7 @@ with (Path(os.environ['COWTYPE_TEST_ROOT'])/'translate-test-starts').open('a') a
 line=sys.stdin.buffer.readline(65538)
 try:
     text=bytes.fromhex(line.decode().strip()).decode()
-    time.sleep(0.12)
+    time.sleep(float(os.environ.get('COWTYPE_TEST_TRANSLATE_DELAY', '0.12')))
     if text not in ('山','hello worl','failure','工'):
         print('E\ttranslate.error.input')
     elif text=='failure':

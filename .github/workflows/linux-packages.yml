@@ -86,3 +86,42 @@ jobs:
           path: |
             build/ci-test/Testing/Temporary/LastTest.log
             build/ci-ldd.txt
+  loongarch:
+    name: Package deepin25 loongarch64
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: loong64
+      - uses: actions/download-artifact@v4
+        with:
+          name: prepared-source
+          path: dist
+      - name: Start Deepin LoongArch64 container
+        run: |
+          docker run --detach --name cowtype-loongarch --platform linux/loong64 \
+            --volume "$PWD:/work" --workdir /work linuxdeepin/deepin:crimson-loong64 sleep infinity
+      - name: Install native dependencies and compiler
+        run: docker exec cowtype-loongarch bash tooling/ci-linux.sh dependencies deepin25
+      - name: Build, test and package
+        run: docker exec cowtype-loongarch bash tooling/ci-linux.sh build deepin25 deb
+      - name: Install and verify native package
+        run: docker exec --env COWTYPE_VOICE_HELPER=/work/tests/native/fake-voice.py cowtype-loongarch bash tooling/ci-linux.sh verify deepin25
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-deepin25-loongarch64
+          path: dist/packages/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: diagnostics-deepin25-loongarch64
+          path: |
+            build/ci-test/Testing/Temporary/LastTest.log
+            build/ci-ldd.txt
+      - name: Remove isolated container
+        if: always()
+        run: docker rm --force cowtype-loongarch || true

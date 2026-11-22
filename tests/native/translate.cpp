@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <vector>
 #include "isolation.h"
+#include "messages.h"
 #define CHECK(x) do { if(!(x))throw std::runtime_error("Translation check failed at line "+std::to_string(__LINE__)); } while(0)
 using namespace fcitx;
 struct Field : InputContext {
@@ -59,7 +60,7 @@ int main(int argc,char **argv){
                 [&]{result();a.inputPanel().candidateList()->candidate(0).select(&a);CHECK(a.commits.size()==2);a.setCapabilityFlags(CapabilityFlags(CapabilityFlag::Preedit)|CapabilityFlag::SurroundingText);a.surroundingText().setText("selected text",13,0);beforeSelection=starts();tap(FcitxKey_F10);},
                 [&]{CHECK(starts()==beforeSelection);CHECK(!a.inputPanel().candidateList());CHECK(!a.inputPanel().auxDown().empty());CHECK(a.commits.size()==2);CHECK(a.inputPanel().clientPreedit().empty());CHECK(a.surroundingText().text()=="selected text");a.surroundingText().invalidate();a.setCapabilityFlags(CapabilityFlag::Preedit);tap(FcitxKey_F6);tap(FcitxKey_F10);type("hello world");CHECK(press(FcitxKey_BackSpace));CHECK(a.inputPanel().clientPreedit().toString()=="hello worl");CHECK(press(FcitxKey_Return));},
                 [&]{result();CHECK(press(FcitxKey_Return));CHECK(a.commits.size()==3);tap(FcitxKey_F10);type("failure");CHECK(press(FcitxKey_Return));},
-                [&]{CHECK(!a.inputPanel().candidateList());CHECK(!a.inputPanel().auxDown().empty());CHECK(press(FcitxKey_Escape));tap(FcitxKey_F6);type("shan");tap(FcitxKey_F10);a.focusOut();a.focusIn();},
+                [&]{CHECK(!a.inputPanel().candidateList());CHECK(a.inputPanel().auxDown().toString()==ct_tr("translate.error.rate"));CHECK(press(FcitxKey_Escape));tap(FcitxKey_F6);type("shan");tap(FcitxKey_F10);a.focusOut();a.focusIn();},
                 [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);addon->reloadConfig();CHECK(a.inputPanel().clientPreedit().toString()=="shan");CHECK(press(FcitxKey_Escape));},
                 [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);tap(FcitxKey_F9);CHECK(press(FcitxKey_Escape));CHECK(press(FcitxKey_Escape));},
                 [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);a.setCapabilityFlags(CapabilityFlag::Password);CHECK(!press(FcitxKey_a));a.setCapabilityFlags(CapabilityFlag::Preedit);},
@@ -72,11 +73,25 @@ int main(int argc,char **argv){
                 [&]{result();CHECK(press(FcitxKey_1));CHECK(a.commits.size()==4 && a.commits.back()=="合成译文");}
             };
             size_t step=0;std::string failure;
+            auto stepDeadline=now(CLOCK_MONOTONIC)+10000000;
             auto timer=instance.eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+400000,1000,
                 [&](EventSourceTime *source,uint64_t){
+                    bool ready=true;
+                    switch(step) {
+                    case 1: case 2: case 3: case 5: case 11: case 15: case 16: {
+                        const auto list=a.inputPanel().candidateList();
+                        ready=list && list->size()==1 && list->candidate(0).text().toString()=="合成译文";
+                        break;
+                    }
+                    case 6: ready=a.inputPanel().auxDown().toString()==ct_tr("translate.error.rate");break;
+                    }
+                    if(!ready && now(CLOCK_MONOTONIC)<stepDeadline) {
+                        source->setNextInterval(20000);source->setOneShot();return true;
+                    }
                     try {steps[step++]();}
                     catch(const std::exception &error){failure=error.what();instance.eventLoop().exit();return false;}
                     if(step==steps.size()){instance.eventLoop().exit();return false;}
+                    stepDeadline=now(CLOCK_MONOTONIC)+10000000;
                     source->setNextInterval(400000);source->setOneShot();return true;
                 });
             instance.eventLoop().exec();

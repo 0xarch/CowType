@@ -972,7 +972,7 @@
       "tooling/platform_trials.py",
       "tooling/platform-probe.sh"
     ],
-    "implementation": "Original CowType image-platform inspection, native dependency gating, per-stage trial logs and report aggregation. Native ARM64 Fedora/Debian targets reuse original packaging. No upstream implementation copied.",
+    "implementation": "Original CowType image-platform inspection, native dependency gating, per-stage trial logs and report aggregation. Native ARM64 Fedora/Debian targets reuse original packaging. No upstream implementation copied. Extended regular matrix to the requested distro/architecture targets, with explicit QEMU LoongArch64 packaging and original bounded asynchronous test waits. Synthetic preedit policy is set explicitly; production respects the frontend preference.",
     "new_dependencies": [],
     "build_environment_references": [
       {
