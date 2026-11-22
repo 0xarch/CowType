@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'i18n'))
 from catalog import tr, en
 from translation import build as build_translation
 from memory import show as show_memory
+from custom import show as show_custom
 
 PAGES = [('input', 'preferences-system-symbolic'), ('keys', 'input-keyboard-symbolic'),
          ('voice', 'audio-input-microphone-symbolic'), ('translate', 'accessories-dictionary-symbolic'),
@@ -39,6 +40,15 @@ def settings_module():
 def memory_store_module():
     path = Path(__file__).resolve().parents[1] / 'config/memory.py'
     spec = importlib.util.spec_from_file_location('cowtype_memory_store', path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def custom_store_module():
+    path = Path(__file__).resolve().parents[1] / 'config/custom.py'
+    spec = importlib.util.spec_from_file_location('cowtype_custom_store', path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
@@ -220,6 +230,8 @@ def main():
             self.prepare = model_button('action.download', self.download_or_cancel)
             self.preparing = False
             build_translation(self, Adw, Gtk, GLib, tr, reload_fcitx)
+            custom_words = self.group('words', 'custom.title', tr('custom.hint'))
+            self.custom_action = self.action(custom_words, 'custom.manage', lambda *_: show_custom(self, custom_store_module(), config, Adw, Gtk, GLib, tr))
             words = self.group('words', 'group.words', tr('hint.words'))
             profile = manager.registry()['wanxiang']
             self.action(words, 'action.words.source', lambda *_: Gtk.UriLauncher.new('https://github.com/' + profile['repository']).launch(self.host, None, None),
@@ -340,6 +352,34 @@ def main():
                         editor.close()
                         print('Memory editor opened with synthetic record', flush=True)
                     memory_dialog.close()
+                    assert self.custom_action.get_visible()
+                    custom_store = custom_store_module()
+                    before_custom = custom_store.load(config.data_home())
+                    custom_dialog = show_custom(self, custom_store, config, Adw, Gtk, GLib, tr)
+                    def find_custom(widget, predicate):
+                        if predicate(widget): return widget
+                        child = widget.get_first_child()
+                        while child:
+                            found = find_custom(child, predicate)
+                            if found: return found
+                            child = child.get_next_sibling()
+                        return None
+                    add_custom = find_custom(custom_dialog, lambda w: isinstance(w, Gtk.Button) and w.get_label() == tr('custom.add'))
+                    add_custom.emit('clicked')
+                    custom_editor = self.window.get_visible_dialog()
+                    find_custom(custom_editor, lambda w: isinstance(w, Adw.EntryRow)).set_text('smoketest')
+                    find_custom(custom_editor, lambda w: isinstance(w, Gtk.TextView)).get_buffer().set_text('合成自定义词条\n第二行')
+                    find_custom(custom_editor, lambda w: isinstance(w, Adw.SpinRow)).set_value(321)
+                    custom_editor.close()  # flush pending autosave on close
+                    saved_custom = custom_store.Record('smoketest', '合成自定义词条\n第二行', 321)
+                    assert saved_custom in custom_store.load(config.data_home())
+                    entry_custom = find_custom(custom_dialog, lambda w: isinstance(w, Adw.ActionRow) and w.get_title() == 'smoketest')
+                    entry_custom.emit('activated')
+                    custom_editor = self.window.get_visible_dialog()
+                    find_custom(custom_editor, lambda w: isinstance(w, Gtk.Button) and w.get_label() == tr('action.delete')).emit('clicked')
+                    assert custom_store.load(config.data_home()) == before_custom
+                    custom_dialog.close()
+                    print('Custom dictionary autosave and deletion passed', flush=True)
                     self.smoke_passed = True
                     print('Libadwaita smoke test: single application window and preferences remain mapped after startup', flush=True)
                     self.window.close()

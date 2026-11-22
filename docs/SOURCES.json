@@ -1194,5 +1194,18 @@
     ],
     "implementation": "Original CowType searchable learning editor, optimistic private request queue and Linux flock single-writer coordination. Uses public Linux file locking API; no external implementation or personal learning data included.",
     "validation": "Synthetic temporary-XDG editing, conflicts, reset, corruption, locking and GTK dialog tests. Read-only native candidate audit used a temporary copy of local learning data; private snapshots and audit helper removed."
+  },
+  "custom_dictionary_editor": {
+    "date": "2026-11-22",
+    "license": "GPL-3.0-or-later",
+    "paths": [
+      "src/custom/",
+      "src-settings/app/custom.py",
+      "src-settings/config/custom.py",
+      "tests/custom_dictionary.rs",
+      "tests/test_custom.py"
+    ],
+    "implementation": "Original CowType explicit letter-trigger index, private atomic autosave editor, optimistic per-record conflict checks and background file reload. Uses Rust standard BTreeMap and Python/Linux flock public API; no external code, data or user phrases included. Custom candidates remain separate from native dictionaries and learned history.",
+    "validation": "Synthetic temporary-XDG CRUD, escaped multiline content, weights, concurrency, last-good-file recovery, GTK autosave/deletion, native external-decoder shortcut and implicit-Unicode precedence tests. Opt-in synthetic 10,000-entry Release parse/index and lookup measurement documented in docs/DICTIONARIES.md."
   }
 }

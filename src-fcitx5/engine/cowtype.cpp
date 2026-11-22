@@ -276,7 +276,8 @@ public:
            && !state->translating && cowtype2_runtime_option(runtime_.get(),16) && !cowtype2_session_mode(state->session.get())) {
             const std::string_view preedit=cowtype2_session_preedit(state->session.get());
             if((preedit=="u" || preedit=="U") && cowtype2_session_cursor(state->session.get())==1
-               && cowtype::UnicodeCode::accepts(preedit,char(code))) {
+               && cowtype::UnicodeCode::accepts(preedit,char(code))
+               && !cowtype2_session_custom_prefix(state->session.get(),(std::string(preedit)+char(code)).c_str())) {
                 state->unicodeBuffer=preedit;
                 cowtype2_session_reset(state->session.get(),false);
                 state->unicodeCode=true;state->unicodePrefix=true;

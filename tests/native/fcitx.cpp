@@ -46,6 +46,9 @@ int main(int argc, char **argv) {
         CHECK(argc == 2);
         CHECK(isolatedPaths());
         std::filesystem::remove(std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v1.ini");
+        const auto customPath=std::filesystem::path(std::getenv("XDG_DATA_HOME"))/"cowtype/custom-v1.tsv";
+        std::filesystem::create_directories(customPath.parent_path());
+        { std::ofstream custom(customPath); custom << "# cowtype-custom-v1\nctest\t合成低权重\t1\nctest\t合成高权重\\n第二行\t1000\nuab\t字母快捷内容\t100\n"; }
         char name[]="cowtype-test", disabled[]="--disable=all";
         char *arguments[]={name, disabled, nullptr}; Instance instance(2, arguments); instance.initialize();
         // Open exactly this build's module. Never load any installed CowType addon.
@@ -164,6 +167,15 @@ int main(int argc, char **argv) {
             CHECK(a.inputPanel().candidateList()->size()==0);
             CHECK(press(engine,pinyin,a,FcitxKey_Return));
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            // Explicit private shortcuts work with the real external decoder.
+            type(engine,pinyin,a,"ctest");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="合成高权重\n第二行");
+            CHECK(a.inputPanel().candidateList()->candidate(1).text().toString()=="合成低权重");
+            CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="合成高权重\n第二行");
+            // A hex-looking alphabetic shortcut wins over implicit u-prefix input.
+            type(engine,pinyin,a,"uab");
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="字母快捷内容");
+            CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="字母快捷内容");
             // Unicode is an independent module and shortcut; preserve normal composition.
             type(engine,pinyin,a,"shan");
             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));

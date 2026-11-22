@@ -154,6 +154,7 @@ pub struct Session {
     candidates: Vec<Candidate>,
     selected_candidate: usize,
     learning: Option<SharedLearning>,
+    custom: Option<crate::custom::service::Shared>,
     last_undo: Vec<Undo>,
     punctuation: Punctuation,
     skin_tone_choice: Option<SkinToneChoice>,
@@ -171,10 +172,21 @@ impl Session {
             candidates: Vec::new(),
             selected_candidate: 0,
             learning: None,
+            custom: None,
             last_undo: Vec::new(),
             punctuation: Punctuation::default(),
             skin_tone_choice: None,
         }
+    }
+    pub fn set_custom(&mut self, custom: crate::custom::service::Shared) {
+        self.custom = Some(custom);
+        self.refresh();
+    }
+    pub fn custom_prefix(&self, raw: &str) -> bool {
+        self.custom
+            .as_ref()
+            .and_then(|c| c.read().ok())
+            .is_some_and(|c| c.has_prefix(raw))
     }
     pub fn set_learning(&mut self, learning: Option<SharedLearning>) {
         self.learning = learning;
@@ -282,6 +294,15 @@ impl Session {
             && self.config.emoji
             && self.config.emoji_skin_tone_picker
             && candidate.custom
+            && !self
+                .custom
+                .as_ref()
+                .and_then(|c| c.read().ok())
+                .is_some_and(|c| {
+                    c.query(&self.remaining)
+                        .iter()
+                        .any(|explicit| explicit.text == candidate.text)
+                })
         {
             let variants = crate::engine::symbols::variants(&candidate.text);
             if !variants.is_empty() {
@@ -527,6 +548,20 @@ impl Session {
                 self.config.emoji_default_skin_tone,
                 self.config.emoji_first,
             );
+        }
+        if let Some(custom) = &self.custom {
+            if let Ok(custom) = custom.read() {
+                let mut explicit = custom.query(&self.remaining);
+                if !explicit.is_empty() {
+                    self.candidates.retain(|c| {
+                        !explicit
+                            .iter()
+                            .any(|e| e.text == c.text && !c.has_remaining)
+                    });
+                    explicit.append(&mut self.candidates);
+                    self.candidates = explicit;
+                }
+            }
         }
         self.selected_candidate = 0;
     }

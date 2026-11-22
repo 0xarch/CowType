@@ -6,6 +6,7 @@
 compile_error!("CowType currently supports Linux only");
 
 pub mod config;
+pub mod custom;
 pub mod dictionary;
 pub mod engine;
 #[cfg(feature = "native-ffi")]

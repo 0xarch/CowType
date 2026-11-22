@@ -262,3 +262,21 @@ learning.error.conflict	记录已变化或目标词条已存在，请刷新后�
 learning.error.data	无法读取或修改记忆，原记录已保留。
 learning.error.value	请填写有效的拼音、词句和正整数权重。
 learning.error.writer	学习记录正由另一实例保存，当前实例不会覆盖它。
+custom.title	自定义词库
+custom.manage	编辑自定义词库
+custom.hint	完整输入触发字母即可匹配。有效编辑自动保存并生效，无需手动编译。
+custom.search	搜索触发字母或内容
+custom.add	添加词条
+custom.edit	编辑词条
+custom.details	权重 {weight} · {text}
+custom.weight_hint	权重范围 1–1,000,000，默认 100；常用可设 100–1,000。相同触发字母按权重从高到低排列，同权重保持添加顺序；自定义词条优先于普通候选。
+custom.trigger	触发字母（1–64 个英文字母）
+custom.content	内容（支持换行和制表符，最多 4096 个字符）
+custom.autosave	有效内容自动保存；未通过校验的编辑不会覆盖已保存词条。
+custom.saved	已自动保存，下次输入时生效（约半秒内同步）。
+custom.close	关闭
+custom.error.data	无法读取或保存自定义词库，原文件和已加载词条已保留。
+custom.error.value	请填写 1–64 个英文字母、非空内容及 1–1,000,000 的整数权重。
+custom.error.conflict	词条已变化或相同触发字母与内容已存在，请关闭并刷新后重试。
+custom.error.limit	自定义词库最多支持 10,000 条，文件不得超过 8 MiB。
+custom.weight	权重

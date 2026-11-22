@@ -362,6 +362,7 @@ pub unsafe extern "C" fn cowtype2_session_mode(h: *const SessionHandle) -> u32 {
 pub struct RuntimeHandle {
     settings: crate::config::Settings,
     service: crate::learning::service::Service,
+    custom: crate::custom::service::Service,
     service_warning: CString,
     warning: CString,
 }
@@ -375,6 +376,7 @@ pub extern "C" fn cowtype2_runtime_new() -> *mut RuntimeHandle {
         Box::into_raw(Box::new(RuntimeHandle {
             settings,
             service: crate::learning::service::Service::new(crate::learning::path()),
+            custom: crate::custom::service::Service::new(crate::custom::path()),
             warning: cstring(&warning),
             service_warning: CString::default(),
         }))
@@ -440,6 +442,12 @@ pub unsafe extern "C" fn cowtype2_runtime_warning(h: *mut RuntimeHandle) -> *con
         return ptr::null();
     };
     if h.warning.as_bytes().is_empty() {
+        if let Ok(error) = h.custom.error.lock() {
+            if !error.is_empty() {
+                h.service_warning = cstring(&error);
+                return h.service_warning.as_ptr();
+            }
+        }
         if let Ok(error) = h.service.error.lock() {
             h.service_warning = cstring(&error);
             return h.service_warning.as_ptr();
@@ -469,6 +477,7 @@ pub unsafe extern "C" fn cowtype2_session_configure(
         c.emoji_default_skin_tone = r.settings.emoji_default_skin_tone;
         h.session.configure(c);
         h.session.set_learning(Some(r.service.state.clone()));
+        h.session.set_custom(r.custom.state.clone());
         h.update(h.session.frame());
     });
 }
@@ -589,4 +598,18 @@ pub unsafe extern "C" fn cowtype2_engine_set_decoder(
         free,
     }));
     true
+}
+
+/// Prefix probe lets explicit shortcuts take precedence over implicit Unicode input.
+#[no_mangle]
+pub unsafe extern "C" fn cowtype2_session_custom_prefix(
+    h: *const SessionHandle,
+    raw: *const c_char,
+) -> bool {
+    protect(false, || {
+        let (Some(h), Ok(raw)) = (unsafe { h.as_ref() }, unsafe { string(raw) }) else {
+            return false;
+        };
+        h.session.custom_prefix(raw)
+    })
 }

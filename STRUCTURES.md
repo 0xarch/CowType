@@ -22,3 +22,5 @@
 根 Cargo.toml 构建本体，src-voice/Cargo.toml 构建语音宿主；CMakeLists.txt 构建和安装 Fcitx5、设置、数据工具与语音程序。运行时代码在 src/ 或 src-*/；维护脚本在 tooling/，生成物统一放 build/、target/、dist/。模型、日志、个人配置和用户诊断附件不作为项目源码。
 
 学习记忆：`src/learning/edits.rs` 提供带版本冲突检查的私有编辑队列及单写者锁，`service.rs` 统一保存学习和设置修改；`src-settings/config/memory.py` 处理快照与请求，`app/memory.py` 提供分页编辑界面。
+
+自定义词库：`src/custom/` 提供完整字母触发索引及后台文件更新，`src-settings/config/custom.py` 原子保存词条，`app/custom.py` 提供自动保存的分页编辑器。独立于系统/万象预编译词库和个人学习。

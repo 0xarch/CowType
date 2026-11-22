@@ -36,6 +36,7 @@ class StartupTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, log.read_text() if log.exists() else result.stderr)
                 self.assertIn('remain mapped after startup', result.stdout)
                 self.assertIn('Memory editor opened with synthetic record', result.stdout)
+                self.assertIn('Custom dictionary autosave and deletion passed', result.stdout)
                 self.assertEqual(log.stat().st_mode & 0o777, 0o600)
                 self.assertIn('Settings starting', log.read_text())
             finally:

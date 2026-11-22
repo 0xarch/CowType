@@ -262,3 +262,21 @@ learning.error.conflict	The record changed or the target already exists. Refresh
 learning.error.data	Memory could not be read or changed. Existing records were preserved.
 learning.error.value	Enter valid pinyin, a word or phrase, and a positive integer weight.
 learning.error.writer	Another instance owns the learning writer. This instance will not overwrite it.
+custom.title	Custom dictionary
+custom.manage	Edit custom dictionary
+custom.hint	Type a complete trigger to match. Valid edits are saved and applied automatically; no manual compilation is needed.
+custom.search	Search triggers or content
+custom.add	Add entry
+custom.edit	Edit entry
+custom.details	Weight {weight} · {text}
+custom.weight_hint	Weights range from 1 to 1,000,000; default: 100. Try 100–1,000 for common entries. Entries sharing a trigger sort by descending weight, with ties in insertion order. Custom entries precede ordinary candidates.
+custom.trigger	Trigger (1–64 English letters)
+custom.content	Content (newlines and tabs supported; up to 4096 characters)
+custom.autosave	Valid edits save automatically. Invalid edits do not replace saved entries.
+custom.saved	Saved automatically. Applies on the next input after synchronization (about half a second).
+custom.close	Close
+custom.error.data	Unable to read or save the custom dictionary. The original file and loaded entries are preserved.
+custom.error.value	Enter 1–64 English letters, nonempty content, and an integer weight from 1 to 1,000,000.
+custom.error.conflict	The entry changed or this trigger and content already exist. Close and refresh before retrying.
+custom.error.limit	The custom dictionary supports up to 10,000 entries and an 8 MiB file.
+custom.weight	Weight

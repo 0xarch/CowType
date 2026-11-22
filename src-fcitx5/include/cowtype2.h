@@ -66,6 +66,7 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);
+bool cowtype2_session_custom_prefix(const Cowtype2Session *, const char *raw);
 bool cowtype2_session_forget(Cowtype2Session *);
 /* Decoder callback context is owned by the engine after successful attachment.
  * Must serialize its shared state; must not throw across the C boundary. */

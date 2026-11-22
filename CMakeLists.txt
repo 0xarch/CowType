@@ -73,7 +73,7 @@ install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype)
 install(DIRECTORY src-data-tools/manifest/notices/ DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/cowtype/dictionary-notices)
 install(FILES src-data-tools/dictionaries/manage.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/dictionaries)
 install(FILES src-data-tools/manifest/sources.json DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/manifest)
-install(FILES src-settings/app/main.py src-settings/app/launch.py src-settings/app/translation.py src-settings/app/memory.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/settings)
+install(FILES src-settings/app/main.py src-settings/app/launch.py src-settings/app/translation.py src-settings/app/memory.py src-settings/app/custom.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/settings)
 install(DIRECTORY src-translate/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/translate FILES_MATCHING PATTERN "*.py" PATTERN __pycache__ EXCLUDE)
 configure_file(src-translate/cowtype-translate.in cowtype-translate @ONLY)
 install(PROGRAMS "${CMAKE_BINARY_DIR}/cowtype-translate" DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -189,7 +189,7 @@ add_custom_target(cowtype-voice-build ALL DEPENDS "${VOICE_TARGET}/release/cowty
 install(PROGRAMS "${VOICE_TARGET}/release/cowtype-voice" DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY src-voice/paraformer/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/paraformer PATTERN __pycache__ EXCLUDE)
 install(FILES src/config/shortcuts.tsv DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/config)
-install(FILES src-settings/config/settings.py src-settings/config/memory.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/config)
+install(FILES src-settings/config/settings.py src-settings/config/memory.py src-settings/config/custom.py DESTINATION ${CMAKE_INSTALL_LIBDIR}/cowtype/config)
 
 # Preserve upstream notices for compiled voice dependencies as well as full source archive.
 if(EXISTS "${CMAKE_SOURCE_DIR}/build/voice-vendor")
