@@ -433,6 +433,7 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         16 => s.unicode_prefix as u32,
         17 => s.translate as u32,
         18 => s.translate_hotkey,
+        19 => s.system_dictionary as u32,
         _ => 0,
     }
 }

@@ -280,3 +280,6 @@ custom.error.value	请填写 1–64 个英文字母、非空内容及 1–1,000,
 custom.error.conflict	词条已变化或相同触发字母与内容已存在，请关闭并刷新后重试。
 custom.error.limit	自定义词库最多支持 10,000 条，文件不得超过 8 MiB。
 custom.weight	权重
+group.system_dictionary	系统词库
+setting.SystemDictionary	使用系统 Fcitx/libime 拼音词库
+hint.system_dictionary	默认关闭。启用后合并系统词库并优先其来源，可能改变候选排序并增加查询开销；与本地统计模型开关相互独立。

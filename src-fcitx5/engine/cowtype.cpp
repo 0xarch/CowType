@@ -549,7 +549,7 @@ private:
         std::string path = data + (scheme ? "/wubi/lexicon.tsv" : "/ice/lexicon.tsv");
         std::string optional = scheme ? "" : home + "/cowtype/dictionaries/wanxiang/lexicon.tsv";
         const bool statisticalModel = !scheme && cowtype2_runtime_option(runtime_.get(),12);
-        const auto system = scheme ? "" : LibimeDecoder::systemPath();
+        const auto system = scheme || !cowtype2_runtime_option(runtime_.get(),19) ? "" : LibimeDecoder::systemPath();
         const auto model = statisticalModel ? LibimeDecoder::modelPath() : "";
         const auto cache = LibimeDecoder::installed("XDG_CACHE_HOME", (environment("HOME", "") + "/.cache").c_str());
         cowtype::PinyinSources sources{path, optional, system, cache.empty() ? "" : cache + "/cowtype/dictionaries", data + "/compiled"};

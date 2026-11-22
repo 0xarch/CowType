@@ -17,6 +17,7 @@ pub struct Settings {
     pub shift_toggle: bool,
     pub remember_mode: bool,
     pub statistical_model: bool,
+    pub system_dictionary: bool,
     pub emoji: bool,
     pub emoji_first: bool,
     pub emoji_skin_tone_picker: bool,
@@ -50,6 +51,7 @@ impl Default for Settings {
             shift_toggle: true,
             remember_mode: false,
             statistical_model: false,
+            system_dictionary: false,
             emoji: false,
             emoji_first: false,
             emoji_skin_tone_picker: true,
@@ -239,6 +241,7 @@ impl Settings {
             ("ShiftToggle", &mut settings.shift_toggle),
             ("RememberMode", &mut settings.remember_mode),
             ("StatisticalModel", &mut settings.statistical_model),
+            ("SystemDictionary", &mut settings.system_dictionary),
             ("Emoji", &mut settings.emoji),
             ("EmojiFirst", &mut settings.emoji_first),
             ("EmojiSkinTonePicker", &mut settings.emoji_skin_tone_picker),
@@ -415,6 +418,16 @@ mod hotkey_tests {
         assert!(!Settings::parse("Version=1\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=True\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=auto\n").is_err());
+    }
+    #[test]
+    fn system_dictionary_is_optional_and_defaults_off() {
+        assert!(!Settings::parse("Version=1\n").unwrap().system_dictionary);
+        assert!(
+            Settings::parse("Version=1\nSystemDictionary=True\n")
+                .unwrap()
+                .system_dictionary
+        );
+        assert!(Settings::parse("Version=1\nSystemDictionary=auto\n").is_err());
     }
     #[test]
     fn statistical_model_is_explicit_and_defaults_off() {

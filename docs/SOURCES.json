@@ -1218,5 +1218,18 @@
     ],
     "implementation": "Original CowType adaptation of installed public libime APIs: isolated stateless query workspaces for typo/plain graphs, append/erase reuse, on-demand literal sentence recovery for corrected or composed best paths which can prune literal alternatives, node source memoization, and complete-consumption candidate ordering. No WowType implementation copied or read by the implementing primary agent; high-level comparison findings only. libime dependency provenance is recorded separately.",
     "validation": "Synthetic fixture regression for literal/initial protection, complete typo ordering, literal sentence recovery and fresh-versus-reused results across edits and options. Independent fixed synthetic offline query benchmarks record the baseline commit and optimized native header digest, without personal history, GUI, microphone or remote service calls."
+  },
+  "optional_system_pinyin": {
+    "date": "2026-11-22",
+    "license": "GPL-3.0-or-later",
+    "implementation": "Original CowType explicit SystemDictionary setting, default false; controls inclusion of system sc.dict independently of the optional statistical LM. No external code or data copied.",
+    "paths": [
+      "src/config/mod.rs",
+      "src/ffi/mod.rs",
+      "src-settings/config/settings.py",
+      "src-settings/app/main.py",
+      "src-fcitx5/engine/cowtype.cpp"
+    ],
+    "validation": "Synthetic config defaults/roundtrip/invalid value tests, native runtime ABI and isolated plugin checks; no live user settings or GUI automation."
   }
 }

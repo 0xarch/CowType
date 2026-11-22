@@ -280,3 +280,6 @@ custom.error.value	Enter 1–64 English letters, nonempty content, and an intege
 custom.error.conflict	The entry changed or this trigger and content already exist. Close and refresh before retrying.
 custom.error.limit	The custom dictionary supports up to 10,000 entries and an 8 MiB file.
 custom.weight	Weight
+group.system_dictionary	System dictionary
+setting.SystemDictionary	Use the system Fcitx/libime pinyin dictionary
+hint.system_dictionary	Off by default. Merges and prioritizes the system dictionary when enabled, which can change candidate ranking and increase query cost. Independent of the local statistical model.

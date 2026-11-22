@@ -232,6 +232,12 @@ def main():
             build_translation(self, Adw, Gtk, GLib, tr, reload_fcitx)
             custom_words = self.group('words', 'custom.title', tr('custom.hint'))
             self.custom_action = self.action(custom_words, 'custom.manage', lambda *_: show_custom(self, custom_store_module(), config, Adw, Gtk, GLib, tr))
+            system_words = self.group('words', 'group.system_dictionary')
+            self.system_dictionary = Adw.SwitchRow(title=tr('setting.SystemDictionary'), subtitle=tr('hint.system_dictionary'))
+            self.system_dictionary.set_active(self.values['SystemDictionary'].lower() == 'true')
+            self.system_dictionary.connect('notify::active', self.save)
+            self.controls['SystemDictionary'] = self.system_dictionary
+            system_words.add(self.system_dictionary)
             words = self.group('words', 'group.words', tr('hint.words'))
             profile = manager.registry()['wanxiang']
             self.action(words, 'action.words.source', lambda *_: Gtk.UriLauncher.new('https://github.com/' + profile['repository']).launch(self.host, None, None),

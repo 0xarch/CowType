@@ -62,7 +62,8 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 12 optional local statistical language model (default off);
  * 13 language key; 14 GB18030 key; 15 Unicode key; key indices follow shortcuts.tsv;
  * 16 automatic u-prefix Unicode input (default on, independent of option 15);
- * 17 translation enabled (default off); 18 translation key index */
+ * 17 translation enabled (default off); 18 translation key index;
+ * 19 optional system pinyin dictionary (default off, independent of option 12) */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);

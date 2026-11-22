@@ -67,6 +67,15 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(settings.load(),values)
         with self.assertRaises(ValueError):
             settings.validate(dict(values, ModeHotkey='Alt_R'))
+    def test_system_dictionary_is_optional_and_independent(self):
+        self.assertEqual(settings.load()['SystemDictionary'], 'False')
+        for enabled in ('True', 'False'):
+            values = dict(settings.load(), SystemDictionary=enabled, StatisticalModel='True')
+            settings.save(values)
+            self.assertEqual(settings.load(), values)
+        with self.assertRaises(ValueError):
+            settings.validate(dict(settings.DEFAULTS, SystemDictionary='auto'))
+
     def test_emoji_defaults_off_and_roundtrips(self):
         values = settings.load()
         self.assertEqual(values['Emoji'], 'False')
