@@ -66,5 +66,13 @@
     "families": 332,
     "license": "Unicode-3.0",
     "conversion": "prepare.py compile_tone_families: group official fully-qualified emoji-test sequences by exact names after removing only skin-tone qualifiers. Preserve gender and role qualifiers and full code point sequences."
+  },
+  "emoji_sequences": {
+    "path": "src-data-tools/emoji/emoji-sequences.txt",
+    "bytes": 48742,
+    "sha256": "90f927a09962fdcfa63513c576b42a521556c9f0e77a7041ec20e76b3f773d14",
+    "sequences": 3944,
+    "license": "Unicode-3.0",
+    "conversion": "prepare.py compile_emoji_sequences: sorted unique fully-qualified sequences from pinned emoji-test. Used only for Emoji/symbol priority classification."
   }
 }

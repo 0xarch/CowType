@@ -43,3 +43,9 @@ class EmojiDataTests(unittest.TestCase):
             for sequence in choices:
                 self.assertNotIn(sequence, seen)
                 seen.add(sequence)
+
+    def test_emoji_classification_requires_a_fully_qualified_sequence(self):
+        data = ('00A9 FE0F ; fully-qualified # ©️ E0.6 copyright\n'
+                '00A9 ; unqualified # © E0.6 copyright\n'
+                '1F44D 1F3FD ; fully-qualified # 👍🏽 E1.0 thumbs up: medium skin tone\n')
+        self.assertEqual(prepare.compile_emoji_sequences({'emoji-test.txt': data}), '©️\n👍🏽\n')

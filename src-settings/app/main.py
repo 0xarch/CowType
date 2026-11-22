@@ -129,15 +129,17 @@ def main():
                 self.load_error = tr('error.load', error=str(error))
             general = self.group('input', 'group.appearance')
             pinyin = self.group('input', 'group.pinyin')
+            self.emoji_options = self.group('input', 'group.emoji')
             privacy = self.group('input', 'group.privacy')
             keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
-            groups = {'Emoji': general, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
+            groups = {'Emoji': self.emoji_options, 'EmojiFirst': self.emoji_options, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
                 'StatisticalModel': pinyin, 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
                 'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
             for key, group in groups.items():
                 row = Adw.SwitchRow(title=tr('setting.' + key))
                 if key == 'Emoji': row.set_subtitle(tr('hint.emoji'))
+                if key == 'EmojiFirst': row.set_subtitle(tr('hint.emoji_first'))
                 if key == 'UnicodePrefix': row.set_subtitle(tr('hint.unicode_prefix'))
                 if key == 'RememberMode': row.set_subtitle(tr('hint.remember_mode'))
                 if key == 'StatisticalModel': row.set_subtitle(tr('hint.statistical_model'))
@@ -148,7 +150,6 @@ def main():
                 row.connect('notify::active', self.save)
                 group.add(row)
                 self.controls[key] = row
-            self.emoji_options = self.group('input', 'group.emoji')
             picker = Adw.SwitchRow(title=tr('setting.EmojiSkinTonePicker'), subtitle=tr('hint.emoji_skin_tone_picker'))
             picker.set_active(self.values['EmojiSkinTonePicker'].lower() == 'true')
             picker.connect('notify::active', self.save)
@@ -226,7 +227,7 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 20
+                    assert len(self.pages) == 5 and len(self.controls) == 21
                     assert not self.controls['Translate'].get_active()
                     assert self.translation_provider.get_selected() == 0
                     assert self.translation_bilibili_model.get_model().get_n_items() == 3
@@ -236,7 +237,13 @@ def main():
                     assert self.controls['UnicodePrefix'].get_active()
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
-                    assert not self.emoji_options.get_visible()
+                    assert self.emoji_options.get_visible()
+                    assert self.controls['Emoji'].is_ancestor(self.emoji_options)
+                    assert self.controls['EmojiFirst'].is_ancestor(self.emoji_options)
+                    assert self.controls['EmojiSkinTonePicker'].is_ancestor(self.emoji_options)
+                    assert not self.controls['EmojiFirst'].get_active()
+                    assert not self.controls['EmojiFirst'].get_visible()
+                    assert not self.skin_tone_row.get_visible()
                     assert self.controls['EmojiSkinTonePicker'].get_active()
                     assert len(self.skin_tone_buttons) == 6
                     assert self.skin_tone_buttons[0].get_active()
@@ -244,6 +251,10 @@ def main():
                     self.controls['Emoji'].set_active(True)
                     self.update_visibility()
                     assert self.emoji_options.get_visible()
+                    assert self.controls['EmojiFirst'].get_visible()
+                    assert self.controls['EmojiSkinTonePicker'].get_visible()
+                    self.controls['EmojiFirst'].set_active(True)
+                    self.controls['EmojiFirst'].set_active(False)
                     self.skin_tone_buttons[3].set_active(True)
                     assert self.skin_tone_buttons[3].get_active()
                     assert not self.skin_tone_buttons[0].get_active()
@@ -306,7 +317,10 @@ def main():
                 GLib.timeout_add(1000, check_visible)
 
         def update_visibility(self):
-            self.emoji_options.set_visible(self.controls['Emoji'].get_active())
+            enabled = self.controls['Emoji'].get_active()
+            self.controls['EmojiFirst'].set_visible(enabled)
+            self.controls['EmojiSkinTonePicker'].set_visible(enabled)
+            self.skin_tone_row.set_visible(enabled)
             self.controls['VoiceModifierHold'].set_visible(config.VOICE_HOTKEYS[self.hotkey.get_selected()] not in ('None', *tuple(f'F{i}' for i in range(1, 13))))
             self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
 

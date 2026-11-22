@@ -12,7 +12,7 @@ from catalog import tr
 
 DEFAULTS = dict(Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
-                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', Emoji='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
+                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
 def shortcut_registry():
     path = Path(__file__).with_name('shortcuts.tsv')
     if not path.exists():

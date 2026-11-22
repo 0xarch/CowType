@@ -73,6 +73,16 @@ class SettingsTests(unittest.TestCase):
         values['Emoji'] = 'True'
         settings.save(values)
         self.assertEqual(settings.load()['Emoji'], 'True')
+    def test_emoji_priority_defaults_to_symbols_and_roundtrips(self):
+        values = settings.load()
+        self.assertEqual(values['EmojiFirst'], 'False')
+        for enabled in ('True', 'False'):
+            values.update(Emoji='True', EmojiFirst=enabled)
+            settings.save(values)
+            self.assertEqual(settings.load()['EmojiFirst'], enabled)
+        with self.assertRaises(ValueError):
+            settings.validate(dict(values, EmojiFirst='auto'))
+
     def test_emoji_skin_tone_choices_validate_and_roundtrip(self):
         values = settings.load()
         self.assertEqual(values['EmojiSkinTonePicker'], 'True')

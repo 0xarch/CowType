@@ -5,6 +5,13 @@ use std::collections::{BTreeMap, HashSet};
 use std::sync::OnceLock;
 
 const KEYWORDS: &str = include_str!("../../src-data-tools/emoji/keywords.tsv");
+const EMOJI_SEQUENCES: &str = include_str!("../../src-data-tools/emoji/emoji-sequences.txt");
+static EMOJI: OnceLock<HashSet<&'static str>> = OnceLock::new();
+fn is_emoji(sequence: &str) -> bool {
+    EMOJI
+        .get_or_init(|| EMOJI_SEQUENCES.lines().collect())
+        .contains(sequence)
+}
 const MAX_SUGGESTIONS: usize = 12;
 static INDEX: OnceLock<BTreeMap<&'static str, Vec<&'static str>>> = OnceLock::new();
 const TONE_FAMILIES: &str = include_str!("../../src-data-tools/emoji/tone-families.tsv");
@@ -91,7 +98,12 @@ fn normalize(text: &str) -> String {
 /// Supplement complete keyword matches without treating partial words or typo
 /// guesses as annotations. Literal expansions share custom-phrase semantics:
 /// selected symbols consume the original input once and are never learned.
-pub(crate) fn augment(raw: &str, candidates: &mut Vec<Candidate>, default_tone: u8) {
+pub(crate) fn augment(
+    raw: &str,
+    candidates: &mut Vec<Candidate>,
+    default_tone: u8,
+    emoji_first: bool,
+) {
     let raw_key = normalize(raw);
     let direct = index().get(raw_key.as_str());
     let mut seen: HashSet<String> = candidates.iter().map(|c| c.text.clone()).collect();
@@ -135,32 +147,49 @@ pub(crate) fn augment(raw: &str, candidates: &mut Vec<Candidate>, default_tone: 
     // global budget. Keep each symbol beside its original word candidate.
     let mut additions = BTreeMap::<usize, Vec<Candidate>>::new();
     let mut count = 0;
-    let mut depth = 0;
-    while count < MAX_SUGGESTIONS {
-        let mut available = false;
-        for (position, reading, matches) in &groups {
-            if let Some(sequence) = matches.get(depth) {
-                available = true;
-                if seen.insert(sequence.to_owned()) {
-                    additions.entry(*position).or_default().push(Candidate {
-                        text: sequence.to_owned(),
-                        reading: reading.clone(),
-                        consumed_bytes: raw.len(),
-                        has_remaining: false,
-                        kind: MatchKind::Exact,
-                        custom: true,
-                    });
-                    count += 1;
-                    if count == MAX_SUGGESTIONS {
-                        break;
+    // Allocate the preferred class first across all matching keywords, before
+    // the global cap. Retain fair turns and source order within each class.
+    for class in [emoji_first, !emoji_first] {
+        let eligible: Vec<_> = groups
+            .iter()
+            .map(|(position, reading, matches)| {
+                (
+                    *position,
+                    reading,
+                    matches
+                        .iter()
+                        .filter(|s| is_emoji(s) == class)
+                        .collect::<Vec<_>>(),
+                )
+            })
+            .collect();
+        let mut depth = 0;
+        while count < MAX_SUGGESTIONS {
+            let mut available = false;
+            for (position, reading, matches) in &eligible {
+                if let Some(sequence) = matches.get(depth) {
+                    available = true;
+                    if seen.insert((*sequence).clone()) {
+                        additions.entry(*position).or_default().push(Candidate {
+                            text: (*sequence).clone(),
+                            reading: (*reading).clone(),
+                            consumed_bytes: raw.len(),
+                            has_remaining: false,
+                            kind: MatchKind::Exact,
+                            custom: true,
+                        });
+                        count += 1;
+                        if count == MAX_SUGGESTIONS {
+                            break;
+                        }
                     }
                 }
             }
+            if !available {
+                break;
+            }
+            depth += 1;
         }
-        if !available {
-            break;
-        }
-        depth += 1;
     }
     let mut result = Vec::with_capacity(candidates.len() + count);
     result.extend(additions.remove(&0).unwrap_or_default());

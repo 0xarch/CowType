@@ -47,6 +47,14 @@ def compile_keywords(sources, aliases=""):
     return ''.join(f'{key}\t{sequence}\n' for (key, sequence), rank in
                    sorted(entries.items(), key=lambda item: (item[0][0], item[1], item[0][1])))
 
+def compile_emoji_sequences(sources):
+    sequences = set()
+    for line in sources['emoji-test.txt'].splitlines():
+        fields = line.split('#', 1)[0].split(';')
+        if len(fields) == 2 and fields[1].strip() == 'fully-qualified':
+            sequences.add(''.join(chr(int(cp, 16)) for cp in fields[0].split()))
+    return ''.join(sequence + '\n' for sequence in sorted(sequences))
+
 def compile_tone_families(sources):
     groups = {}
     for line in sources['emoji-test.txt'].splitlines():
@@ -88,13 +96,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source-dir', type=Path, required=True)
     parser.add_argument('--output', type=Path, default=HERE / 'keywords.tsv')
+    parser.add_argument('--emoji-output', type=Path, default=HERE / 'emoji-sequences.txt')
     parser.add_argument('--families-output', type=Path, default=HERE / 'tone-families.tsv')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     sources = read_sources(args.source_dir)
     output = compile_keywords(sources, (HERE / 'aliases.tsv').read_text())
     families = compile_tone_families(sources)
+    emoji = compile_emoji_sequences(sources)
     if args.check:
+        if args.emoji_output.read_text() != emoji:
+            raise ValueError('Bundled emoji classification differs from pinned sources')
         if args.families_output.read_text() != families:
             raise ValueError('Bundled emoji tone families differ from pinned sources')
         if args.output.read_text() != output:
@@ -102,6 +114,7 @@ def main():
     else:
         args.output.write_text(output)
         args.families_output.write_text(families)
+        args.emoji_output.write_text(emoji)
     print(f'CLDR keyword index verified: {len(output.splitlines())} pairs, {len(output.encode())} bytes')
 
 if __name__ == '__main__':

@@ -69,6 +69,7 @@ pub struct SessionConfig {
     pub initials: bool,
     pub learning: bool,
     pub emoji: bool,
+    pub emoji_first: bool,
     pub emoji_skin_tone_picker: bool,
     pub emoji_default_skin_tone: u8,
 }
@@ -83,6 +84,7 @@ impl Default for SessionConfig {
             initials: false,
             learning: false,
             emoji: false,
+            emoji_first: false,
             emoji_skin_tone_picker: true,
             emoji_default_skin_tone: 0,
         }
@@ -523,6 +525,7 @@ impl Session {
                 &self.remaining,
                 &mut self.candidates,
                 self.config.emoji_default_skin_tone,
+                self.config.emoji_first,
             );
         }
         self.selected_candidate = 0;

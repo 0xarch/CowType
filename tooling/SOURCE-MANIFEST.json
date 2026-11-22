@@ -35,13 +35,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "dd392ad7e45a0b83a69c821e7ada3dd36315b9a0f7e6c505d07d6fafd6d9208d",
-      "bytes": 11965
+      "sha256": "c40786df1212bac2f9549ca76d386151fbe68bee5bfd57ee0c4c2f21ed5454ef",
+      "bytes": 12239
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "1c8866395d438c666317eb4407638e95b6ab0e6846ac35062b9afa958b7441b5",
-      "bytes": 17153
+      "sha256": "48968b3ad3ecf3d99ea62bee0763ab21cea4a225322addb83211b01b641cf8e4",
+      "bytes": 17194
     },
     {
       "path": "Cargo.lock",
@@ -138,13 +138,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "b62d4b1f7542eed52074d6a04d1c51f241b369da6c6043f8a823b0888f119bb2",
-      "bytes": 50543
+      "sha256": "81453b9bc139fa4cc6ca33f01d2c9deb92b43408fdd1e5a66b8c025ec4cbc6b2",
+      "bytes": 51406
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "90d8c245c6ca041f5125281c9b8fe4e57c26a38db37e7d4ee937aac65d56f11c",
-      "bytes": 8883
+      "sha256": "ca7fcb11ac8c8cd116f4f15e071aae571e2560b79685105baa0f6b86e8f6d320",
+      "bytes": 9159
     },
     {
       "path": "i18n/README.md",
@@ -153,13 +153,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "cc84f1a6e0a545aa7d7c544c50df839c1712c65fb40d23fc88ecdc30847823fa",
-      "bytes": 13931
+      "sha256": "bd681e01454e9ca30af9332fd35fd08784c1720960f666a1880d7930f05a4123",
+      "bytes": 14043
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "c03cd4dc534d297818185cdf9974cf30db3fb5352f692646a177fb17d31b0089",
-      "bytes": 12546
+      "sha256": "ec416c740a375ce8d8e4dc3d5ac4cac1c72e2c0ee9406903781e55adf4d5bc64",
+      "bytes": 12671
     },
     {
       "path": "packaging/README.md",
@@ -203,13 +203,18 @@
     },
     {
       "path": "src-data-tools/emoji/README.md",
-      "sha256": "dfe65219b38bc4ec593259029527cd10ba6d6046e0250a4db0b8e432baf56cbd",
-      "bytes": 2885
+      "sha256": "522a2b47bbae353b50ac0415671c15dc023d1b5767ee7fb1265a9eb90a7da4fe",
+      "bytes": 3525
     },
     {
       "path": "src-data-tools/emoji/aliases.tsv",
       "sha256": "6ebf79c298474c721b9e877fa6bacb88497187d98cf8daf5ba7845f2bd613b0f",
       "bytes": 262
+    },
+    {
+      "path": "src-data-tools/emoji/emoji-sequences.txt",
+      "sha256": "90f927a09962fdcfa63513c576b42a521556c9f0e77a7041ec20e76b3f773d14",
+      "bytes": 48742
     },
     {
       "path": "src-data-tools/emoji/keywords.tsv",
@@ -218,13 +223,13 @@
     },
     {
       "path": "src-data-tools/emoji/prepare.py",
-      "sha256": "c4571526d881e14aa11628fb671e0493e8ae7e5402a28c2ae3441c973b026f77",
-      "bytes": 5218
+      "sha256": "451482d325441d4530de9011ad145cff110517dbf7853830f467d75bedb4bdca",
+      "bytes": 5928
     },
     {
       "path": "src-data-tools/emoji/sources.json",
-      "sha256": "926898e8cc238583e4eb054b6ceebd9c5f76e9407cec959fc5c94552f038e65e",
-      "bytes": 3144
+      "sha256": "15aef74a893efc4982d72739de8eb4946e7a7b0dd26fbe7937623794030b8a36",
+      "bytes": 3555
     },
     {
       "path": "src-data-tools/emoji/tone-families.tsv",
@@ -373,8 +378,8 @@
     },
     {
       "path": "src-settings/README.md",
-      "sha256": "67e2ab87e774e47490023af97ebf8927231960ab2d04f23cf75aa12e9208ad6c",
-      "bytes": 723
+      "sha256": "4679d0c4052fc97a63e1d2ec847e1ef69882510f3c7346544c9e0965e48f0c75",
+      "bytes": 1044
     },
     {
       "path": "src-settings/app/launch.py",
@@ -383,8 +388,8 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "473068cbe82d79497ccc832793a44c6c9f79f8a7ebf6fbd7d2e2ffbc502bf1ab",
-      "bytes": 25305
+      "sha256": "ae0364393a71c43ea6b5d812b4a2e481d122a1a2a0a4144a8987ca74db063457",
+      "bytes": 26340
     },
     {
       "path": "src-settings/app/translation.py",
@@ -393,8 +398,8 @@
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "9e13a0dd8885015b22b2dcb8bdb2e7e58f6b0a83261c08449bf1864702b3aa7b",
-      "bytes": 5634
+      "sha256": "5f8856b940de2d33543f2311e57f3eea4c010000912fa1f1d83fbc13381fa73d",
+      "bytes": 5654
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -553,8 +558,8 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "49eb85b3e3ca58e902dfb79c06ae955a9741fba865732cb4ad3ac40352d24c09",
-      "bytes": 16743
+      "sha256": "dce3ab88108b19cbbacca2e3f312489f100e4ad94bffe4f5a59f27d503715178",
+      "bytes": 17115
     },
     {
       "path": "src/config/shortcuts.tsv",
@@ -578,8 +583,8 @@
     },
     {
       "path": "src/engine/symbols.rs",
-      "sha256": "823b13aae165a953bddd84957ec1edd4ce5ed21670a0d89d2f022fd785f70d08",
-      "bytes": 6371
+      "sha256": "8ee625b13beeaeb1378cec7be1e4703355977d955c716fb34df46db5e82a15b6",
+      "bytes": 7434
     },
     {
       "path": "src/engine/wubi.rs",
@@ -588,8 +593,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "5e7bb0186b1c712b7f6bf34300b37e7866e13ee4f69aacf47246f2133778f046",
-      "bytes": 19579
+      "sha256": "f0579096ddab668b8ce7d142ce7b18ba1ab9a9e2424f9c2934f2a8e86a3776c5",
+      "bytes": 19627
     },
     {
       "path": "src/i18n/mod.rs",
@@ -613,8 +618,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "32cc0ec3bff7d06c0e44352879f471ba666be512dbb37cc742e776ae99ba5c9d",
-      "bytes": 20198
+      "sha256": "74fce13d6f60683699ea3676a42f2997a7d4b82ebd3e7c3b999289936855f752",
+      "bytes": 20298
     },
     {
       "path": "src/session/punctuation.rs",
@@ -758,8 +763,8 @@
     },
     {
       "path": "tests/symbols.rs",
-      "sha256": "8b9098b08442cc1dad2ce39c10ff2a7992fe67b7dece97723ad6114091b2b9a6",
-      "bytes": 9991
+      "sha256": "4be7d1324acd15056c61d013d50e532f65aa4c33ede33094d91c263640b06946",
+      "bytes": 12301
     },
     {
       "path": "tests/test_development.py",
@@ -773,13 +778,13 @@
     },
     {
       "path": "tests/test_emoji_data.py",
-      "sha256": "525446bee07731e6fa762c81c425d3001b8cd457b541dcfff8182e769d38d836",
-      "bytes": 3069
+      "sha256": "58c597aad331a0d2675db563d45d677a5d046b20b152b12bca3e351840f21786",
+      "bytes": 3477
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "5149e28e6632ab887dbe10f3a3c3a5b3e38a069dcc1216b87ee8dbd0e7658db5",
-      "bytes": 7743
+      "sha256": "5ae4c0aed4f96cbda05297755c41154f005bc48bcd3ee53eb869188f1acbdaa2",
+      "bytes": 8215
     },
     {
       "path": "tests/test_settings_startup.py",

@@ -464,6 +464,7 @@ pub unsafe extern "C" fn cowtype2_session_configure(
         c.initials = r.settings.initials;
         c.learning = r.settings.learning;
         c.emoji = r.settings.emoji;
+        c.emoji_first = r.settings.emoji_first;
         c.emoji_skin_tone_picker = r.settings.emoji_skin_tone_picker;
         c.emoji_default_skin_tone = r.settings.emoji_default_skin_tone;
         h.session.configure(c);

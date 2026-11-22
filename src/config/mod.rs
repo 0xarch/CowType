@@ -18,6 +18,7 @@ pub struct Settings {
     pub remember_mode: bool,
     pub statistical_model: bool,
     pub emoji: bool,
+    pub emoji_first: bool,
     pub emoji_skin_tone_picker: bool,
     pub emoji_default_skin_tone: u8,
     pub voice: bool,
@@ -50,6 +51,7 @@ impl Default for Settings {
             remember_mode: false,
             statistical_model: false,
             emoji: false,
+            emoji_first: false,
             emoji_skin_tone_picker: true,
             emoji_default_skin_tone: 0,
             voice: false,
@@ -238,6 +240,7 @@ impl Settings {
             ("RememberMode", &mut settings.remember_mode),
             ("StatisticalModel", &mut settings.statistical_model),
             ("Emoji", &mut settings.emoji),
+            ("EmojiFirst", &mut settings.emoji_first),
             ("EmojiSkinTonePicker", &mut settings.emoji_skin_tone_picker),
             ("UnicodePrefix", &mut settings.unicode_prefix),
             ("Translate", &mut settings.translate),
@@ -387,6 +390,13 @@ mod hotkey_tests {
     #[test]
     fn cldr_symbols_are_explicit_and_default_off() {
         let defaults = Settings::parse("Version=1\n").unwrap();
+        assert!(!defaults.emoji_first);
+        assert!(
+            Settings::parse("Version=1\nEmojiFirst=True\n")
+                .unwrap()
+                .emoji_first
+        );
+        assert!(Settings::parse("Version=1\nEmojiFirst=auto\n").is_err());
         assert!(defaults.emoji_skin_tone_picker);
         assert_eq!(defaults.emoji_default_skin_tone, 0);
         for tone in 0..=5 {

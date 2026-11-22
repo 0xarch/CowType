@@ -28,6 +28,9 @@ fn type_text(s: &mut Session, text: &str) {
     }
 }
 fn candidates(s: &mut Session) -> Vec<cowtype::engine::Candidate> {
+    while s.frame().has_previous_page {
+        s.key(Event::press(Key::PageUp));
+    }
     let mut result = s.frame().candidates;
     while s.frame().has_next_page {
         s.key(Event::press(Key::PageDown));
@@ -266,4 +269,60 @@ fn atomic_and_zwj_handshakes_share_one_family() {
     let parent = candidates(&mut s);
     let index = parent.iter().position(|c| c.text == "🤝🏾").unwrap();
     assert_eq!(s.choose(index).commit.as_deref(), Some("🤝🏾"));
+}
+
+#[test]
+fn emoji_priority_changes_both_budget_and_keyword_order() {
+    let mut cfg = config(true);
+    let mut s = Session::new(None, cfg);
+    type_text(&mut s, "right");
+    let symbols_first = candidates(&mut s);
+    assert_eq!(symbols_first.len(), 12);
+    assert_eq!(symbols_first[0].text, "»");
+    assert!(symbols_first.iter().any(|c| c.text == "→"));
+    assert!(!symbols_first.iter().any(|c| c.text == "➡️"));
+    cfg.emoji_first = true;
+    s.configure(cfg);
+    assert_eq!(s.input(), "right");
+    let emoji_first = candidates(&mut s);
+    assert_eq!(emoji_first.len(), 12);
+    assert_eq!(emoji_first[0].text, "↩️");
+    assert!(emoji_first.iter().any(|c| c.text == "➡️"));
+    assert!(!emoji_first.iter().any(|c| c.text == "→"));
+
+    let dictionary = Dictionary::from_tsv("you fang\t右\t10\n".as_bytes())
+        .unwrap()
+        .value;
+    let mut s = Session::new(Some(Arc::new(Engine::new(dictionary))), cfg);
+    type_text(&mut s, "youfang");
+    for preferred in [false, true] {
+        cfg.emoji_first = preferred;
+        s.configure(cfg);
+        let rows = candidates(&mut s);
+        assert_eq!(rows[0].text, "右");
+        let symbol = rows.iter().position(|c| c.text == "→").unwrap();
+        let emoji = rows.iter().position(|c| c.text == "➡️").unwrap();
+        assert_eq!(emoji < symbol, preferred);
+        assert_eq!(s.input(), "youfang");
+    }
+}
+
+#[test]
+fn latin_keyword_you_cannot_starve_chinese_direction_symbols_when_disabled() {
+    let dictionary = Dictionary::from_tsv("you\t右\t10\n".as_bytes())
+        .unwrap()
+        .value;
+    let mut cfg = config(true);
+    let mut s = Session::new(Some(Arc::new(Engine::new(dictionary))), cfg);
+    type_text(&mut s, "you");
+    assert!(candidates(&mut s).iter().any(|c| c.text == "→"));
+    cfg.emoji_first = true;
+    s.configure(cfg);
+    // The English CLDR keyword "you" has many emoji. Explicitly prioritizing
+    // them may spend the cap before the Chinese word's ordinary arrow.
+    assert!(!candidates(&mut s).iter().any(|c| c.text == "→"));
+    cfg.emoji_first = false;
+    s.configure(cfg);
+    assert!(candidates(&mut s).iter().any(|c| c.text == "→"));
+    assert_eq!(s.input(), "you");
 }
