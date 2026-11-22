@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "e98e80602e3e16cfbe5c0c51dd9cb07e10249d3be2ad9a62c54c0c21a49ca7a7",
-      "bytes": 10541
+      "sha256": "31c2fb6f205d4b6b13d95e1658cca1751a05f555a70fed5999264e1ebf3d3cb0",
+      "bytes": 10714
     },
     {
       "path": "CMakeLists.txt",
@@ -703,8 +703,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "13586a1bdb872bf2bac0d7e86b48e123a112e8c62858b9c4228a3e2cf8f99ae2",
-      "bytes": 35064
+      "sha256": "6542c8f57e7f4e11cea7c9c936d9ff61b5d6a279710028da6dd3fd4eaa2412e4",
+      "bytes": 36753
     },
     {
       "path": "tests/native/internal-code.cpp",

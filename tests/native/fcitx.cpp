@@ -326,9 +326,31 @@ int main(int argc, char **argv) {
             int stage=0; std::string voiceFailure; std::unique_ptr<Field> destroyedField;
             CHECK(press(engine, pinyin, a, FcitxKey_F9));
             CHECK(press(engine, pinyin, a, FcitxKey_F9,true));
+            auto stageDeadline=now(CLOCK_MONOTONIC)+10000000;
             auto timer = instance.eventLoop().addTimeEvent(CLOCK_MONOTONIC, now(CLOCK_MONOTONIC)+200000, 1000,
                 [&](EventSourceTime *source, uint64_t) {
                     try {
+                        // Subprocess startup is slower under QEMU. Await the
+                        // observable result, retaining a bounded failure time;
+                        // leave the modifier-hold timing assertions unchanged.
+                        bool ready=true;
+                        switch(stage) {
+                        case 0: case 17: case 22: case 29: case 31:
+                            ready=a.inputPanel().clientPreedit().toString()=="合成中间结果";break;
+                        case 1: ready=a.committed.size()>=before+1;break;
+                        case 6: ready=a.inputPanel().auxDown().toString()=="合成后端错误";break;
+                        case 9: ready=a.committed.size()>=before+2;break;
+                        case 13: ready=a.committed.size()>=before+3;break;
+                        case 15: ready=a.committed.size()>=before+4;break;
+                        case 18: ready=a.committed.size()>=before+5;break;
+                        case 23: ready=a.committed.size()>=before+6;break;
+                        case 28: ready=std::filesystem::exists(std::filesystem::path(std::getenv("COWTYPE_TEST_ROOT"))/"voice-test-prepared");break;
+                        case 30: ready=a.committed.size()>=before+7;break;
+                        case 32: ready=a.committed.size()>=before+8;break;
+                        }
+                        if(!ready && now(CLOCK_MONOTONIC)<stageDeadline) {
+                            source->setNextInterval(20000);source->setOneShot();return true;
+                        }
                         switch(stage++) {
                         case 0:
                             CHECK(a.inputPanel().clientPreedit().toString()=="合成中间结果");
@@ -433,6 +455,7 @@ int main(int argc, char **argv) {
                             instance.eventLoop().exit(); return false;
                         }
                     } catch(const std::exception &error) { voiceFailure=error.what();instance.eventLoop().exit();return false; }
+                    stageDeadline=now(CLOCK_MONOTONIC)+10000000;
                     source->setNextInterval(200000);source->setOneShot();return true;
                 });
             instance.eventLoop().exec();
