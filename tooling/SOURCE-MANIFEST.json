@@ -103,8 +103,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "a9ea8edfdbc77c93da9e7494578081cdf95aba71248d8dfd0cccb7e8b6d8d46c",
-      "bytes": 8934
+      "sha256": "bcbafa63a3e3998a048b2c8aab1d932bc9a3a903aa8c5267d49046543fbdc2a5",
+      "bytes": 9095
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -758,8 +758,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "bd658520a89fdd8416b6280b89b6f34bb01027d17db0c314a649a1a6dcdff5af",
-      "bytes": 582
+      "sha256": "e56867907063530b6635d80dee7335b6800de234bf7dd3a2c4d9db5884e937ba",
+      "bytes": 806
     },
     {
       "path": "tooling/ci-linux.sh",
@@ -800,6 +800,11 @@
       "path": "tooling/release_notes.py",
       "sha256": "8cd0702de14f2d727df6161362c42abc1788d3cba8d5796dae78e2c16d389938",
       "bytes": 691
+    },
+    {
+      "path": "tooling/update-source-manifest.sh",
+      "sha256": "8a87c671a2fbf02ec178ae372571ef55a4c23665d4f1ffd67beb01c529b862fd",
+      "bytes": 316
     }
   ]
 }
