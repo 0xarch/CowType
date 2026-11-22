@@ -142,9 +142,9 @@ bash build-arch.sh
 
 ## 许可证
 
-本项目整体按 GPL3.0 许可证发布。
+本项目整体按 GPL3.0 许可证发布。详细的代码、图标、数据与模型各自的许可和署名见[版权与第三方归属](docs/ATTRIBUTION.md)。
 
-详细的代码、图标、数据与模型各自的许可和署名见[版权与第三方归属](docs/ATTRIBUTION.md)。
+可联系作者取得单独授权的固定版本源代码闭源使用许可（不包含此版本先前或之后的源代码使用许可。其余资源需参考[版权与第三方归属](docs/ATTRIBUTION.md)自行获取）。
 
 [^audit]: 粗略审计报告可参见 <https://0xarch.github.io/posts/wowtype-audit>
 
