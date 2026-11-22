@@ -18,3 +18,9 @@ CowType 是 Linux Fcitx5 输入法，包含 Rust 核心、C++ 平台插件、GTK
 - 按改动运行 Rust、Python 或 CMake/CTest 检查。测试与源码清单命令见 docs/BUILD.md；打包前更新并校验 tooling/SOURCE-MANIFEST.json。不得将 mock、编译通过写成真实麦克风或完整桌面验收。
 - 不擅自改写 Git 历史；每个功能或修复使用独立提交；推送和发布遵循用户当前授权。
 - 同一轮多个任务，除非用户要求，否则按顺序进行。
+
+发布流程：
+1. 更改版本号及相关内容、CHANGELOG
+2. 推送新版本号并触发 GitHub Actions
+3. GitHub Actions 全部构建通过后收集各发行版构建产物
+4. 发布 Tag 和 Release ，描述文本附带 CHANGELOG ， Release Assets 附带各发行版构建产物
