@@ -86,11 +86,11 @@ GitHub Actions 已验证以下 Linux 目标的容器构建、安装包和插件�
 | Arch Linux | x86_64 | `.pkg.tar.zst` |
 | Fedora 45 | x86_64、ARM64 | `.rpm` |
 | openSUSE Tumbleweed | x86_64 | `.rpm` |
+| openSUSE Leap 16.0 | x86_64 | `.rpm` |
 | Debian unstable | x86_64、ARM64 | `.deb` |
 | Ubuntu 26.04 | x86_64、ARM64 | `.deb` |
 | Deepin 23 | x86_64 | `.deb` |
-| Deepin 25 | x86_64、ARM64、LoongArch64（QEMU 验证） | `.deb` |
-| openSUSE Leap 16.0 | x86_64 | `.rpm` |
+| Deepin 25 | x86_64、ARM64、LoongArch64 | `.deb` |
 | openKylin 3.0 | x86_64 | `.deb` |
 
 在 [Releases](https://github.com/0xarch/CowType/releases) 下载对应的发布包，
