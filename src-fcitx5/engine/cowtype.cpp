@@ -64,9 +64,8 @@ struct State : InputContextProperty {
     int internalCursor = 0;
     VoiceLevel voiceLevel;
     std::string voiceStatus, voicePartial;
-    bool translating=false, translateDraft=false, translateSelection=false;
-    unsigned selectionCursor=0, selectionAnchor=0;
-    std::string translateInput, translateResult, translateStatus, selectionText;
+    bool translating=false, translateDraft=false;
+    std::string translateInput, translateResult, translateStatus;
 };
 class InternalWord final : public CandidateWord {
     std::function<void(InputContext *)> select_;
@@ -312,8 +311,8 @@ public:
 private:
     void cancelTranslation(InputContext *ic) {
         translator_.cancel(ic);auto *s=ic->propertyFor(&factory_);
-        s->translating=s->translateDraft=s->translateSelection=false;
-        s->translateInput.clear();s->translateResult.clear();s->translateStatus.clear();s->selectionText.clear();
+        s->translating=s->translateDraft=false;
+        s->translateInput.clear();s->translateResult.clear();s->translateStatus.clear();
     }
     void requestTranslation(InputContext *ic) {
         auto *s=ic->propertyFor(&factory_);
@@ -341,9 +340,7 @@ private:
         }
         const auto &surrounding=ic->surroundingText();
         if(ic->capabilityFlags().test(CapabilityFlag::SurroundingText) && surrounding.isValid() && surrounding.cursor()!=surrounding.anchor()) {
-            s->translateInput=surrounding.selectedText();s->selectionText=s->translateInput;
-            s->selectionCursor=surrounding.cursor();s->selectionAnchor=surrounding.anchor();s->translateSelection=true;
-            requestTranslation(ic);return;
+            cancelTranslation(ic);s->voiceStatus=ct_tr("translate.error.selection");render(ic,false);return;
         }
         s->translateDraft=true;render(ic,false);
     }
@@ -351,12 +348,9 @@ private:
         auto *s=ic->propertyFor(&factory_);
         if(!s->translating || s->translateResult.empty() || !ic->hasFocus()
            || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable))return;
-        if(s->translateSelection) {
-            const auto &surrounding=ic->surroundingText();
-            if(!ic->capabilityFlags().test(CapabilityFlag::SurroundingText) || !surrounding.isValid()
-               || surrounding.cursor()!=s->selectionCursor || surrounding.anchor()!=s->selectionAnchor || surrounding.selectedText()!=s->selectionText) {
-                s->translateResult.clear();s->translateStatus=ct_tr("translate.error.selection");render(ic,false);return;
-            }
+        const auto &surrounding=ic->surroundingText();
+        if(ic->capabilityFlags().test(CapabilityFlag::SurroundingText) && surrounding.isValid() && surrounding.cursor()!=surrounding.anchor()) {
+            s->translateResult.clear();s->translateStatus=ct_tr("translate.error.selection");render(ic,false);return;
         }
         auto text=s->translateResult;cancelTranslation(ic);cowtype2_session_reset(s->session.get(),false);
         // Frontends replace their current selection on commit; do not delete

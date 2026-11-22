@@ -219,7 +219,7 @@ translate.error.timeout	Translation timed out. The original input is preserved.
 translate.error.network	Could not connect to the translation service. Check the network.
 translate.error.process	Could not start the translation helper, or it exited unexpectedly. Check the installation.
 translate.error.busy	Translation is active in another input field. Try again later.
-translate.error.selection	The selection changed. The translation was not committed; select the text and translate again.
+translate.error.selection	Application selection translation is deferred. Clear the selection, then translate the current candidate or use translation input mode.
 translate.lang.auto	Automatic Chinese / English
 translate.lang.zh	Chinese
 translate.lang.en	English

@@ -25,8 +25,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "6c9a60a0faefe22fd4b8fce6898cbced1c2dafd683fbcf9fb6cfa6f920b8af19",
-      "bytes": 6944
+      "sha256": "946224fd137b346f6a69f55e44915fd19e4ac3b7eea5754fc38123458fbe12cc",
+      "bytes": 7068
     },
     {
       "path": "CMakeLists.txt",
@@ -123,13 +123,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "60fb1cd2be6f86ea790e20bab4690a4fcb581e1efdb44c7bef3f8e306607450f",
-      "bytes": 41288
+      "sha256": "e900598947404ede5e83fa304ca54f1eebcceffaf392d50567eefab6d721ddad",
+      "bytes": 41687
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "a85b93be984af06b3aad1d43bb7913ec2c200978552b43f2f28847fd196d6184",
-      "bytes": 8245
+      "sha256": "f4938ecab5fd7b17ca39fcb61a98e941f5644a97da64a2a902064883dc85246f",
+      "bytes": 8317
     },
     {
       "path": "i18n/README.md",
@@ -138,13 +138,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "449ebfaa33ec9b44fb272100876f79717dbdbcb01b374aa55178e25590c0d4d8",
-      "bytes": 14096
+      "sha256": "432b8544db5e8bd89065c64a86a7014896ea3b964c1f9f80e87952dae0dbe826",
+      "bytes": 14137
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "069641974fb6bc8f40363ba0b5fbe3d136edcb70f3d30f76a140e8cf06264f20",
-      "bytes": 12711
+      "sha256": "2e0605285cfeccf9e090ba8ab37992aeed6b325e8a7b20a08b0b97eaa7af4df9",
+      "bytes": 12753
     },
     {
       "path": "packaging/README.md",
@@ -238,8 +238,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "771a1d5d3e9473db1430ffecbfa6624e138c1f4867f843f96744457e52c08a21",
-      "bytes": 45381
+      "sha256": "5fa47c4278648b4509da8f4fa2bfb986bf04f0b0a17d66c3e7bc4f2c6a6a6b5c",
+      "bytes": 44926
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -373,8 +373,8 @@
     },
     {
       "path": "src-translate/README.md",
-      "sha256": "44857f4581e10586e24da551da6b45e7ed5361070a4b5e6be69e826e4b6577e3",
-      "bytes": 6607
+      "sha256": "7b11a68516828c1ef3d4a2c537ca8a555e19a7ce548df11e15f18d8a2518fcb0",
+      "bytes": 6647
     },
     {
       "path": "src-translate/cowtype-translate.in",
@@ -583,8 +583,8 @@
     },
     {
       "path": "tests/README.md",
-      "sha256": "558a2f456240fa696e2c4aec8643b14f28cc56492457971ef929ebce15a87023",
-      "bytes": 788
+      "sha256": "c64ea46e025ced2ffaf17b941516ae10f5c7b1fe619ffed48e88c9fffd1ef6b8",
+      "bytes": 800
     },
     {
       "path": "tests/cli.rs",
@@ -658,8 +658,8 @@
     },
     {
       "path": "tests/native/fake-translate.py",
-      "sha256": "fe0c51037c51068fadc884b9fbf3ecab693832ceb75e4a052a76c535fda40ea6",
-      "bytes": 600
+      "sha256": "645d7614bfed675f81992501aaa99eb55110e48e94396c8bffd39586fbeaa204",
+      "bytes": 733
     },
     {
       "path": "tests/native/fake-voice.py",
@@ -693,8 +693,8 @@
     },
     {
       "path": "tests/native/translate.cpp",
-      "sha256": "9d3685e8a7ba2b2f3182da99bb16e43dad79907ccb982ae51994ad5a56248861",
-      "bytes": 7852
+      "sha256": "99cdb994db090ee527141d489d2ae444794a5c62e3deeb70089655205db1ddf3",
+      "bytes": 8444
     },
     {
       "path": "tests/native/unicode-code.cpp",

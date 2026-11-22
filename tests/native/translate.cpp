@@ -50,24 +50,26 @@ int main(int argc,char **argv){
             auto type=[&](std::string text){for(unsigned char c:text)CHECK(press(static_cast<KeySym>(c)));};
             auto settings=[&](std::string extra){std::ofstream out(config);out<<"[CowType]\nVersion=1\n"<<extra;out.close();addon->reloadConfig();};
             auto result=[&](){auto list=a.inputPanel().candidateList();CHECK(list && list->size()==1);CHECK(list->candidate(0).text().toString()=="合成译文");};
+            auto starts=[&](){std::ifstream file(std::filesystem::path(std::getenv("COWTYPE_TEST_ROOT"))/"translate-test-starts");size_t count=0;std::string line;while(std::getline(file,line))++count;return count;};
+            size_t beforeSelection=0;
             std::vector<std::function<void()>> steps{
                 [&]{CHECK(!press(FcitxKey_F10));CHECK(!press(FcitxKey_F10,true));settings("Translate=True\n");type("shan");tap(FcitxKey_F10);CHECK(a.commits.empty());},
                 [&]{result();CHECK(a.commits.empty());CHECK(press(FcitxKey_Escape));CHECK(a.inputPanel().clientPreedit().toString()=="shan");tap(FcitxKey_F10);},
                 [&]{result();CHECK(press(FcitxKey_Return));CHECK(a.commits.size()==1 && a.commits.back()=="合成译文");CHECK(a.inputPanel().clientPreedit().empty());tap(FcitxKey_F10);type("shan");CHECK(press(FcitxKey_space));CHECK(a.commits.size()==1);CHECK(press(FcitxKey_Return));},
-                [&]{result();a.inputPanel().candidateList()->candidate(0).select(&a);CHECK(a.commits.size()==2);a.setCapabilityFlags(CapabilityFlags(CapabilityFlag::Preedit)|CapabilityFlag::SurroundingText);a.surroundingText().setText("selected text",13,0);tap(FcitxKey_F10);},
-                [&]{result();a.surroundingText().setCursor(13,13);CHECK(press(FcitxKey_Return));CHECK(a.commits.size()==2);CHECK(!a.inputPanel().candidateList());CHECK(press(FcitxKey_Escape));a.surroundingText().setText("selected text",13,0);tap(FcitxKey_F10);},
-                [&]{result();CHECK(press(FcitxKey_space));CHECK(a.commits.size()==3);a.surroundingText().invalidate();a.setCapabilityFlags(CapabilityFlag::Preedit);tap(FcitxKey_F6);tap(FcitxKey_F10);type("hello world");CHECK(press(FcitxKey_BackSpace));CHECK(a.inputPanel().clientPreedit().toString()=="hello worl");CHECK(press(FcitxKey_Return));},
-                [&]{result();CHECK(press(FcitxKey_Return));CHECK(a.commits.size()==4);tap(FcitxKey_F10);type("failure");CHECK(press(FcitxKey_Return));},
+                [&]{result();a.inputPanel().candidateList()->candidate(0).select(&a);CHECK(a.commits.size()==2);a.setCapabilityFlags(CapabilityFlags(CapabilityFlag::Preedit)|CapabilityFlag::SurroundingText);a.surroundingText().setText("selected text",13,0);beforeSelection=starts();tap(FcitxKey_F10);},
+                [&]{CHECK(starts()==beforeSelection);CHECK(!a.inputPanel().candidateList());CHECK(!a.inputPanel().auxDown().empty());CHECK(a.commits.size()==2);CHECK(a.inputPanel().clientPreedit().empty());CHECK(a.surroundingText().text()=="selected text");a.surroundingText().invalidate();a.setCapabilityFlags(CapabilityFlag::Preedit);tap(FcitxKey_F6);tap(FcitxKey_F10);type("hello world");CHECK(press(FcitxKey_BackSpace));CHECK(a.inputPanel().clientPreedit().toString()=="hello worl");CHECK(press(FcitxKey_Return));},
+                [&]{result();CHECK(press(FcitxKey_Return));CHECK(a.commits.size()==3);tap(FcitxKey_F10);type("failure");CHECK(press(FcitxKey_Return));},
                 [&]{CHECK(!a.inputPanel().candidateList());CHECK(!a.inputPanel().auxDown().empty());CHECK(press(FcitxKey_Escape));tap(FcitxKey_F6);type("shan");tap(FcitxKey_F10);a.focusOut();a.focusIn();},
-                [&]{CHECK(a.commits.size()==4 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);addon->reloadConfig();CHECK(a.inputPanel().clientPreedit().toString()=="shan");CHECK(press(FcitxKey_Escape));},
-                [&]{CHECK(a.commits.size()==4 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);tap(FcitxKey_F9);CHECK(press(FcitxKey_Escape));CHECK(press(FcitxKey_Escape));},
-                [&]{CHECK(a.commits.size()==4 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);a.setCapabilityFlags(CapabilityFlag::Password);CHECK(!press(FcitxKey_a));a.setCapabilityFlags(CapabilityFlag::Preedit);},
-                [&]{CHECK(a.commits.size()==4 && a.inputPanel().clientPreedit().empty());settings("Translate=True\nTranslateHotkey=Control_R\n");type("shan");CHECK(!press(FcitxKey_Control_R));CHECK(!press(FcitxKey_Control_R,true));},
+                [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);addon->reloadConfig();CHECK(a.inputPanel().clientPreedit().toString()=="shan");CHECK(press(FcitxKey_Escape));},
+                [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);tap(FcitxKey_F9);CHECK(press(FcitxKey_Escape));CHECK(press(FcitxKey_Escape));},
+                [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);a.setCapabilityFlags(CapabilityFlag::Password);CHECK(!press(FcitxKey_a));a.setCapabilityFlags(CapabilityFlag::Preedit);},
+                [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());settings("Translate=True\nTranslateHotkey=Control_R\n");type("shan");CHECK(!press(FcitxKey_Control_R));CHECK(!press(FcitxKey_Control_R,true));},
                 [&]{result();CHECK(press(FcitxKey_Escape));CHECK(press(FcitxKey_Escape));settings("Translate=True\n");type("shan");tap(FcitxKey_F10);a.focusOut();b.focusIn();},
-                [&]{CHECK(b.inputPanel().clientPreedit().empty());b.focusOut();a.focusIn();CHECK(a.commits.size()==4);type("shan");tap(FcitxKey_F10);InputContextEvent reset(&a,EventType::InputContextReset);engine->reset(entry,reset);},
-                [&]{CHECK(a.commits.size()==4 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);InputContextSwitchInputMethodEvent change(InputMethodSwitchedReason::Enumerate,"cowtype",&a);engine->deactivate(entry,change);engine->activate(entry,activate);},
-                [&]{CHECK(a.commits.size()==4 && a.inputPanel().clientPreedit().empty());entry=InputMethodEntry("cowtype-wubi","CowType Wubi","zh_CN","cowtype");engine->activate(entry,activate);type("a");tap(FcitxKey_F10);},
-                [&]{result();CHECK(press(FcitxKey_1));CHECK(a.commits.size()==5 && a.commits.back()=="合成译文");}
+                [&]{CHECK(b.inputPanel().clientPreedit().empty());b.focusOut();a.focusIn();CHECK(a.commits.size()==3);type("shan");tap(FcitxKey_F10);InputContextEvent reset(&a,EventType::InputContextReset);engine->reset(entry,reset);},
+                [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());type("shan");tap(FcitxKey_F10);InputContextSwitchInputMethodEvent change(InputMethodSwitchedReason::Enumerate,"cowtype",&a);engine->deactivate(entry,change);engine->activate(entry,activate);},
+                [&]{CHECK(a.commits.size()==3 && a.inputPanel().clientPreedit().empty());entry=InputMethodEntry("cowtype-wubi","CowType Wubi","zh_CN","cowtype");engine->activate(entry,activate);type("a");tap(FcitxKey_F10);},
+                [&]{result();a.setCapabilityFlags(CapabilityFlags(CapabilityFlag::Preedit)|CapabilityFlag::SurroundingText);a.surroundingText().setText("selected text",13,0);CHECK(press(FcitxKey_1));CHECK(a.commits.size()==3);CHECK(!a.inputPanel().candidateList());a.surroundingText().invalidate();a.setCapabilityFlags(CapabilityFlag::Preedit);CHECK(press(FcitxKey_Escape));tap(FcitxKey_F10);},
+                [&]{result();CHECK(press(FcitxKey_1));CHECK(a.commits.size()==4 && a.commits.back()=="合成译文");}
             };
             size_t step=0;std::string failure;
             auto timer=instance.eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+400000,1000,
@@ -80,6 +82,6 @@ int main(int argc,char **argv){
             instance.eventLoop().exec();
             if(!failure.empty())throw std::runtime_error(failure);
         }
-        dlclose(module);std::cout<<"Translation addon: async preview, composition, selection, English, Wubi, shortcuts, error and lifecycle isolation passed\n";
+        dlclose(module);std::cout<<"Translation addon: async preview, composition, deferred selection, English, Wubi, shortcuts, error and lifecycle isolation passed\n";
     }catch(const std::exception &error){std::cerr<<error.what()<<'\n';return 1;}
 }

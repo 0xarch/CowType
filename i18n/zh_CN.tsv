@@ -219,7 +219,7 @@ translate.error.timeout	翻译请求超时，原输入已保留。
 translate.error.network	无法连接翻译服务，请检查网络。
 translate.error.process	无法启动翻译进程或进程意外退出，请检查安装。
 translate.error.busy	另一个输入框正在翻译，请稍后再试。
-translate.error.selection	选区已变化，未提交译文；请重新选择后翻译。
+translate.error.selection	应用选区翻译暂缓支持。请先取消选区，再翻译当前候选或使用翻译输入模式。
 translate.lang.auto	自动中英互译
 translate.lang.zh	中文
 translate.lang.en	英语
