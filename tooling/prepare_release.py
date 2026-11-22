@@ -18,6 +18,13 @@ def prepare(directory, version):
         f'cowtype-{version}-1.opensusetumbleweed.x86_64.rpm',
         f'cowtype_{version}-1.debianunstable_amd64.deb',
         f'cowtype_{version}-1.debianunstable_arm64.deb',
+        f'cowtype_{version}-1.ubuntu26.04_amd64.deb',
+        f'cowtype_{version}-1.ubuntu26.04_arm64.deb',
+        f'cowtype_{version}-1.deepin23_amd64.deb',
+        f'cowtype_{version}-1.deepin25_amd64.deb',
+        f'cowtype_{version}-1.deepin25_arm64.deb',
+        f'cowtype-{version}-1.opensuseleap16.0.x86_64.rpm',
+        f'cowtype_{version}-1.openkylin_amd64.deb',
         f'cowtype-{version}-source.tar.gz',
         'PKGBUILD',
     }

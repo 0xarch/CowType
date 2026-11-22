@@ -53,6 +53,13 @@ jobs:
           - {distro: opensusetumbleweed, image: 'opensuse/tumbleweed:latest', format: rpm, arch: x86_64, runner: ubuntu-24.04}
           - {distro: fedora45, image: 'fedora:45', format: rpm, arch: arm64, runner: ubuntu-24.04-arm}
           - {distro: debianunstable, image: 'debian:unstable', format: deb, arch: arm64, runner: ubuntu-24.04-arm}
+          - {distro: ubuntu26.04, image: 'ubuntu:26.04', format: deb, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: ubuntu26.04, image: 'ubuntu:26.04', format: deb, arch: arm64, runner: ubuntu-24.04-arm}
+          - {distro: deepin23, image: 'linuxdeepin/deepin:23', format: deb, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: deepin25, image: 'linuxdeepin/deepin:25', format: deb, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: deepin25, image: 'linuxdeepin/deepin:crimson-arm64', format: deb, arch: arm64, runner: ubuntu-24.04-arm}
+          - {distro: opensuseleap16.0, image: 'registry.opensuse.org/opensuse/leap:16.0', format: rpm, arch: x86_64, runner: ubuntu-24.04}
+          - {distro: openkylin, image: 'openkylin/openkylin:latest', format: deb, arch: x86_64, runner: ubuntu-24.04}
     defaults:
       run:
         shell: bash

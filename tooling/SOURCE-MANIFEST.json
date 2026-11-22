@@ -10,8 +10,8 @@
     },
     {
       "path": ".github/workflows/linux-packages.yml",
-      "sha256": "ab33f10bc87a17a7e0f0f7a97d7fd1a675270eeb6e202cd0479b88e3db0c087f",
-      "bytes": 3403
+      "sha256": "f14c128b3a6ee9e1c954d64a2f5f1944d44983893e81d6cf1d40554dc64eac14",
+      "bytes": 4225
     },
     {
       "path": ".github/workflows/platform-trials.yml",
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "c8b3e0a52e229aab720e56b08e5779a0b0c107f658afc526cf458cac9540a9da",
-      "bytes": 10892
+      "sha256": "c5cb90914eeb7611da16ac236b77780e6d832b911f65c2cb33d91795e2cc515f",
+      "bytes": 11159
     },
     {
       "path": "CMakeLists.txt",
@@ -798,8 +798,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "8e90547d55918454e2fd8157ae11aa6bdc2ba190d3ce63fdec866d7ac6657266",
-      "bytes": 5104
+      "sha256": "5bf26ab57810877df6e21113abae65f504a0147fbdd4bcfca87dd60066d3badc",
+      "bytes": 5150
     },
     {
       "path": "tooling/ci-rust.py",
@@ -848,8 +848,8 @@
     },
     {
       "path": "tooling/prepare_release.py",
-      "sha256": "14027a9f6deccecab44fb1e05c4cf891590aa272c3501346a1f6c9e2f56a100d",
-      "bytes": 1747
+      "sha256": "59ebb37e44544fbf81f3aa49e5649fd33295d062f45fbb13184862a2642cda27",
+      "bytes": 2120
     },
     {
       "path": "tooling/release_notes.py",

@@ -64,7 +64,7 @@ verify)
     arch) sed -i '/^NoExtract/d' /etc/pacman.conf; pacman -U --noconfirm dist/packages/*.pkg.tar.zst; pacman -Qkk cowtype ;;
     fedora*) dnf install -y dist/packages/*.rpm; rpm -V cowtype ;;
     opensuse*) zypper --non-interactive install --no-recommends --allow-unsigned-rpm dist/packages/*.rpm; rpm -V cowtype ;;
-    *) apt-get install -y ./dist/packages/*.deb; dpkg --verify cowtype ;;
+    *) apt-get -o Acquire::Retries=3 install -y --no-install-recommends ./dist/packages/*.deb; dpkg --verify cowtype ;;
   esac
   libdir=$(pkg-config --variable=libdir Fcitx5Core)
   test -s "$libdir/fcitx5/libcowtype-fcitx5.so"
