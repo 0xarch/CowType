@@ -30,9 +30,14 @@ class StartupTests(unittest.TestCase):
                     time.sleep(0.05)
                 installed = os.environ.get('COWTYPE_TEST_SETTINGS_EXECUTABLE')
                 command = [installed] if installed else [sys.executable, str(root / 'src-settings/app/launch.py')]
-                result = subprocess.run([*command, '--smoke-test'], env=env,
-                    capture_output=True, text=True, timeout=15)
                 log = Path(temporary + '/state/cowtype/settings.log')
+                try:
+                    result = subprocess.run([*command, '--smoke-test'], env=env,
+                        capture_output=True, text=True, timeout=15)
+                except subprocess.TimeoutExpired:
+                    # Isolated synthetic fixture only: expose callback locations
+                    # instead of losing their diagnostics when TemporaryDirectory exits.
+                    self.fail(log.read_text() if log.exists() else 'Settings smoke test timed out before diagnostic startup')
                 self.assertEqual(result.returncode, 0, log.read_text() if log.exists() else result.stderr)
                 self.assertIn('remain mapped after startup', result.stdout)
                 self.assertIn('Memory editor opened with synthetic record', result.stdout)

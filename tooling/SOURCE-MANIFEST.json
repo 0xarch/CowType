@@ -853,8 +853,8 @@
     },
     {
       "path": "tests/test_settings_startup.py",
-      "sha256": "4ddec1941e8c298104b5b12d8036ba760cfb086a1b7a800d67f38d119a20a467",
-      "bytes": 2438
+      "sha256": "51d0e726ebb459549128e7fa0172e81b4f7f1bfe893108a975d5ed3a8a882aa9",
+      "bytes": 2813
     },
     {
       "path": "tests/test_translate.py",
