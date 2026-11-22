@@ -10,8 +10,13 @@
     },
     {
       "path": ".github/workflows/linux-packages.yml",
-      "sha256": "77679cbadd1807213004c8322660648eab5479446a03596b4ec629b4eb2ae3b8",
-      "bytes": 3899
+      "sha256": "5702a2ccca9b476dcd59a2b213ee83489405b41422c26fc04df6f2cbcf7d83f6",
+      "bytes": 2983
+    },
+    {
+      "path": ".github/workflows/publish-release.yml",
+      "sha256": "0b6dafbaab5c4059a571dcb90237493e2ed08456d4b5ddacf1b1126b2e1a3a83",
+      "bytes": 2651
     },
     {
       "path": ".gitignore",
@@ -148,8 +153,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "707fcf5c5582a12601a27f6cb64df97a83fe2126a249522320ecc73a2dbf8ac4",
-      "bytes": 3272
+      "sha256": "8df639951c9381b019cda284a1297d7a5b7f81780337f103556a5a4b9ebb0031",
+      "bytes": 3513
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
@@ -758,8 +763,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "e56867907063530b6635d80dee7335b6800de234bf7dd3a2c4d9db5884e937ba",
-      "bytes": 806
+      "sha256": "20549c68403435b73712c4e87087b4c18c5005d6ddde9e650158663443b0a16e",
+      "bytes": 1114
     },
     {
       "path": "tooling/ci-linux.sh",
@@ -795,6 +800,11 @@
       "path": "tooling/package_linux.py",
       "sha256": "c958c94eac87298d1d84b07534c8d03cd9b4ee22cc790438f8bf97490fb6e529",
       "bytes": 4738
+    },
+    {
+      "path": "tooling/prepare_release.py",
+      "sha256": "39fd75628acdf89f18831c90cf9745f8289bb685fc53fcee45c47a06c5a0c2c1",
+      "bytes": 1637
     },
     {
       "path": "tooling/release_notes.py",

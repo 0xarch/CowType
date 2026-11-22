@@ -12,7 +12,7 @@ arch/PKGBUILD.in 是源码归档使用的模板。脚本生成带真实 SHA-256 
 
 Tumbleweed 使用 `opensuse/tumbleweed:latest`，产物为 `cowtype-<版本>-1.opensusetumbleweed.x86_64.rpm`；CI 通过 zypper 安装本地 RPM，再执行 `rpm -V` 和插件验证。最小容器显式安装 DejaVu 字体，以便 Pango/GTK 进行无头窗口测试。已通过的[容器打包与安装验证](https://github.com/0xarch/CowType/actions/runs/44925306514)使用 Fcitx5 5.1.23、libime 1.1.17、GTK 4.24.1、libadwaita 1.10.0；这不是完整桌面或真实麦克风验收。
 
-所有构建产物先上传到 Actions artifacts；v* 标签与 Cargo.toml 版本一致、所有任务成功后，汇总原生包、离线源码、PKGBUILD 和 SHA256SUMS 到 Release。更新内容来自 CHANGELOG.md。普通分支与手动运行不会发布 Release；已有 Release 不会被自动覆盖。
+发布时先更新版本号和 CHANGELOG，推送 dev/main 触发 `Linux packages`。全部任务成功后，在同一提交上手动运行 `Publish verified release`，填入成功构建的 run ID。发布任务验证构建来源、分支和提交一致，再收集四个发行版的原生包及离线源码、PKGBUILD，检查附件齐全并生成 SHA256SUMS，最后才创建 Tag 和 Release。发布说明取自 CHANGELOG。普通构建不创建 Tag 或 Release，发布复用已验证的产物；已有标签与 Release 不会被自动覆盖。
 
 Debian 包的内部版本保留 `-1~debianunstable`，发布文件名使用 `-1.debianunstable`，避免上传后特殊符号被规范化而与 SHA256SUMS 中的文件名不一致。
 

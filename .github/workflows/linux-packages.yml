@@ -2,7 +2,6 @@ name: Linux packages
 on:
   push:
     branches: [dev, main]
-    tags: ['v*']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -78,28 +77,3 @@ jobs:
           path: |
             build/ci-test/Testing/Temporary/LastTest.log
             build/ci-ldd.txt
-  release:
-    name: Publish tag packages
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [source, packages]
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: package-*
-          path: dist/release
-          merge-multiple: true
-      - uses: actions/download-artifact@v4
-        with:
-          name: prepared-source
-          path: dist/release
-      - name: Validate version and publish
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 tooling/release_notes.py "$GITHUB_REF_NAME" > build-release-notes.md
-          (cd dist/release && sha256sum -- * > SHA256SUMS)
-          gh release create "$GITHUB_REF_NAME" dist/release/* --verify-tag --title "CowType ${GITHUB_REF_NAME#v}" --notes-file build-release-notes.md

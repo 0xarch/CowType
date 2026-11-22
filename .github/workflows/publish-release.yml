@@ -1,0 +1,65 @@
+name: Publish verified release
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful Linux packages workflow run ID for this commit
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: cowtype-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    name: Collect verified packages and publish
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify completed build
+        uses: actions/github-script@v7
+        env:
+          BUILD_RUN_ID: ${{ inputs.run_id }}
+        with:
+          script: |
+            const id = process.env.BUILD_RUN_ID;
+            if (!/^[1-9][0-9]*$/.test(id)) throw new Error('Invalid build run ID');
+            const {data: run} = await github.rest.actions.getWorkflowRun({
+              ...context.repo, run_id: Number(id)
+            });
+            if (run.status !== 'completed' || run.conclusion !== 'success' ||
+                run.head_sha !== context.sha || run.event !== 'push' ||
+                !['dev', 'main'].includes(run.head_branch) ||
+                run.path !== '.github/workflows/linux-packages.yml' ||
+                run.repository.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
+              throw new Error('Release requires a successful branch build of this exact commit');
+            }
+      - uses: actions/checkout@v4
+      - name: Collect native packages
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          pattern: package-*
+          path: dist/release
+          merge-multiple: true
+      - name: Collect prepared source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          name: prepared-source
+          path: dist/release
+      - name: Verify assets, then create tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tooling/prepare_release.py dist/release
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')
+          python3 tooling/release_notes.py "v$version" > build-release-notes.md
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git tag -a "v$version" -m "CowType $version"
+          git push origin "refs/tags/v$version"
+          gh release create "v$version" dist/release/* --verify-tag --latest --title "CowType $version" --notes-file build-release-notes.md
