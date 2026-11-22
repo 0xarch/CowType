@@ -6,7 +6,7 @@
 
 设置“互译”页启用功能，默认关闭，统一快捷键默认为 F10。可选服务：
 
-- **Bilibili 翻译**：`https://index-translate.bilibili.com/v1`，模型 `Index-Translate-35B-A3B`，公共服务不需要 Key。根据官方示例使用单条 user 消息，并传 `chat_template_kwargs.enable_thinking=false`。
+- **Bilibili 翻译**：`https://index-translate.bilibili.com/v1`，可选模型 `Index-Translate-2B`、`Index-Translate-9B`、`Index-Translate-35B-A3B`（默认），公共服务不需要 Key。根据官方示例使用单条 user 消息，并传 `chat_template_kwargs.enable_thinking=false`。
 - **自定义 OpenAI 兼容接口**：在设置中填写基础地址（例如 `https://example.com/v1`）或完整 `chat/completions` 地址及模型名称。使用标准消息、非流式返回和 Bearer Key；不添加 Bilibili 专属字段。
 
 默认让模型自动判断来源语言：中文译为英语，其他语言译为简体中文。也可固定译成中文、英语、日语、韩语、法语、德语、西班牙语、俄语、葡萄牙语、意大利语、阿拉伯语、越南语、泰语或印度尼西亚语。固定目标时来源语言同样由模型判别。不会自动检测后换服务，也不会失败后改用其他接口。

@@ -9,6 +9,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 BILIBILI_API = 'https://index-translate.bilibili.com/v1'
 BILIBILI_MODEL = 'Index-Translate-35B-A3B'
+BILIBILI_MODELS = ('Index-Translate-2B', 'Index-Translate-9B', 'Index-Translate-35B-A3B')
 LANGUAGES = ('auto', 'zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru', 'pt', 'it', 'ar', 'vi', 'th', 'id')
 DEFAULTS = dict(version=1, provider='bilibili', api=BILIBILI_API, model=BILIBILI_MODEL,
                 target='auto', key_source='none')
@@ -55,7 +56,7 @@ def validate(values):
             or not model.strip() or len(model) > 256 or any(ord(c) < 32 or ord(c) == 127 for c in model)):
         raise TranslationError('config')
     endpoint(api)
-    if values['provider'] == 'bilibili' and (api != BILIBILI_API or model != BILIBILI_MODEL or values['key_source'] != 'none'):
+    if values['provider'] == 'bilibili' and (api != BILIBILI_API or model not in BILIBILI_MODELS or values['key_source'] != 'none'):
         raise TranslationError('config')
     return dict(values)
 

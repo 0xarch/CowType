@@ -211,6 +211,7 @@ def main():
                     assert len(self.pages) == 5 and len(self.controls) == 19
                     assert not self.controls['Translate'].get_active()
                     assert self.translation_provider.get_selected() == 0
+                    assert self.translation_bilibili_model.get_model().get_n_items() == 3
                     assert self.translation_target.get_selected() == 0
                     assert not self.translation_key.get_visible()
                     assert self.controls['UnicodePrefix'].get_visible()
@@ -227,6 +228,9 @@ def main():
                     assert isinstance(self.overlay, Adw.ToastOverlay)
                     assert not self.controls['VoiceModifierHold'].get_visible()
                     self.ready = False
+                    self.translation_bilibili_model.set_selected(0)
+                    assert self.translation_bilibili_model.get_visible()
+                    self.translation_bilibili_model.set_selected(2)
                     self.translation_provider.set_selected(1)
                     self.translation_key_source.set_selected(2)
                     assert self.translation_key.get_visible()

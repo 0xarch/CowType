@@ -36,6 +36,9 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
     rows.add(provider)
     api = Adw.EntryRow(title=tr('translate.api')); api.set_text(values['api']); rows.add(api)
     model = Adw.EntryRow(title=tr('translate.model')); model.set_text(values['model']); rows.add(model)
+    bilibili_model = Adw.ComboRow(title=tr('translate.model'), model=Gtk.StringList.new(config.BILIBILI_MODELS))
+    bilibili_model.set_selected(config.BILIBILI_MODELS.index(values['model'] if values['model'] in config.BILIBILI_MODELS else config.BILIBILI_MODEL))
+    rows.add(bilibili_model)
     target = Adw.ComboRow(title=tr('translate.target'), model=Gtk.StringList.new([
         tr('translate.lang.' + language) for language in config.LANGUAGES]))
     target.set_selected(config.LANGUAGES.index(values['target'])); rows.add(target)
@@ -55,14 +58,16 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
     def visibility(*_):
         custom = provider.get_selected() == 1
         api.set_sensitive(custom); model.set_sensitive(custom)
+        model.set_visible(custom); bilibili_model.set_visible(not custom)
         key_mode.set_sensitive(custom)
         key.set_visible(custom and key_sources[key_mode.get_selected()] == 'secret')
         forget.set_visible(custom and key_sources[key_mode.get_selected()] == 'secret')
         if not custom:
-            api.set_text(config.BILIBILI_API); model.set_text(config.BILIBILI_MODEL); key_mode.set_selected(0)
+            api.set_text(config.BILIBILI_API); model.set_text(config.BILIBILI_MODELS[bilibili_model.get_selected()]); key_mode.set_selected(0)
             key.set_text('')
     provider.connect('notify::selected', visibility)
     key_mode.connect('notify::selected', visibility)
+    bilibili_model.connect('notify::selected', visibility)
     visibility()
     if error:
         # An invalid file must remain available for manual repair.
@@ -120,3 +125,4 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
     app.translation_key = key
     app.translation_target = target
     app.translation_key_source = key_mode
+    app.translation_bilibili_model = bilibili_model

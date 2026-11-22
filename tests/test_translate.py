@@ -92,10 +92,17 @@ class TranslationTests(unittest.TestCase):
                 self.assertEqual(request.full_url,config.BILIBILI_API+'/chat/completions')
                 self.assertIsNone(request.get_header('Authorization'))
                 payload=json.loads(request.data)
-                self.assertEqual(payload['model'],config.BILIBILI_MODEL)
+                self.assertEqual(payload['model'],selected_model)
                 self.assertEqual(payload['chat_template_kwargs'],{'enable_thinking':False})
                 return Response(self.server.body)
-        client.translate('synthetic',config.DEFAULTS,opener=Opener())
+        for selected_model in config.BILIBILI_MODELS:
+            with self.subTest(model=selected_model):
+                settings=dict(config.DEFAULTS,model=selected_model)
+                config.save(settings)
+                self.assertEqual(config.load()['model'],selected_model)
+                client.translate('synthetic',config.load(),opener=Opener())
+        with self.assertRaises(config.TranslationError):
+            config.validate(dict(config.DEFAULTS,model='unsupported-preset-model'))
         self.assertEqual(self.server.requests,[])
     def test_http_errors_do_not_expose_response_or_credentials(self):
         for status,code in [(401,'auth'),(403,'auth'),(429,'rate'),(500,'http'),(503,'unavailable')]:
