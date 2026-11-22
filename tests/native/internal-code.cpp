@@ -39,7 +39,7 @@ int main() {
     return 0u;
   };
   for (auto action : {Shortcuts::Action::Mode, Shortcuts::Action::InternalCode,
-                      Shortcuts::Action::Voice, Shortcuts::Action::Unicode}) {
+                      Shortcuts::Action::Voice, Shortcuts::Action::Unicode, Shortcuts::Action::Translate}) {
     for (auto sym :
          {FcitxKey_Shift_L, FcitxKey_Shift_R, FcitxKey_Control_L,
           FcitxKey_Alt_L, FcitxKey_Super_R, FcitxKey_ISO_Level3_Shift}) {
@@ -61,6 +61,8 @@ int main() {
     }
   }
   assert(Shortcuts::matches(index("Shift"), FcitxKey_Shift_L));
+  assert(Shortcuts::resolve(FcitxKey_F10,0,5,6,7,true,8,9,true)==Shortcuts::Action::Translate);
+  assert(Shortcuts::resolve(FcitxKey_F10,0,5,6,7,true,8,9,false)==Shortcuts::Action::None);
   assert(Shortcuts::matches(index("Shift"), FcitxKey_Shift_R));
   assert(Shortcuts::resolve(FcitxKey_Control_L, 4, index("Control"), 6, 7,
                             true) == Shortcuts::Action::Mode);

@@ -932,5 +932,33 @@
     "implementation": "Original CowType Unicode scalar validation and UTF-8 encoding, independent of GB18030/iconv. No external Unicode table, model or upstream code copied.",
     "features": "Separate per-field mode and shortcut registered alongside language, voice and GB18030. Shared conflict checks include overlapping modifier aliases. Original default-on, independently configurable u-prefix entry shares scalar decoding and candidate rendering; no new external data or dependencies.",
     "dependencies": []
+  },
+  "translation_2026_11_22": {
+    "paths": [
+      "src-translate/",
+      "src-fcitx5/engine/translate.h",
+      "src-settings/app/translation.py",
+      "tests/test_translate.py",
+      "tests/native/translate.cpp"
+    ],
+    "implementation": "Original CowType OpenAI-compatible HTTP client, Secret Service key adapter, private one-shot subprocess, per-field translation preview and unified shortcut integration. No upstream implementation copied or vendored.",
+    "license": "GPL-3.0-or-later",
+    "reference": {
+      "project": "Bilibili Index-Translate",
+      "authors": "Bilibili Index-Translate contributors",
+      "repository": "https://github.com/bilibili/Index-Translate",
+      "revision": "5bc437dffea3a7605604e70e6a459c44e6fea19f",
+      "path": "inference/llm/call_api.py",
+      "sha256": "ea845c79d7f765c13e1c8be548402997ce858b60a11d772936aadba0ce460549",
+      "bytes": 22958,
+      "license": "Apache-2.0",
+      "use": "Public endpoint, model identifier, chat/completions message format and disable-thinking extension; script not redistributed."
+    },
+    "dependencies": [
+      "Python standard library urllib/json",
+      "Optional libsecret Secret 1 GI typelib via existing PyGObject and desktop Secret Service"
+    ],
+    "data_policy": "Explicit user-triggered text requests only; keyless public preset or configured custom endpoint. No bundled models, input/result/credential logging, history or plaintext credential persistence.",
+    "validation": "Synthetic loopback HTTP and mock keyring; native fake worker tests. Separate public preset smoke succeeded. User-provided custom test endpoint returned HTTP 503 and its model was absent from the returned model listing; no automatic model substitution. No production keys or response text stored."
   }
 }

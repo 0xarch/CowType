@@ -28,6 +28,7 @@ for name, path in {
     path.mkdir(parents=True, exist_ok=True)
     env[name] = str(path)
 env.update(COWTYPE_SYSTEM_PINYIN_DICT='', COWTYPE_STATISTICAL_MODEL_FILE='', COWTYPE_TEST_ROOT=str(root), COWTYPE_DATA_DIR=str(args.data.resolve()),
+           COWTYPE_TRANSLATE_HELPER=str(Path(__file__).with_name('fake-translate.py').resolve()),
            SKIP_FCITX_PATH='1', SKIP_FCITX_SYSTEM_PATH='0', SKIP_FCITX_USER_PATH='0',
            DISPLAY='', WAYLAND_DISPLAY='')
 raise SystemExit(subprocess.run(args.command, env=env).returncode)

@@ -25,13 +25,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "e7004552c1097b63c5922ea2000a71c12c806dc7f09542f29954e08e0b59f330",
-      "bytes": 5802
+      "sha256": "0b7b953040386721955a4186e71b5ee4afbe8194c8ffb033bea9e7b8ccc21f08",
+      "bytes": 6508
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "a337a941267a34b5660a61988faa8ada3b4767b5475d6f5be26d4c8e25c5158b",
-      "bytes": 14847
+      "sha256": "51c58e399706cbbf0c2c43ba7e6754dd2a42cb015792d8380d16865f020cec2d",
+      "bytes": 15775
     },
     {
       "path": "Cargo.lock",
@@ -78,8 +78,8 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "633b1f161bcc5f0d406f7102686013555132e1d0db30ae90a0bb0c3c978a0c65",
-      "bytes": 2043
+      "sha256": "bf863c0f48c088f5a83258ee451178dc53f137115ddc6b8a2f0dbd03cbfc0f34",
+      "bytes": 2126
     },
     {
       "path": "assets/icons/README.md",
@@ -103,8 +103,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "8963b8a0e1e9cfc959c484e78135ecc3ee5ac4431fcf92faff1244f1b0d6f02e",
-      "bytes": 8532
+      "sha256": "a9ea8edfdbc77c93da9e7494578081cdf95aba71248d8dfd0cccb7e8b6d8d46c",
+      "bytes": 8934
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -123,13 +123,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "854926ae37a79dfd4af180d8debf0bab517d63643262b0a56ad3582ae3ea664f",
-      "bytes": 39384
+      "sha256": "e7b9f46f9d8c19960318a515a689909c8cf8857dd2de39541ae4d3ffb52bd27d",
+      "bytes": 41170
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "3edcd565c9c38790b173893c7da7ed57f54ecfa12b9e7370c8fa785f652b9348",
-      "bytes": 6468
+      "sha256": "4b0b905b0f609f4c4b266259771d5a44d98f2db10acb1ab3ea77f502683a6699",
+      "bytes": 8063
     },
     {
       "path": "i18n/README.md",
@@ -138,13 +138,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "fcbfe7736b9746fa3fc0a31d75aa51ac4d76f8541336c57074d7fff689e54bcd",
-      "bytes": 10238
+      "sha256": "093b2aaff330c5f16e41f8f4e584c3fe2b390f3db55c822d8a6b4d8bec7963d1",
+      "bytes": 13746
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "d28c3672f01a94886b088b9f0234235f52b1b1051e7f58bea35e8d23e5b5cc6c",
-      "bytes": 9226
+      "sha256": "d48de6901a9f9e2ee01776bf628564e401302dd2fca1c35c8fb716342dadda4c",
+      "bytes": 12388
     },
     {
       "path": "packaging/README.md",
@@ -153,18 +153,18 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "377fc1436051ebe6247c6ef2cd38ca5708d8ecead02b6a21279baf773eccf339",
-      "bytes": 1541
+      "sha256": "1c2716d36b3235f952c341d0f443d2e7e9c19537c23dbb8b54c6eb7122965a50",
+      "bytes": 1611
     },
     {
       "path": "packaging/debian/control.in",
-      "sha256": "c1e10b4fe356e59bd42606f138ffc022b52a305656ecbec070ad3ab316047e63",
-      "bytes": 614
+      "sha256": "ecf1c60e6986c1bba2f96f39f09b4cb76b1823a032fdbf84dd62a655b6a3d00a",
+      "bytes": 631
     },
     {
       "path": "packaging/rpm/cowtype.spec.in",
-      "sha256": "ea84e36092d9cb6808b2c99ef03ca7a6335abc4a30f67073c36b6a9941cfd9e6",
-      "bytes": 1021
+      "sha256": "8920e3652a772ddf58de642fd65b8006abd7e411427a54d99bafc88b51b15039",
+      "bytes": 1039
     },
     {
       "path": "src-data-tools/README.md",
@@ -218,8 +218,8 @@
     },
     {
       "path": "src-fcitx5/README.md",
-      "sha256": "c84c9d55792900c649737857492ab635ebe0810acf2bc3947d419b23d6596ed9",
-      "bytes": 731
+      "sha256": "c9fc1425552fc683891dc8ab80478b91613420f587e4fecdd649b253e969ae0e",
+      "bytes": 1102
     },
     {
       "path": "src-fcitx5/config/cowtype-addon.conf.in",
@@ -238,8 +238,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "8edc637297cb9ad6a702cfa5279cbd2b4fff04032c7da21ce5d8f71f8cb1fb32",
-      "bytes": 36357
+      "sha256": "771a1d5d3e9473db1430ffecbfa6624e138c1f4867f843f96744457e52c08a21",
+      "bytes": 45381
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -263,8 +263,13 @@
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
-      "sha256": "9dbad8832a0eb77d5a91dee1cd6f573a38284eeb9e8e5ff4cc6b567d724f538f",
-      "bytes": 4351
+      "sha256": "53257121e66d525dbd21e4be753caa566198ca77b932a14d7991fd8e20aff972",
+      "bytes": 4522
+    },
+    {
+      "path": "src-fcitx5/engine/translate.h",
+      "sha256": "97a93f776d9741398273e00cfb1e33c4506ccde8ff88d1fd99193140cbf63a24",
+      "bytes": 5736
     },
     {
       "path": "src-fcitx5/engine/voice.h",
@@ -288,8 +293,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "d4d8e1b197ae150fcb6a755570a76e8a9e6422b89729f9362ff6489d01d41f46",
-      "bytes": 4200
+      "sha256": "94ad02584e71cde143837ef7be1434735984ad73db3957d9dd3f86f65493d0a1",
+      "bytes": 4471
     },
     {
       "path": "src-fcitx5/unicode/README.md",
@@ -328,8 +333,8 @@
     },
     {
       "path": "src-settings/README.md",
-      "sha256": "8974b5c8c9efdfc2cf232866058248cdf56ca05669a8eb9fdc551be92b88acb8",
-      "bytes": 303
+      "sha256": "cd9b870876d046cccbb2884e67109ee5df414a9942985a0d11295047c7126cfd",
+      "bytes": 474
     },
     {
       "path": "src-settings/app/launch.py",
@@ -338,13 +343,18 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "cd5cefa4e3af16854af0e57ea5106d228943bd03ddbae2141c2bbd9f501d72e0",
-      "bytes": 20774
+      "sha256": "e686bd6f8635be93106c76cfe2b9ac9f8cabb792af172ef9dd6af8b32c790483",
+      "bytes": 21674
+    },
+    {
+      "path": "src-settings/app/translation.py",
+      "sha256": "a4cb8b6aa21fd73ccf716a338e9820322b6976a8adf47416ba8ba7e4bdd870f2",
+      "bytes": 6162
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "66266537fb3e796991f2368392842b1c7e62dbac340f6cf1fd3699f928663934",
-      "bytes": 5251
+      "sha256": "792a8f792eafe0111027c87dbe67e46a551a10a7f5a4f0c21088e48c260aa6bb",
+      "bytes": 5420
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -363,8 +373,33 @@
     },
     {
       "path": "src-translate/README.md",
-      "sha256": "21ab251acbf1ecaf44ed3b30cc3b963b4c812a08f847325e870a64461decbdcf",
-      "bytes": 71
+      "sha256": "eb8c7a7be1edf7a442a708ba9fd0fc76dfc3d095cb883b8eec13f4da7e5debbd",
+      "bytes": 6039
+    },
+    {
+      "path": "src-translate/cowtype-translate.in",
+      "sha256": "565f178bdf1af6c17b081b7a0edfffc81ed9d8de683e44b65270aa29a9378069",
+      "bytes": 88
+    },
+    {
+      "path": "src-translate/main.py",
+      "sha256": "ab57da18b9dac5cf4b24196b5543fbe018ed9f8170f474d28df0d6d59f2cd82f",
+      "bytes": 961
+    },
+    {
+      "path": "src-translate/translation_client.py",
+      "sha256": "fa5b8054ff199c4f4c5b1a220b5c449a8949400bbdd541c40f64920ab7b6a7b0",
+      "bytes": 4088
+    },
+    {
+      "path": "src-translate/translation_config.py",
+      "sha256": "8545b450011593350f98d9f520eef09d76f61c03e15258b2cfdb42f8384c75f9",
+      "bytes": 3858
+    },
+    {
+      "path": "src-translate/translation_credentials.py",
+      "sha256": "071791ff7fbb86af0b9967b9f05e9b4ec1d7aa70bde245ab5a40d043395d3cbd",
+      "bytes": 2207
     },
     {
       "path": "src-voice/Cargo.lock",
@@ -478,13 +513,13 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "d2fdc3a23a07f022b284a2cd9062a167e954b15a598e8665e67252e1b8faf6de",
-      "bytes": 13599
+      "sha256": "88bc7481642e16ed1acb20358428b00b5d5b1f87832561fff18e2eee3ee4ff9a",
+      "bytes": 15510
     },
     {
       "path": "src/config/shortcuts.tsv",
-      "sha256": "8e990daad627009dbd3d5b79ed319e68f3ecbba7eabecd1e26d3c6413664b77a",
-      "bytes": 664
+      "sha256": "2dc59b59d87aeb3adebddd362984517e284bd09d66ced2e6d6bf0b819d64324f",
+      "bytes": 833
     },
     {
       "path": "src/dictionary/mod.rs",
@@ -513,8 +548,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "66eec8071bc1ed0a8a959cb7b8bad6ee92bc6f7d4e4cef2fa2e3ef27ce0aa058",
-      "bytes": 19045
+      "sha256": "cd2c78f84704fc8d1512c8f23f772336e9e9fe2458ecdd0395853e7b14237595",
+      "bytes": 19437
     },
     {
       "path": "src/i18n/mod.rs",
@@ -538,8 +573,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "a62aaa078dff6e5915c311beeb1682cda353a3025c636c18fd8e098daee984ad",
-      "bytes": 17360
+      "sha256": "5e141bf6a804a2512edb570dbbe36b3254bac1031c980837e8f58ba52170b6e7",
+      "bytes": 17809
     },
     {
       "path": "src/session/punctuation.rs",
@@ -548,8 +583,8 @@
     },
     {
       "path": "tests/README.md",
-      "sha256": "7956ea8be28b7b9d9cb5733086e1f4df5a44996e160af9eb09d612b94531a980",
-      "bytes": 407
+      "sha256": "558a2f456240fa696e2c4aec8643b14f28cc56492457971ef929ebce15a87023",
+      "bytes": 788
     },
     {
       "path": "tests/cli.rs",
@@ -622,6 +657,11 @@
       "bytes": 448
     },
     {
+      "path": "tests/native/fake-translate.py",
+      "sha256": "fe0c51037c51068fadc884b9fbf3ecab693832ceb75e4a052a76c535fda40ea6",
+      "bytes": 600
+    },
+    {
       "path": "tests/native/fake-voice.py",
       "sha256": "5624f85621efa2977f2f8305e324427ea0eb913ca0681e50a98db0057dd98eb5",
       "bytes": 1366
@@ -633,13 +673,13 @@
     },
     {
       "path": "tests/native/internal-code.cpp",
-      "sha256": "d01b0110becd7b10f27553a724a670aa62e9044e0f5598bc60fa1b5d2082379b",
-      "bytes": 4244
+      "sha256": "bf836d9ce8e6f0c6f7637813d3b8a67e61f34b5e4ef844189a1a7f8862eb2cdc",
+      "bytes": 4462
     },
     {
       "path": "tests/native/isolated.py",
-      "sha256": "2ed43627347f0296e8f0bbec1f9ad01573b07955994cbef2cbc2c1d611d5f05c",
-      "bytes": 1647
+      "sha256": "c9af719552d6e842b0779872e28f324afa4e8ac95b29e5d5b690800af86bcd68",
+      "bytes": 1745
     },
     {
       "path": "tests/native/isolation.h",
@@ -650,6 +690,11 @@
       "path": "tests/native/loading.cpp",
       "sha256": "95f934066aec5bbe5dcc7c9af479d42faa82542e908197a7ac618e826a5f14ff",
       "bytes": 4785
+    },
+    {
+      "path": "tests/native/translate.cpp",
+      "sha256": "9d3685e8a7ba2b2f3182da99bb16e43dad79907ccb982ae51994ad5a56248861",
+      "bytes": 7852
     },
     {
       "path": "tests/native/unicode-code.cpp",
@@ -663,8 +708,8 @@
     },
     {
       "path": "tests/session.rs",
-      "sha256": "ab852a926910b9c8acbe305e34e82956e02d4f043aced23b46df840349ae1ff4",
-      "bytes": 11383
+      "sha256": "88f58ed02541e588b703e58cbaff8be4a7960e64c7aeece0a509114b286a017f",
+      "bytes": 11961
     },
     {
       "path": "tests/symbols.rs",
@@ -688,13 +733,18 @@
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "00697f496763d4ec9f14a83528caf560195c4cc122e6048869531c5dc6321172",
-      "bytes": 6468
+      "sha256": "59d9e6b4b1192567a16ec5b0c69023fbc2b9cc3f5a1a82f04634697e673707a1",
+      "bytes": 7120
     },
     {
       "path": "tests/test_settings_startup.py",
       "sha256": "0b05546faa370951eed0e1dc5d214869fc88724fe5615278e512db925fdbb42b",
       "bytes": 2032
+    },
+    {
+      "path": "tests/test_translate.py",
+      "sha256": "3c7378609f9f905c5cf0554326a54f68f629d5bdc9f80ff3f40b1db9f5149c50",
+      "bytes": 10010
     },
     {
       "path": "tests/voice_resident.py",
@@ -713,8 +763,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "712e98c1dfb93c28b0b77af0d180b8634fa0f82e4c350a309a41440f95e69a91",
-      "bytes": 4620
+      "sha256": "0c2e68f708b353e26a4149b67acca8f1232b47ea76a7cc0c65af25ce0b52eaa5",
+      "bytes": 4843
     },
     {
       "path": "tooling/compile_i18n.py",
@@ -743,8 +793,8 @@
     },
     {
       "path": "tooling/package_linux.py",
-      "sha256": "314be621bda5491a17edfa5d3636f84f90d24979691a1660fcd3ab28e36702d7",
-      "bytes": 4640
+      "sha256": "c958c94eac87298d1d84b07534c8d03cd9b4ee22cc790438f8bf97490fb6e529",
+      "bytes": 4738
     },
     {
       "path": "tooling/release_notes.py",

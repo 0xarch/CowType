@@ -7,6 +7,7 @@
 #include "level.h"
 #include "libime.h"
 #include "shortcuts.h"
+#include "translate.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
 #include <fcitx-config/configuration.h>
@@ -63,6 +64,9 @@ struct State : InputContextProperty {
     int internalCursor = 0;
     VoiceLevel voiceLevel;
     std::string voiceStatus, voicePartial;
+    bool translating=false, translateDraft=false, translateSelection=false;
+    unsigned selectionCursor=0, selectionAnchor=0;
+    std::string translateInput, translateResult, translateStatus, selectionText;
 };
 class InternalWord final : public CandidateWord {
     std::function<void(InputContext *)> select_;
@@ -110,13 +114,19 @@ public:
         else if(kind=='V'){auto value=state->voiceLevel.push(text);if(!value.empty()) state->voiceStatus=std::move(value);}
         else {state->voiceStatus=text;}
         render(ic,false);
+    }), translator_(instance->eventLoop(), [this](InputContext *ic,bool success,const std::string &value) {
+        auto *state=ic->propertyFor(&factory_);
+        if(!state->translating)return;
+        if(success){state->translateResult=value;state->translateStatus=ct_tr("translate.ready");}
+        else {state->translateResult.clear();state->translateStatus=ct_tr(value);}
+        render(ic,false);
     }) {
         if (!runtime_) { throw std::runtime_error("CowType settings runtime allocation failed"); }
         if (cowtype2_abi_version() / 1000 != 2) { throw std::runtime_error("CowType ABI major mismatch"); }
         instance_->inputContextManager().registerProperty("cowtype-v2-session", &factory_);
         focus_ = instance_->watchEvent(EventType::InputContextFocusOut, EventWatcherPhase::PreInputMethod,
             [this](Event &event) { auto *ic = static_cast<InputContextEvent &>(event).inputContext();
-                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();state->shortcuts.reset(); cowtype2_session_reset(state->session.get(), false); render(ic, false); });
+                auto *state = ic->propertyFor(&factory_); cancelVoice(ic);cancelTranslation(ic);state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();state->shortcuts.reset(); cowtype2_session_reset(state->session.get(), false); render(ic, false); });
         resourceTimer_=instance_->eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+20000,1000,
             [this](EventSourceTime *timer,uint64_t) {
                 for(int scheme=0;scheme<2;++scheme) {
@@ -141,11 +151,13 @@ public:
     void reloadConfig() override {
         const auto began=now(CLOCK_MONOTONIC);
         if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}voice_.cancelAll();
+        translator_.cancel();
         cowtype2_runtime_reload(runtime_.get());++configGeneration_;
         instance_->inputContextManager().foreach([this](InputContext *ic) {
             auto *state=ic->propertyFor(&factory_);
-            state->shortcuts.reset();state->voiceHold.reset();
-            if(state->internalCode || state->unicodeCode){state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();render(ic,false);}
+            const bool wasTranslating=state->translating;
+            cancelTranslation(ic);state->shortcuts.reset();state->voiceHold.reset();
+            if(state->internalCode || state->unicodeCode || wasTranslating){state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();render(ic,false);}
             return true;
         });
         voice_.setResident(cowtype2_runtime_option(runtime_.get(),4));
@@ -168,24 +180,26 @@ public:
         ctDiagnostic("event=activate scheme="+std::to_string(scheme)+" ready="+std::to_string(bool(resources_[scheme].engine))+" elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
     }
     void deactivate(const InputMethodEntry &, InputContextEvent &event) override {
+        const bool wasTranslating=event.inputContext()->propertyFor(&factory_)->translating;
         event.inputContext()->propertyFor(&factory_)->active=false;
         event.inputContext()->propertyFor(&factory_)->internalCode=false;
         event.inputContext()->propertyFor(&factory_)->internalBuffer.clear();
         event.inputContext()->propertyFor(&factory_)->clearUnicode();
-        cancelVoice(event.inputContext());
-        bool commit = event.type() == EventType::InputContextSwitchInputMethod;
+        cancelVoice(event.inputContext());cancelTranslation(event.inputContext());
+        bool commit = !wasTranslating && event.type() == EventType::InputContextSwitchInputMethod;
         if (commit) { commit = static_cast<InputContextSwitchInputMethodEvent &>(event).reason() != InputMethodSwitchedReason::CapabilityChanged; }
         cowtype2_session_reset(event.inputContext()->propertyFor(&factory_)->session.get(), commit);
         render(event.inputContext(), true);
     }
     void reset(const InputMethodEntry &, InputContextEvent &event) override {
-        cancelVoice(event.inputContext());
+        cancelVoice(event.inputContext());cancelTranslation(event.inputContext());
         event.inputContext()->propertyFor(&factory_)->internalCode=false;
         event.inputContext()->propertyFor(&factory_)->internalBuffer.clear();
         event.inputContext()->propertyFor(&factory_)->clearUnicode();
         cowtype2_session_reset(event.inputContext()->propertyFor(&factory_)->session.get(), false); render(event.inputContext(), false);
     }
     std::string subMode(const InputMethodEntry &, InputContext &ic) override {
+        if(ic.propertyFor(&factory_)->translating)return ct_tr("translate.mode");
         if(ic.propertyFor(&factory_)->unicodeCode) return ct_tr("unicode.mode");
         if(ic.propertyFor(&factory_)->internalCode) return ct_tr("gb18030.mode");
         return cowtype2_session_mode(ic.propertyFor(&factory_)->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6");
@@ -194,7 +208,7 @@ public:
         CtSlowEvent latency;
         auto *ic = event.inputContext();
         if (ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive) | CapabilityFlag::Disable)) {
-            cancelVoice(ic);
+            cancelVoice(ic);cancelTranslation(ic);
             ic->propertyFor(&factory_)->internalCode=false;ic->propertyFor(&factory_)->internalBuffer.clear();
             ic->propertyFor(&factory_)->clearUnicode();
             cowtype2_session_reset(ic->propertyFor(&factory_)->session.get(), false); render(ic, false); return;
@@ -206,7 +220,7 @@ public:
         const auto modifiers=event.key().states().toInteger() | event.rawKey().states().toInteger();
         const auto time=fcitx::now(CLOCK_MONOTONIC);
 
-        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),cowtype2_runtime_option(runtime_.get(),5),cowtype2_runtime_option(runtime_.get(),3),cowtype2_runtime_option(runtime_.get(),15));
+        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),cowtype2_runtime_option(runtime_.get(),5),cowtype2_runtime_option(runtime_.get(),3),cowtype2_runtime_option(runtime_.get(),15),cowtype2_runtime_option(runtime_.get(),18),cowtype2_runtime_option(runtime_.get(),17));
         auto shortcut=state->shortcuts.handle(sym,modifiers,event.isRelease(),time,action,cowtype2_runtime_option(runtime_.get(),6));
         if(shortcut.interrupted || (event.isRelease() && shortcut.handled))state->voiceHold.reset();
         if(shortcut.cancelVoice && voice_.owns(ic)){cancelVoice(ic);render(ic,false);}
@@ -225,6 +239,7 @@ public:
         if(shortcut.stopVoice && voice_.owns(ic)){voice_.stop();state->voiceStatus=ct_tr("message.50698e404b8c");render(ic,false);}
         if(shortcut.accept)event.filterAndAccept();
         if(shortcut.handled)return;
+        if(state->translating && translationKey(ic,event,modifiers))return;
         if(state->unicodeCode){unicodeKey(ic,event,modifiers);return;}
         if(state->internalCode){internalKey(ic,event,modifiers);return;}
         if(voice_.owns(ic) && !event.isRelease()){
@@ -258,7 +273,7 @@ public:
         // its next character starts a Unicode code point. Digits must reach
         // the code buffer before the ordinary numeric candidate selection.
         if(!event.isRelease() && !(modifiers&(4|8|64|128)) && code<128
-           && cowtype2_runtime_option(runtime_.get(),16) && !cowtype2_session_mode(state->session.get())) {
+           && !state->translating && cowtype2_runtime_option(runtime_.get(),16) && !cowtype2_session_mode(state->session.get())) {
             const std::string_view preedit=cowtype2_session_preedit(state->session.get());
             if((preedit=="u" || preedit=="U") && cowtype2_session_cursor(state->session.get())==1
                && cowtype::UnicodeCode::accepts(preedit,char(code))) {
@@ -295,6 +310,110 @@ public:
         cowtype2_session_key(ic->propertyFor(&factory_)->session.get(), next ? CT2_PAGE_DOWN : CT2_PAGE_UP, 0, false, 0xffffffff); render(ic, true);
     }
 private:
+    void cancelTranslation(InputContext *ic) {
+        translator_.cancel(ic);auto *s=ic->propertyFor(&factory_);
+        s->translating=s->translateDraft=s->translateSelection=false;
+        s->translateInput.clear();s->translateResult.clear();s->translateStatus.clear();s->selectionText.clear();
+    }
+    void requestTranslation(InputContext *ic) {
+        auto *s=ic->propertyFor(&factory_);
+        if(s->translateDraft) {
+            std::string text=s->translateInput+cowtype2_session_preview(s->session.get());
+            if(text.empty())return;
+            if(text.size()>32768){s->translateStatus=ct_tr("translate.error.input");render(ic,false);return;}
+            s->translateInput=std::move(text);s->translateDraft=false;
+        }
+        if(s->translateInput.empty())return;
+        if(s->translateInput.size()>32768){s->translateStatus=ct_tr("translate.error.input");render(ic,false);return;}
+        if(translator_.active() && !translator_.owns(ic)) {s->translateStatus=ct_tr("translate.error.busy");render(ic,false);return;}
+        s->translateResult.clear();s->translateStatus=ct_tr("translate.working");
+        if(!translator_.start(ic,s->translateInput,environment("COWTYPE_TRANSLATE_HELPER",COWTYPE_TRANSLATE_EXECUTABLE)))s->translateStatus=ct_tr("translate.error.process");
+        render(ic,false);
+    }
+    void invokeTranslation(InputContext *ic) {
+        auto *s=ic->propertyFor(&factory_);
+        if(s->translating){cancelTranslation(ic);render(ic,false);return;}
+        voice_.cancel(ic);s->voiceHold.reset();s->voiceStatus.clear();s->voicePartial.clear();
+        s->internalCode=false;s->internalBuffer.clear();s->clearUnicode();
+        s->translating=true;
+        if(const auto *preedit=cowtype2_session_preedit(s->session.get());preedit && *preedit) {
+            s->translateInput=cowtype2_session_preview(s->session.get());requestTranslation(ic);return;
+        }
+        const auto &surrounding=ic->surroundingText();
+        if(ic->capabilityFlags().test(CapabilityFlag::SurroundingText) && surrounding.isValid() && surrounding.cursor()!=surrounding.anchor()) {
+            s->translateInput=surrounding.selectedText();s->selectionText=s->translateInput;
+            s->selectionCursor=surrounding.cursor();s->selectionAnchor=surrounding.anchor();s->translateSelection=true;
+            requestTranslation(ic);return;
+        }
+        s->translateDraft=true;render(ic,false);
+    }
+    void chooseTranslation(InputContext *ic) {
+        auto *s=ic->propertyFor(&factory_);
+        if(!s->translating || s->translateResult.empty() || !ic->hasFocus()
+           || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable))return;
+        if(s->translateSelection) {
+            const auto &surrounding=ic->surroundingText();
+            if(!ic->capabilityFlags().test(CapabilityFlag::SurroundingText) || !surrounding.isValid()
+               || surrounding.cursor()!=s->selectionCursor || surrounding.anchor()!=s->selectionAnchor || surrounding.selectedText()!=s->selectionText) {
+                s->translateResult.clear();s->translateStatus=ct_tr("translate.error.selection");render(ic,false);return;
+            }
+        }
+        auto text=s->translateResult;cancelTranslation(ic);cowtype2_session_reset(s->session.get(),false);
+        // Frontends replace their current selection on commit; do not delete
+        // arbitrary surrounding text or write translated text to learning.
+        ic->commitString(text);render(ic,false);
+    }
+    bool translationKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
+        auto *s=ic->propertyFor(&factory_);auto sym=event.key().sym();
+        if(event.isRelease() || (modifiers&(4|8|64|128)))return false;
+        if(sym==FcitxKey_Escape){cancelTranslation(ic);render(ic,false);event.filterAndAccept();return true;}
+        const bool enter=sym==FcitxKey_Return || sym==FcitxKey_KP_Enter;
+        const bool space=sym==FcitxKey_space || sym==FcitxKey_KP_Space;
+        if(!s->translateDraft) {
+            if(enter || space || (!s->translateResult.empty() && (sym==FcitxKey_1 || sym==FcitxKey_KP_1))) {
+                if(!s->translateResult.empty())chooseTranslation(ic);
+                else if(!translator_.owns(ic))requestTranslation(ic);
+                event.filterAndAccept();return true;
+            }
+            // Ordinary editing cancels the preview and restores composition.
+            cancelTranslation(ic);render(ic,false);return false;
+        }
+        if(enter){requestTranslation(ic);event.filterAndAccept();return true;}
+        const auto *preedit=cowtype2_session_preedit(s->session.get());
+        if(s->translateInput.size()+std::char_traits<char>::length(preedit)>32768
+           && sym!=FcitxKey_BackSpace && sym!=FcitxKey_Delete && sym!=FcitxKey_Left && sym!=FcitxKey_Right) {
+            s->translateStatus=ct_tr("translate.error.input");render(ic,false);event.filterAndAccept();return true;
+        }
+        if(preedit && *preedit)return false;
+        if(sym==FcitxKey_BackSpace) {
+            if(!s->translateInput.empty()){
+                size_t i=s->translateInput.size()-1;
+                while(i && (static_cast<unsigned char>(s->translateInput[i])&0xc0)==0x80)--i;
+                s->translateInput.erase(i);
+            }
+        } else if(space) {
+            if(s->translateInput.size()<32768)s->translateInput+=' ';
+        } else if(cowtype2_session_mode(s->session.get())) {
+            auto code=Key::keySymToUnicode(sym);
+            if(sym>=FcitxKey_KP_0 && sym<=FcitxKey_KP_9)code='0'+sym-FcitxKey_KP_0;
+            if(code<32 || code==127 || code>0x10ffff)return false;
+            auto text=fcitx::utf8::UCS4ToUTF8(code);
+            if(s->translateInput.size()+text.size()<=32768)s->translateInput+=text;
+        } else return false;
+        render(ic,false);event.filterAndAccept();return true;
+    }
+    void renderTranslation(InputContext *ic) {
+        auto *s=ic->propertyFor(&factory_);auto &panel=ic->inputPanel();panel.reset();
+        Text text(s->translateInput,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);text.setCursor(s->translateInput.size());
+        if(ic->capabilityFlags().test(CapabilityFlag::Preedit))panel.setClientPreedit(text);else panel.setPreedit(text);
+        if(!s->translateResult.empty()) {
+            auto list=std::make_unique<CommonCandidateList>();list->setPageSize(1);
+            list->setSelectionKey({Key(FcitxKey_1)});
+            list->append<InternalWord>(s->translateResult,"",[this](InputContext *context){chooseTranslation(context);});
+            list->setGlobalCursorIndex(0);panel.setCandidateList(std::move(list));
+        }
+        panel.setAuxDown(Text(s->translateStatus));ic->updatePreedit();ic->updateUserInterface(UserInterfaceComponent::InputPanel);
+    }
     void chooseInternal(InputContext *ic,size_t index) {
         auto *state=ic->propertyFor(&factory_);
         if(!state->internalCode || !ic->hasFocus() || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable)) return;
@@ -391,6 +510,8 @@ private:
     }
     void invokeShortcut(InputContext *ic,Shortcuts::Action action) {
         auto *state=ic->propertyFor(&factory_);
+        if(action==Shortcuts::Action::Translate){invokeTranslation(ic);return;}
+        cancelTranslation(ic);
         if(action==Shortcuts::Action::Voice) {
             state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();
             bool starting=!voice_.active();toggleVoice(ic);
@@ -496,17 +617,26 @@ private:
     }
     void render(InputContext *ic, bool consumeCommit) {
         auto *state = ic->propertyFor(&factory_);
+        if(state->translating && !state->translateDraft){renderTranslation(ic);return;}
         if(state->unicodeCode){renderUnicode(ic);return;}
         if(state->internalCode){renderInternal(ic);return;}
         auto *session = state->session.get();
         if (!session) { return; }
-        if (consumeCommit) { const char *commit = cowtype2_session_commit(session); if (commit && *commit) { ic->commitString(commit); } }
+        if (consumeCommit) { const char *commit = cowtype2_session_commit(session); if (commit && *commit) {
+            if(state->translating){state->translateInput+=commit;if(state->translateInput.size()>32768)state->translateStatus=ct_tr("translate.error.input");}
+            else ic->commitString(commit);
+        } }
         auto &panel = ic->inputPanel(); panel.reset();
         Text preedit;
         if (const char *value = cowtype2_session_preedit(session); value && *value) {
             preedit.append(value, TextFormatFlags(TextFormatFlag::Underline) | TextFormatFlag::DontCommit);
         }
         preedit.setCursor(cowtype2_session_cursor(session));
+        if(state->translating) {
+            auto current=preedit.toString();auto cursor=preedit.cursor();
+            preedit=Text(state->translateInput+current,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);
+            preedit.setCursor(state->translateInput.size()+cursor);
+        }
         if(voice_.owns(ic) && !state->voicePartial.empty()){preedit=Text();preedit.append(state->voicePartial,TextFormatFlags(TextFormatFlag::Underline)|TextFormatFlag::DontCommit);preedit.setCursor(state->voicePartial.size());}
         if (ic->capabilityFlags().test(CapabilityFlag::Preedit)) { panel.setClientPreedit(preedit); }
         else { panel.setPreedit(preedit); }
@@ -526,7 +656,8 @@ private:
             }
             list->setGlobalCursorIndex(cowtype2_session_candidate_cursor(session)); panel.setCandidateList(std::move(list));
         }
-        if(!state->voiceStatus.empty()){panel.setAuxDown(Text(state->voiceStatus));}
+        if(state->translating){panel.setAuxDown(Text(state->translateStatus.empty()?ct_tr(preedit.empty()?"translate.input_hint":"translate.send_hint"):state->translateStatus));}
+        else if(!state->voiceStatus.empty()){panel.setAuxDown(Text(state->voiceStatus));}
         else if(const char *warning=cowtype2_runtime_warning(runtime_.get());warning && *warning){panel.setAuxDown(Text(warning));}
         ic->updatePreedit(); ic->updateUserInterface(UserInterfaceComponent::InputPanel);
     }
@@ -537,6 +668,7 @@ private:
     Instance *instance_;
     FactoryFor<State> factory_;
     VoiceWorker voice_;
+    TranslateWorker translator_;
     std::array<Resource, 2> resources_;
     std::unique_ptr<HandlerTableEntry<EventHandler>> focus_;
     std::unique_ptr<EventSourceTime> resourceTimer_;

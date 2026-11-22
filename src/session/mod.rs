@@ -193,6 +193,17 @@ impl Session {
     pub fn selected_text(&self) -> String {
         self.selections.iter().map(|s| s.text.as_str()).collect()
     }
+    /// Preview without confirming selections or changing the learning history.
+    pub fn preview(&self) -> String {
+        let mut text = self.selected_text();
+        if let Some(candidate) = self.candidates.get(self.selected_candidate) {
+            text.push_str(&candidate.text);
+            text.push_str(&self.remaining[candidate.consumed_bytes..]);
+        } else {
+            text.push_str(&self.remaining);
+        }
+        text
+    }
     pub fn input(&self) -> String {
         let mut input: String = self.selections.iter().map(|s| s.raw.as_str()).collect();
         input.push_str(&self.remaining);

@@ -37,7 +37,7 @@ hint.model	Models are downloaded by the user; weights are not included in the pa
 hint.modifier_hold	Hold for 300 ms to start recording, then release to stop. Tap to toggle.
 hint.remember_mode	Keep this field’s language mode when returning to CowType; otherwise start in Chinese.
 hint.resident	Keeps about 0.9 GB of memory after first use.
-hint.translate	No translation backend is connected yet.
+hint.translate	Text is sent to the selected service only when you request translation. Off by default; default shortcut F10. Confirm the result to commit.
 hint.words	Rime Ice Pinyin and Wubi 86 are included by default.
 hint.words.source	Pinned revision {revision}; download size is about {size} MiB.
 hotkey.Alt_L	Left Alt
@@ -177,3 +177,59 @@ unicode.hint	Unicode: 1–6 hex digits, optional U+ prefix; Space/Enter to commi
 unicode.invalid	Invalid code point, surrogate or control character
 setting.UnicodePrefix	u-prefix Unicode input
 hint.unicode_prefix	In Chinese mode, type u followed by a hex code point (e.g. u0020 for a space). On by default; independent of the Unicode shortcut.
+setting.Translate	Enable Translation
+setting.TranslateHotkey	Translation Shortcut
+translate.service	Translation Service
+translate.provider	Service Type
+translate.provider.bilibili	Bilibili Translation (Index-Translate)
+translate.provider.custom	Custom OpenAI-compatible API
+translate.api	API URL (base URL or chat/completions)
+translate.model	Model Name
+translate.target	Target Language
+translate.key_source	API Key Source
+translate.key.none	No Key (Bilibili Public Service or Local API)
+translate.key.environment	Environment Variable COWTYPE_TRANSLATE_KEY
+translate.key.secret	Desktop Keyring (Secret Service)
+translate.key_value	New API Key (leave blank to keep the stored key)
+translate.config_hint	The API URL, model and target language are saved locally. Keys are never written to the configuration file.
+translate.save	Save Translation Settings
+translate.check	Test API (send Hello, world!)
+translate.forget_key	Delete Stored Key for This API
+translate.key_removed	The keyring entry for this API has been deleted.
+translate.saved	Translation settings saved.
+translate.checked	API test succeeded.
+translate.mode	Translation
+translate.input_hint	Enter text, press Enter to translate or Esc to cancel. Switch to English mode first to type English directly.
+translate.ready	1/Space/Enter to commit the translation; Esc to cancel
+translate.send_hint	Enter to translate; Esc to cancel
+translate.working	Translating…
+translate.error.config	Invalid translation settings. Use HTTPS without credentials, query parameters or fragments. HTTP is allowed only for loopback addresses.
+translate.error.key	The API key is missing or invalid. Check the environment variable or keyring settings.
+translate.error.keyring	The desktop keyring is unavailable or locked. Unlock Secret Service or use the environment variable.
+translate.error.input	The source text is empty, too long or contains unsupported control characters (32 KiB maximum).
+translate.error.response	The translation service returned an invalid or oversized result.
+translate.error.incomplete	The translation is incomplete or was rejected. Shorten the text or check the model settings.
+translate.error.auth	Translation service authentication failed. Check the API key.
+translate.error.rate	The translation service rate limit was reached. Try again later.
+translate.error.http	The translation request failed. Check the API URL and model.
+translate.error.unavailable	The translation service is temporarily unavailable (HTTP 502/503/504). Try again later.
+translate.error.timeout	Translation timed out. The original input is preserved.
+translate.error.network	Could not connect to the translation service. Check the network.
+translate.error.process	Could not start the translation helper, or it exited unexpectedly. Check the installation.
+translate.error.busy	Translation is active in another input field. Try again later.
+translate.error.selection	The selection changed. The translation was not committed; select the text and translate again.
+translate.lang.auto	Automatic Chinese / English
+translate.lang.zh	Chinese
+translate.lang.en	English
+translate.lang.ja	Japanese
+translate.lang.ko	Korean
+translate.lang.fr	French
+translate.lang.de	German
+translate.lang.es	Spanish
+translate.lang.ru	Russian
+translate.lang.pt	Portuguese
+translate.lang.it	Italian
+translate.lang.ar	Arabic
+translate.lang.vi	Vietnamese
+translate.lang.th	Thai
+translate.lang.id	Indonesian

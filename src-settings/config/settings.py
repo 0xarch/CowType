@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "i18n"))
 from catalog import tr
 
-DEFAULTS = dict(Version='1', PageSize='5', UnicodePrefix='True', Punctuation='True', Sentence='True',
+DEFAULTS = dict(Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
                 Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', Emoji='False', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
 def shortcut_registry():
@@ -70,7 +70,7 @@ def validate(values):
         if assigned & physical:
             raise ValueError(tr('error.shortcut.conflict'))
         assigned.update(physical)
-    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'VoiceHotkey', 'ModeHotkey', 'InternalCodeHotkey', 'UnicodeHotkey'}:
+    for key in DEFAULTS.keys() - {'Version', 'PageSize', *SHORTCUTS}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values
@@ -93,6 +93,8 @@ def load():
             values['ModeHotkey'] = 'Shift'
         if 'UnicodeHotkey' not in parser['CowType'] and values['UnicodeHotkey'] in (values['ModeHotkey'], values['InternalCodeHotkey'], values['VoiceHotkey']):
             values['UnicodeHotkey'] = 'None'
+        if 'TranslateHotkey' not in parser['CowType'] and values['TranslateHotkey'] in tuple(values[name] for name in SHORTCUTS if name != 'TranslateHotkey'):
+            values['TranslateHotkey'] = 'None'
     return validate(values)
 
 def save(values):

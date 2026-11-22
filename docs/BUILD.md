@@ -52,6 +52,8 @@ python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
 
 `--offline` 需要依赖已缓存；首次配置时按锁文件获取依赖。核心库没有第三方 Rust crate，语音是单独的 Cargo 工程。所有修改使用项目目录内产物，测试不得读写用户配置或调用真实设备。
 
+互译客户端使用 Python 标准库，无额外 HTTP 库或 Rust 依赖；可选桌面密钥环需要 libsecret 的 Secret 1 GI typelib 和用户自行提供的 Secret Service。Arch/Debian/Fedora/openSUSE 包名与配置步骤见[互译组件](../src-translate/README.md)。普通 CI 只使用合成 HTTP 服务和假翻译进程，不读取 `COWTYPE_TRANSLATE_KEY` 或调用外部翻译接口。
+
 首次准备默认词典需要网络：
 
 ```sh

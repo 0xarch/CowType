@@ -37,7 +37,7 @@ hint.model	模型由用户下载，安装包不含权重。继续使用原有模
 hint.modifier_hold	按住 300 毫秒开始录音，松开停止；短按仍可切换。
 hint.remember_mode	切回 CowType 时保留该输入框的中英文状态；关闭时恢复中文。
 hint.resident	首次使用后保留约 0.9 GB 内存。
-hint.translate	尚未接入翻译后端。
+hint.translate	仅主动翻译时发送文本至所选服务。默认关闭；默认 F10，结果确认后上屏。
 hint.words	默认包含雾凇拼音与五笔86。
 hint.words.source	固定版本 {revision}；下载约 {size} MiB。
 hotkey.Alt_L	左 Alt
@@ -177,3 +177,59 @@ unicode.hint	Unicode：输入 1–6 位十六进制（可带 U+）；空格/回�
 unicode.invalid	无效码点、代理项或控制字符
 setting.UnicodePrefix	u 前缀 Unicode 输入
 hint.unicode_prefix	中文模式下输入 u 和十六进制码点（如 u0020 → 空格），默认开启；与独立 Unicode 快捷键无关。
+setting.Translate	启用互译
+setting.TranslateHotkey	翻译快捷键
+translate.service	翻译服务
+translate.provider	服务类型
+translate.provider.bilibili	Bilibili 翻译（Index-Translate）
+translate.provider.custom	自定义 OpenAI 兼容接口
+translate.api	API 地址（基础地址或 chat/completions）
+translate.model	模型名称
+translate.target	目标语言
+translate.key_source	API Key 来源
+translate.key.none	不使用 Key（Bilibili 公共服务或本地接口）
+translate.key.environment	环境变量 COWTYPE_TRANSLATE_KEY
+translate.key.secret	桌面密钥环（Secret Service）
+translate.key_value	新 API Key（留空保留已存密钥）
+translate.config_hint	地址、模型和目标语言保存在本机设置中；Key 不写入配置文件。
+translate.save	保存翻译配置
+translate.check	测试接口（发送 Hello, world!）
+translate.forget_key	删除此接口的已存 Key
+translate.key_removed	已删除此接口的密钥环记录。
+translate.saved	翻译配置已保存。
+translate.checked	接口测试成功。
+translate.mode	互译
+translate.input_hint	输入待翻译文本，Enter 发送，Esc 取消；英文可先切换中英文模式。
+translate.ready	1/空格/回车确认译文，Esc 取消
+translate.send_hint	Enter 翻译，Esc 取消
+translate.working	正在翻译…
+translate.error.config	翻译配置无效；HTTPS 地址不可含账号、查询参数或片段。HTTP 仅支持本机回环地址。
+translate.error.key	API Key 缺失或无效，请检查环境变量或密钥环配置。
+translate.error.keyring	桌面密钥环不可用或已锁定；请解锁 Secret Service，或选择环境变量。
+translate.error.input	待翻译文本为空、过长或含不支持的控制字符（最多 32 KiB）。
+translate.error.response	翻译服务返回了无效或过长的结果。
+translate.error.incomplete	翻译结果不完整或被服务拒绝，请缩短文本或检查模型设置。
+translate.error.auth	翻译服务认证失败，请检查 API Key。
+translate.error.rate	翻译服务请求受限，请稍后再试。
+translate.error.http	翻译服务请求失败，请检查接口地址和模型。
+translate.error.unavailable	翻译服务暂时不可用（HTTP 502/503/504），请稍后重试。
+translate.error.timeout	翻译请求超时，原输入已保留。
+translate.error.network	无法连接翻译服务，请检查网络。
+translate.error.process	无法启动翻译进程或进程意外退出，请检查安装。
+translate.error.busy	另一个输入框正在翻译，请稍后再试。
+translate.error.selection	选区已变化，未提交译文；请重新选择后翻译。
+translate.lang.auto	自动中英互译
+translate.lang.zh	中文
+translate.lang.en	英语
+translate.lang.ja	日语
+translate.lang.ko	韩语
+translate.lang.fr	法语
+translate.lang.de	德语
+translate.lang.es	西班牙语
+translate.lang.ru	俄语
+translate.lang.pt	葡萄牙语
+translate.lang.it	意大利语
+translate.lang.ar	阿拉伯语
+translate.lang.vi	越南语
+translate.lang.th	泰语
+translate.lang.id	印度尼西亚语

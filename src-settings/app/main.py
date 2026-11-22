@@ -11,6 +11,7 @@ import sys
 import threading
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'i18n'))
 from catalog import tr, en
+from translation import build as build_translation
 
 PAGES = [('input', 'preferences-system-symbolic'), ('keys', 'input-keyboard-symbolic'),
          ('voice', 'audio-input-microphone-symbolic'), ('translate', 'accessories-dictionary-symbolic'),
@@ -188,7 +189,7 @@ def main():
             self.check = model_button('action.check', lambda *_: self.voice_action(False))
             self.prepare = model_button('action.download', self.download_or_cancel)
             self.preparing = False
-            self.group('translate', 'page.translate', tr('hint.translate'))
+            build_translation(self, Adw, Gtk, GLib, tr, reload_fcitx)
             words = self.group('words', 'group.words', tr('hint.words'))
             profile = manager.registry()['wanxiang']
             self.action(words, 'action.words.source', lambda *_: Gtk.UriLauncher.new('https://github.com/' + profile['repository']).launch(self.host, None, None),
@@ -207,14 +208,18 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 18
+                    assert len(self.pages) == 5 and len(self.controls) == 19
+                    assert not self.controls['Translate'].get_active()
+                    assert self.translation_provider.get_selected() == 0
+                    assert self.translation_target.get_selected() == 0
+                    assert not self.translation_key.get_visible()
                     assert self.controls['UnicodePrefix'].get_visible()
                     assert self.controls['UnicodePrefix'].get_active()
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
                     assert self.controls['StatisticalModel'].get_visible()
                     assert not self.controls['StatisticalModel'].get_active()
-                    assert len(self.feature_hotkeys) == 4
+                    assert len(self.feature_hotkeys) == 5
                     assert self.feature_hotkeys['InternalCodeHotkey'].get_selected() == 6
                     assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
                     assert self.get_windows() == [self.window]
@@ -222,6 +227,15 @@ def main():
                     assert isinstance(self.overlay, Adw.ToastOverlay)
                     assert not self.controls['VoiceModifierHold'].get_visible()
                     self.ready = False
+                    self.translation_provider.set_selected(1)
+                    self.translation_key_source.set_selected(2)
+                    assert self.translation_key.get_visible()
+                    self.translation_key.set_text('synthetic-unsaved-key')
+                    self.translation_target.set_selected(3)
+                    self.translation_provider.set_selected(0)
+                    assert not self.translation_key.get_visible()
+                    assert not self.translation_key.get_text()
+                    self.translation_target.set_selected(0)
                     assert self.controls['RememberMode'].get_visible()
                     self.hotkey.set_selected(config.VOICE_HOTKEYS.index('Alt_L'))
                     self.update_visibility()

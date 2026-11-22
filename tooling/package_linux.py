@@ -73,7 +73,8 @@ def main():
                            if suse else 'python3, python3-gobject, gtk4 >= 4.10, libadwaita >= 1.5')
             emoji_font = 'google-noto-coloremoji-fonts' if suse else 'google-noto-color-emoji-fonts'
             for key, value in {'VERSION': version, 'DISTRO': args.distro, 'STAGE': str(stage), 'LIBDIR': args.libdir,
-                               'UI_REQUIRES': ui_requires, 'EMOJI_FONT': emoji_font}.items():
+                               'UI_REQUIRES': ui_requires, 'EMOJI_FONT': emoji_font,
+                               'SECRET_PACKAGE': 'typelib-1_0-Secret-1' if suse else 'libsecret'}.items():
                 spec = spec.replace('@' + key + '@', value)
             specfile = work / 'SPECS/cowtype.spec'
             specfile.write_text(spec)

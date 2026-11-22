@@ -25,6 +25,8 @@ pub struct Settings {
     pub internal_code_hotkey: u32,
     pub unicode_hotkey: u32,
     pub unicode_prefix: bool,
+    pub translate: bool,
+    pub translate_hotkey: u32,
     pub voice_modifier_hold: bool,
     pub show_pinyin: bool,
     pub voice_always_resident: bool,
@@ -53,6 +55,8 @@ impl Default for Settings {
             internal_code_hotkey: shortcut_default_index("InternalCodeHotkey"),
             unicode_hotkey: shortcut_default_index("UnicodeHotkey"),
             unicode_prefix: true,
+            translate: false,
+            translate_hotkey: shortcut_default_index("TranslateHotkey"),
             voice_modifier_hold: false,
             show_pinyin: true,
             voice_always_resident: false,
@@ -129,6 +133,7 @@ impl Settings {
             ("InternalCodeHotkey", &mut settings.internal_code_hotkey),
             ("VoiceHotkey", &mut settings.voice_hotkey),
             ("UnicodeHotkey", &mut settings.unicode_hotkey),
+            ("TranslateHotkey", &mut settings.translate_hotkey),
         ] {
             // Explicit unified binding wins over the removed legacy Shift switch.
             let legacy = if name == "ModeHotkey"
@@ -172,12 +177,35 @@ impl Settings {
                     .unwrap() as u32;
             }
         }
+        if !values.contains_key("TranslateHotkey") {
+            let keys = shortcut_physical_keys(
+                shortcut_choices("TranslateHotkey")[settings.translate_hotkey as usize],
+            );
+            if [
+                ("ModeHotkey", settings.mode_hotkey),
+                ("VoiceHotkey", settings.voice_hotkey),
+                ("InternalCodeHotkey", settings.internal_code_hotkey),
+                ("UnicodeHotkey", settings.unicode_hotkey),
+            ]
+            .iter()
+            .any(|(name, index)| {
+                shortcut_physical_keys(shortcut_choices(name)[*index as usize])
+                    .iter()
+                    .any(|key| keys.contains(key))
+            }) {
+                settings.translate_hotkey = shortcut_choices("TranslateHotkey")
+                    .iter()
+                    .position(|key| *key == "None")
+                    .unwrap() as u32;
+            }
+        }
         let mut assigned = std::collections::BTreeSet::new();
         for (action, index) in [
             ("ModeHotkey", settings.mode_hotkey),
             ("InternalCodeHotkey", settings.internal_code_hotkey),
             ("VoiceHotkey", settings.voice_hotkey),
             ("UnicodeHotkey", settings.unicode_hotkey),
+            ("TranslateHotkey", settings.translate_hotkey),
         ] {
             let choices = shortcut_choices(action);
             let key = choices[index as usize];
@@ -200,6 +228,7 @@ impl Settings {
             ("StatisticalModel", &mut settings.statistical_model),
             ("Emoji", &mut settings.emoji),
             ("UnicodePrefix", &mut settings.unicode_prefix),
+            ("Translate", &mut settings.translate),
             ("Voice", &mut settings.voice),
             ("VoiceResident", &mut settings.voice_resident),
             ("VoiceModifierHold", &mut settings.voice_modifier_hold),
@@ -233,6 +262,20 @@ impl Settings {
 #[cfg(test)]
 mod hotkey_tests {
     use super::*;
+    #[test]
+    fn translation_is_optional_and_preserves_existing_f10() {
+        let defaults = Settings::parse("Version=1\n").unwrap();
+        assert!(!defaults.translate);
+        assert_eq!(defaults.translate_hotkey, 9);
+        let old = Settings::parse("Version=1\nVoiceHotkey=F10\n").unwrap();
+        assert_eq!(old.translate_hotkey, 12);
+        assert!(Settings::parse("Version=1\nVoiceHotkey=F10\nTranslateHotkey=F10\n").is_err());
+        assert!(
+            Settings::parse("Version=1\nTranslate=True\nTranslateHotkey=Control\n")
+                .unwrap()
+                .translate
+        );
+    }
     #[test]
     fn unicode_prefix_is_default_on_and_independent_of_hotkey() {
         assert!(
@@ -282,6 +325,7 @@ mod hotkey_tests {
             "VoiceHotkey",
             "InternalCodeHotkey",
             "UnicodeHotkey",
+            "TranslateHotkey",
         ] {
             for key in [
                 "Shift",

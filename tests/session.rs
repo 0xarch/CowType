@@ -29,6 +29,23 @@ fn type_text(session: &mut Session, text: &str) {
 }
 
 #[test]
+fn translation_preview_preserves_partial_selection_suffix_and_frame() {
+    let mut s = session();
+    type_text(&mut s, "SHAN'hai");
+    s.choose(1);
+    assert_eq!(s.selected_text(), "山");
+    let before = s.frame();
+    assert_eq!(s.preview(), "山海");
+    assert_eq!(s.preview(), "山海");
+    assert_eq!(s.frame().preedit, before.preedit);
+    assert_eq!(s.remaining(), "hai");
+    assert!(s.frame().commit.is_none());
+    let mut raw = Session::new(None, SessionConfig::default());
+    type_text(&mut raw, "Hello");
+    assert_eq!(raw.preview(), "Hello");
+}
+
+#[test]
 fn ps001_no_engine_preserves_case_and_commits_raw_once() {
     let mut session = Session::new(None, SessionConfig::default());
     type_text(&mut session, "AbC");

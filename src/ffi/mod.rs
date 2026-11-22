@@ -46,6 +46,7 @@ pub struct SessionHandle {
     session: Session,
     frame: Frame,
     preedit: CString,
+    preview: CString,
     commit: CString,
     words: Vec<CString>,
     readings: Vec<CString>,
@@ -53,6 +54,7 @@ pub struct SessionHandle {
 impl SessionHandle {
     fn update(&mut self, frame: Frame) {
         self.preedit = cstring(&frame.preedit);
+        self.preview = cstring(&self.session.preview());
         self.commit = cstring(frame.commit.as_deref().unwrap_or(""));
         self.words = frame.candidates.iter().map(|c| cstring(&c.text)).collect();
         self.readings = frame
@@ -176,6 +178,7 @@ pub unsafe extern "C" fn cowtype2_session_new(handle: *const EngineHandle) -> *m
             session,
             frame,
             preedit: CString::default(),
+            preview: CString::default(),
             commit: CString::default(),
             words: Vec::new(),
             readings: Vec::new(),
@@ -279,6 +282,12 @@ pub unsafe extern "C" fn cowtype2_session_reset(handle: *mut SessionHandle, comm
 pub unsafe extern "C" fn cowtype2_session_preedit(h: *const SessionHandle) -> *const c_char {
     unsafe { h.as_ref() }
         .map(|h| h.preedit.as_ptr())
+        .unwrap_or(ptr::null())
+}
+#[no_mangle]
+pub unsafe extern "C" fn cowtype2_session_preview(h: *const SessionHandle) -> *const c_char {
+    unsafe { h.as_ref() }
+        .map(|h| h.preview.as_ptr())
         .unwrap_or(ptr::null())
 }
 #[no_mangle]
@@ -420,6 +429,8 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         14 => s.internal_code_hotkey,
         15 => s.unicode_hotkey,
         16 => s.unicode_prefix as u32,
+        17 => s.translate as u32,
+        18 => s.translate_hotkey,
         _ => 0,
     }
 }

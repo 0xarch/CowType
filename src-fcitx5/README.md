@@ -7,3 +7,5 @@ C++20 插件接入 Rust ABI、libime 拼音、五笔、候选窗口、热键及�
 `gb18030/` 提供系统 iconv 内码转换，`engine/shortcuts.h` 集中派发功能快捷键，配置注册表为 `src/config/shortcuts.tsv`，见[组件说明](gb18030/README.md)。
 
 `unicode/` 是独立的 Unicode 标量输入模块，拥有独立模式和快捷键，不依赖 GB18030 或 iconv，见[Unicode 说明](unicode/README.md)。
+
+`engine/translate.h` 通过非阻塞私有管道启动单次翻译子进程，将 HTTP 和 Secret Service 操作隔离在 Fcitx5 事件循环之外。`TranslateHotkey` 使用同一快捷键注册表；按字段保留输入、请求与候选状态，确认后提交，并在取消、失焦和配置变更时丢弃结果，见[互译说明](../src-translate/README.md)。

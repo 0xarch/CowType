@@ -71,6 +71,7 @@ verify)
   test -s /usr/share/icons/hicolor/22x22/apps/cowtype.png
   # Use package binaries, explicit synthetic dictionaries and isolated Fcitx paths.
   python3 tests/native/isolated.py --root build/ci-installed --prefix build/ci-installed/prefix --data build/ci-test/test-data build/ci-test/cowtype-fcitx-probe "$libdir/fcitx5/libcowtype-fcitx5.so"
+  python3 tests/native/isolated.py --root build/ci-installed-translate --prefix build/ci-installed-translate/prefix --data build/ci-test/test-data build/ci-test/cowtype-translate-probe "$libdir/fcitx5/libcowtype-fcitx5.so"
   # Reuse the isolated GTK test against the installed launcher and resources.
   COWTYPE_TEST_SETTINGS_EXECUTABLE=/usr/bin/cowtype-config python3 -m unittest discover -s tests -p 'test_settings_startup.py'
   ;;

@@ -40,6 +40,9 @@ bool cowtype2_session_key(Cowtype2Session *, uint32_t code, uint32_t modifiers, 
 bool cowtype2_session_select(Cowtype2Session *, size_t visible_index);
 void cowtype2_session_reset(Cowtype2Session *, bool commit);
 const char *cowtype2_session_preedit(const Cowtype2Session *);
+/* Current selected text + highlighted candidate + unconsumed raw suffix.
+ * Read-only preview for translation; does not commit or learn. */
+const char *cowtype2_session_preview(const Cowtype2Session *);
 const char *cowtype2_session_commit(const Cowtype2Session *);
 size_t cowtype2_session_cursor(const Cowtype2Session *); /* UTF-8 bytes */
 size_t cowtype2_session_count(const Cowtype2Session *);
@@ -58,7 +61,8 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 11 remember language mode;
  * 12 optional local statistical language model (default off);
  * 13 language key; 14 GB18030 key; 15 Unicode key; key indices follow shortcuts.tsv;
- * 16 automatic u-prefix Unicode input (default on, independent of option 15) */
+ * 16 automatic u-prefix Unicode input (default on, independent of option 15);
+ * 17 translation enabled (default off); 18 translation key index */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);

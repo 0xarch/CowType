@@ -57,6 +57,16 @@ class SettingsTests(unittest.TestCase):
         settings.save(values)
         self.assertEqual(settings.load()['UnicodePrefix'], 'False')
         self.assertEqual(settings.load()['UnicodeHotkey'], 'F9')
+    def test_translation_default_and_existing_binding_migration(self):
+        self.assertEqual(settings.DEFAULTS['Translate'], 'False')
+        self.assertEqual(settings.DEFAULTS['TranslateHotkey'], 'F10')
+        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nVoiceHotkey=F10\n')
+        self.assertEqual(settings.load()['TranslateHotkey'], 'None')
+        values=dict(settings.DEFAULTS, Translate='True', TranslateHotkey='Alt')
+        settings.save(values)
+        self.assertEqual(settings.load(),values)
+        with self.assertRaises(ValueError):
+            settings.validate(dict(values, ModeHotkey='Alt_R'))
     def test_emoji_defaults_off_and_roundtrips(self):
         values = settings.load()
         self.assertEqual(values['Emoji'], 'False')
