@@ -5,7 +5,8 @@
 # CowType
 
 CowType(牛子输入法) 是基于 Fcitx5 的自由的 Linux 拼音输入法，面向所有需求的用户。
-CowType 主体受 WowType 启发，并旨在用完全自由的代码消除 WowType 逆向破解微信输入法[^audit]带来的项目持续性与法律风险的同时，提供对等或更优的功能性。
+CowType 主体受 WowType 启发，
+并旨在用完全自由的代码消除 WowType 逆向破解微信输入法[^audit]带来的项目持续性与法律风险，同时提供对等或更优的功能性。
 
 支持拼音、五笔、码表、语音输入，基本输入完全离线处理。可选 API 互译仅在主动翻译时将文本发送到所选服务。
 
@@ -27,15 +28,13 @@ CowType 主体受 WowType 启发，并旨在用完全自由的代码消除 WowTy
 
 纠错模型基本覆盖大部分使用场景，主观体验与 WowType 基本相同，多重错误纠错能力略弱于 WowType。
 
-支持通过 Bilibili Index-Translate 或自定义 OpenAI 兼容 API 互译，默认关闭；可配置目标语言和统一快捷键（默认 F10）。Key 可读取环境变量或保存到桌面密钥环，详见[互译说明](src-translate/README.md)。
-
 拼音优先使用本机 Fcitx/libime 系统词库，并以雾凇词库补充；需要更多词汇时，可在设置里下载万象文本词库。
 支持词库预编译缓存，详见[词库说明](docs/DICTIONARIES.md)。五笔使用五笔词库。
 
 本地统计语言模型默认关闭。开启后长句准确率可达 90%/50词 以上。
 > 准确率受语句复杂度等多因素影响，实际使用时可能无法达到预期效果。
 
-## 高级特性
+## 高级功能
 
 支持输入 `u` 后自动接 Unicode 码自动匹配码表。
 可通过快捷键显式进入独立 Unicode 码表模式，默认绑定 `F9`，可在设置中修改或禁用。
@@ -51,13 +50,26 @@ CowType 主体受 WowType 启发，并旨在用完全自由的代码消除 WowTy
 语音默认关闭，模型不随安装包附带。
 设置页面可一键下载并启用阿里达摩院 `paraformer-zh-streaming` 模型(开放授权)，自备模型步骤见[语音模型说明](src-voice/paraformer/README.md)。
 
+## 文本翻译
+
+支持 14 种语言翻译[^languages]、支持智能分辨来源语言（默认翻译为中文，中文翻译为英文）。
+
+通过 [Bilibili Index-Translate](https://index-translate.bilibili.com/site/home.html) (开放使用) 或自定义 OpenAI 兼容 API 调用翻译模型。
+通过 Ollama 等部署本地模型可通过自定义 OpenAI 兼容 API 调用。
+推荐使用 Claude Haiku 5.5 等小模型。
+
+设置默认关闭。支持一键启用 Bilibili Index-Translate 。
+
+API Key 仅支持通过环境变量或桌面密钥环读取。详见[互译说明](src-translate/README.md)。
+
 ## GUI 设置
 
 [![Please do not theme this app](https://stopthemingmy.app/badge.svg)](https://stopthemingmy.app)
 
 打开 CowType 设置或运行 `cowtype-config` 即可调整输入、按键、语音和词库选项。
 
-- 用设置中选择的快捷键切换中英文，默认 F6，也可改为单按 Shift。
+- 用设置中选择的快捷键切换中英文，默认 F6。
+- 互译可配置自定义接口，快捷键默认 F10。
 - 用数字键选词，PageUp/PageDown 翻页；也可开启方括号、减号和等号翻页。
 - 自选语音快捷键、长按方式，以及是否保留语音实例。
 - 下载或移除可选词库，按需增加词汇。
@@ -135,3 +147,5 @@ bash build-arch.sh
 详细的代码、图标、数据与模型各自的许可和署名见[版权与第三方归属](docs/ATTRIBUTION.md)。
 
 [^audit]: 粗略审计报告可参见 <https://0xarch.github.io/posts/wowtype-audit>
+
+[^languages]：提供预设的简体中文、英语、日语、韩语、法语、德语、西班牙语、俄语、葡萄牙语、意大利语、阿拉伯语、越南语、泰语、印度尼西亚语支持。

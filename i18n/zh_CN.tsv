@@ -37,7 +37,7 @@ hint.model	模型由用户下载，安装包不含权重。继续使用原有模
 hint.modifier_hold	按住 300 毫秒开始录音，松开停止；短按仍可切换。
 hint.remember_mode	切回 CowType 时保留该输入框的中英文状态；关闭时恢复中文。
 hint.resident	首次使用后保留约 0.9 GB 内存。
-hint.translate	仅主动翻译时发送文本至所选服务。默认关闭；默认 F10，结果确认后上屏。
+hint.translate	仅主动翻译时发送文本至所选服务。
 hint.words	默认包含雾凇拼音与五笔86。
 hint.words.source	固定版本 {revision}；下载约 {size} MiB。
 hotkey.Alt_L	左 Alt
@@ -187,13 +187,13 @@ translate.api	API 地址（基础地址或 chat/completions）
 translate.model	模型名称
 translate.target	目标语言
 translate.key_source	API Key 来源
-translate.key.none	不使用 Key（Bilibili 公共服务或本地接口）
-translate.key.environment	环境变量 COWTYPE_TRANSLATE_KEY
+translate.key.none	不使用 Key
+translate.key.environment	环境变量
 translate.key.environment_hint	优先读取设置进程的 Key；缺少时读取当前用户 Fcitx5 进程继承的 Key。不会写入配置文件。
 translate.error.environment	设置进程和当前 Fcitx5 均未提供有效的 COWTYPE_TRANSLATE_KEY；请从已导出该变量的终端启动，或改用桌面密钥环。
-translate.key.secret	桌面密钥环（Secret Service）
+translate.key.secret	桌面密钥环
 translate.key_value	新 API Key（留空保留已存密钥）
-translate.config_hint	地址、模型和目标语言保存在本机设置中；Key 不写入配置文件。
+translate.config_hint	Bilibili 翻译不填写 API Key；环境变量为 COWTYPE_TRANSLATE_KEY。
 translate.save	保存翻译配置
 translate.check	测试接口（发送 Hello, world!）
 translate.forget_key	删除此接口的已存 Key
