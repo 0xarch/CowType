@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "c40786df1212bac2f9549ca76d386151fbe68bee5bfd57ee0c4c2f21ed5454ef",
-      "bytes": 12239
+      "sha256": "48fdccf7eafd481141b2f1da351f3561919e5faf7a460035ed84a0688c43ef67",
+      "bytes": 12447
     },
     {
       "path": "CMakeLists.txt",
@@ -138,12 +138,12 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "81453b9bc139fa4cc6ca33f01d2c9deb92b43408fdd1e5a66b8c025ec4cbc6b2",
-      "bytes": 51406
+      "sha256": "de43f20680baefe5c52690310cba2405e7f0617e3e737aea9ce31ee1a8f4f3eb",
+      "bytes": 51632
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "ca7fcb11ac8c8cd116f4f15e071aae571e2560b79685105baa0f6b86e8f6d320",
+      "sha256": "d5dcb77a9eb968190aa92520fdfcfd8c1d48784186faa90ecaa300296064522e",
       "bytes": 9159
     },
     {
@@ -203,8 +203,8 @@
     },
     {
       "path": "src-data-tools/emoji/README.md",
-      "sha256": "522a2b47bbae353b50ac0415671c15dc023d1b5767ee7fb1265a9eb90a7da4fe",
-      "bytes": 3525
+      "sha256": "a2c2d4b7f1fa436fd707e6f73ed07f6e57f54ba2a82fbd06ad8980d31cc4a5f2",
+      "bytes": 3567
     },
     {
       "path": "src-data-tools/emoji/aliases.tsv",
@@ -583,8 +583,8 @@
     },
     {
       "path": "src/engine/symbols.rs",
-      "sha256": "8ee625b13beeaeb1378cec7be1e4703355977d955c716fb34df46db5e82a15b6",
-      "bytes": 7434
+      "sha256": "09f7bb5034b31e70005e52fc737fd84c6085dc18f3703977b17daf044e4c46ee",
+      "bytes": 7543
     },
     {
       "path": "src/engine/wubi.rs",
@@ -763,8 +763,8 @@
     },
     {
       "path": "tests/symbols.rs",
-      "sha256": "4be7d1324acd15056c61d013d50e532f65aa4c33ede33094d91c263640b06946",
-      "bytes": 12301
+      "sha256": "68a7ff4a4d931445ac103130e685eb5388bb265faea57051050231b8cb721ab8",
+      "bytes": 13285
     },
     {
       "path": "tests/test_development.py",

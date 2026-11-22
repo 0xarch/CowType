@@ -1121,7 +1121,7 @@
       "src-data-tools/emoji/emoji-sequences.txt",
       "src-settings/app/main.py"
     ],
-    "implementation": "Original CowType optional Emoji-first allocation before the shared 12-family cap, retaining round-robin turns within the preferred class and native word ranking. Classification uses only fully-qualified sequences from the existing pinned Unicode emoji-test; generated output provenance and digest recorded in emoji/sources.json. GTK settings consolidate Emoji controls into one group and move learning/privacy immediately before integration.",
+    "implementation": "Original CowType optional Emoji-first allocation before the shared 12-family cap, retaining round-robin turns within the preferred class and native word ranking. Classification uses only fully-qualified sequences from the existing pinned Unicode emoji-test; generated output provenance and digest recorded in emoji/sources.json. GTK settings consolidate Emoji controls into one group and move learning/privacy immediately before integration. Final supplementary candidates now form a single class-ranked block after the first matching word; source word order no longer overrides the selected priority across different keywords. Native word relative order is retained.",
     "configuration": "EmojiFirst boolean defaults false (symbols first); applied by session reconfiguration without changing raw input.",
     "dependencies": "No new upstream data versions, libraries, models or services."
   }

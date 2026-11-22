@@ -326,3 +326,30 @@ fn latin_keyword_you_cannot_starve_chinese_direction_symbols_when_disabled() {
     assert!(candidates(&mut s).iter().any(|c| c.text == "→"));
     assert_eq!(s.input(), "you");
 }
+
+#[test]
+fn chinese_arrows_precede_english_you_couple_emoji_globally() {
+    let dictionary = Dictionary::from_tsv("you\t有\t100\nyou\t右\t90\nyou\t友\t80\n".as_bytes())
+        .unwrap()
+        .value;
+    let mut cfg = config(true);
+    let mut s = Session::new(Some(Arc::new(Engine::new(dictionary))), cfg);
+    type_text(&mut s, "you");
+    let rows = candidates(&mut s);
+    let arrow = rows.iter().position(|c| c.text == "→").unwrap();
+    let couple = rows.iter().position(|c| c.text == "👨‍❤️‍👨").unwrap();
+    assert!(arrow < couple);
+    assert_eq!(
+        rows.iter()
+            .filter(|c| !c.custom)
+            .map(|c| c.text.as_str())
+            .collect::<Vec<_>>(),
+        ["有", "右", "友"]
+    );
+    cfg.emoji_first = true;
+    s.configure(cfg);
+    let rows = candidates(&mut s);
+    assert!(rows.iter().any(|c| c.text == "👨‍❤️‍👨"));
+    assert!(!rows.iter().any(|c| c.text == "→"));
+    assert_eq!(s.input(), "you");
+}

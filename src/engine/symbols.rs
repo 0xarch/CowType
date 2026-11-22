@@ -143,9 +143,11 @@ pub(crate) fn augment(
             groups.push((0, raw.to_owned(), collapse(matches)));
         }
     }
-    // Give each complete keyword a turn before broad annotations spend the
-    // global budget. Keep each symbol beside its original word candidate.
-    let mut additions = BTreeMap::<usize, Vec<Candidate>>::new();
+    // Insert one ranked supplement block after the first matched word. Putting
+    // each group back beside its source word would undo the global priority
+    // (the English keyword "you" could put couple emoji before Chinese arrows).
+    let insertion = groups.iter().map(|g| g.0).min().unwrap_or(0);
+    let mut additions = Vec::new();
     let mut count = 0;
     // Allocate the preferred class first across all matching keywords, before
     // the global cap. Retain fair turns and source order within each class.
@@ -166,11 +168,11 @@ pub(crate) fn augment(
         let mut depth = 0;
         while count < MAX_SUGGESTIONS {
             let mut available = false;
-            for (position, reading, matches) in &eligible {
+            for (_, reading, matches) in &eligible {
                 if let Some(sequence) = matches.get(depth) {
                     available = true;
                     if seen.insert((*sequence).clone()) {
-                        additions.entry(*position).or_default().push(Candidate {
+                        additions.push(Candidate {
                             text: (*sequence).clone(),
                             reading: (*reading).clone(),
                             consumed_bytes: raw.len(),
@@ -192,10 +194,14 @@ pub(crate) fn augment(
         }
     }
     let mut result = Vec::with_capacity(candidates.len() + count);
-    result.extend(additions.remove(&0).unwrap_or_default());
+    if insertion == 0 {
+        result.append(&mut additions);
+    }
     for (position, candidate) in std::mem::take(candidates).into_iter().enumerate() {
         result.push(candidate);
-        result.extend(additions.remove(&(position + 1)).unwrap_or_default());
+        if position + 1 == insertion {
+            result.append(&mut additions);
+        }
     }
     *candidates = result;
 }
