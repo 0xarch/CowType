@@ -30,7 +30,7 @@ group.pinyin	拼音
 group.privacy	学习与隐私
 group.voice	语音输入
 group.words	附加词库
-hint.always_resident	CowType 加载时即准备模型，约占用 0.9 GB 内存。需同时启用语音输入。
+hint.always_resident	CowType 加载时即准备模型。
 hint.fcitx	在 Fcitx5 中添加 CowType·拼音或 CowType·五笔86。
 hint.initials	例如 kn → 可能
 hint.model	模型由用户下载，安装包不含权重。继续使用原有模型目录。
@@ -147,10 +147,10 @@ voice.paraformer.pointer	模型文件为空或仍是 Git LFS 指针，请先下�
 voice.paraformer.runtime	无法加载系统 ONNX Runtime（需要 1.22 或更高版本）
 voice.paraformer.shape	ONNX 输出形状或数值无效，模型、词表和缓存配置可能不匹配
 setting.StatisticalModel	本地统计语言模型
-hint.statistical_model	默认关闭。启用后使用本机已安装的 libime 中文模型，不会下载模型。
+hint.statistical_model	启用后使用 libime 中文模型。
 warning.dictionary_optional	可选词库或本地统计模型不可用，基本输入仍可使用。
 setting.Emoji	表情与符号候选
-hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词，默认关闭。
+hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词。
 setting.ModeHotkey	切换中英文
 setting.InternalCodeHotkey	GB18030-2022 内码输入
 hint.shortcuts	相同或重叠的修饰键分配会被拒绝。
@@ -176,7 +176,7 @@ unicode.mode	Unicode 码点
 unicode.hint	Unicode：输入 1–6 位十六进制（可带 U+）；空格/回车提交，Esc 退出
 unicode.invalid	无效码点、代理项或控制字符
 setting.UnicodePrefix	u 前缀 Unicode 输入
-hint.unicode_prefix	中文模式下输入 u 和十六进制码点（如 u0020 → 空格），默认开启；与独立 Unicode 快捷键无关。
+hint.unicode_prefix	中文模式下输入 u 和十六进制码点（如 u0020 → 空格）。
 setting.Translate	启用互译
 setting.TranslateHotkey	翻译快捷键
 translate.service	翻译服务
@@ -189,7 +189,6 @@ translate.target	目标语言
 translate.key_source	API Key 来源
 translate.key.none	不使用 Key
 translate.key.environment	环境变量
-translate.key.environment_hint	优先读取设置进程的 Key；缺少时读取当前用户 Fcitx5 进程继承的 Key。不会写入配置文件。
 translate.error.environment	设置进程和当前 Fcitx5 均未提供有效的 COWTYPE_TRANSLATE_KEY；请从已导出该变量的终端启动，或改用桌面密钥环。
 translate.key.secret	桌面密钥环
 translate.key_value	新 API Key（留空保留已存密钥）

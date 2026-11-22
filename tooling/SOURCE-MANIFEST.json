@@ -138,13 +138,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "432b8544db5e8bd89065c64a86a7014896ea3b964c1f9f80e87952dae0dbe826",
-      "bytes": 14137
+      "sha256": "b0e5e58895cee79d36511bfb5a94da6021be31cfd9dbb1d4d4564f17d2a6fe71",
+      "bytes": 13643
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "3f98afbb13d0e74754dbba321b23501566eebd371185f324ecb929ed7ad65003",
-      "bytes": 12607
+      "sha256": "316d83396257a1faf5fa25b4784cec3fe469f7eda6efd72b52fe207654416fa6",
+      "bytes": 12281
     },
     {
       "path": "packaging/README.md",
@@ -348,8 +348,8 @@
     },
     {
       "path": "src-settings/app/translation.py",
-      "sha256": "6734b222eb490576a4523702a7fcfc1b1bb1b62aac4dd2d86552442bff7aea09",
-      "bytes": 7030
+      "sha256": "001e1bcee1f6df2ec21ce9514c3c8c255e88e424eb3f456c1fa7f5f511a0614d",
+      "bytes": 6778
     },
     {
       "path": "src-settings/config/settings.py",

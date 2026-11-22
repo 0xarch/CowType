@@ -30,14 +30,14 @@ group.pinyin	Pinyin
 group.privacy	Learning and Privacy
 group.voice	Voice Input
 group.words	Additional Dictionaries
-hint.always_resident	Prepare the model when CowType loads, using about 0.9 GB of memory. Voice input must also be enabled.
+hint.always_resident	Prepare the model when CowType loads.
 hint.fcitx	Add CowType Pinyin or CowType Wubi 86 in Fcitx5.
 hint.initials	For example, kn → 可能
 hint.model	Models are downloaded by the user; weights are not included in the package. Continue using the existing model folder.
 hint.modifier_hold	Hold for 300 ms to start recording, then release to stop. Tap to toggle.
 hint.remember_mode	Keep this field’s language mode when returning to CowType; otherwise start in Chinese.
 hint.resident	Keeps about 0.9 GB of memory after first use.
-hint.translate	Text is sent to the selected service only when you request translation. Off by default; default shortcut F10. Confirm the result to commit.
+hint.translate	Text is sent to the selected service only when you request translation.
 hint.words	Rime Ice Pinyin and Wubi 86 are included by default.
 hint.words.source	Pinned revision {revision}; download size is about {size} MiB.
 hotkey.Alt_L	Left Alt
@@ -147,10 +147,10 @@ voice.paraformer.pointer	Model file is empty or a Git LFS pointer; download the 
 voice.paraformer.runtime	Cannot load system ONNX Runtime (1.22 or newer required)
 voice.paraformer.shape	Invalid ONNX output shape or value; model, tokens and cache configuration may not match
 setting.StatisticalModel	Local statistical language model
-hint.statistical_model	Off by default. Uses the installed libime Chinese model; never downloads a model.
+hint.statistical_model	Use the libime Chinese model when enabled.
 warning.dictionary_optional	An optional dictionary or local statistical model is unavailable. Basic input remains available.
 setting.Emoji	Emoji and symbol suggestions
-hint.emoji	Match complete Chinese or English keywords using Unicode CLDR. Off by default.
+hint.emoji	Match complete Chinese or English keywords using Unicode CLDR.
 setting.ModeHotkey	Switch Chinese / English
 setting.InternalCodeHotkey	GB18030-2022 internal code input
 hint.shortcuts	Duplicate or overlapping modifier bindings are rejected.
@@ -176,7 +176,7 @@ unicode.mode	Unicode code point
 unicode.hint	Unicode: 1–6 hex digits, optional U+ prefix; Space/Enter to commit, Escape to exit
 unicode.invalid	Invalid code point, surrogate or control character
 setting.UnicodePrefix	u-prefix Unicode input
-hint.unicode_prefix	In Chinese mode, type u followed by a hex code point (e.g. u0020 for a space). On by default; independent of the Unicode shortcut.
+hint.unicode_prefix	In Chinese mode, type u followed by a hex code point (e.g. u0020 for a space).
 setting.Translate	Enable Translation
 setting.TranslateHotkey	Translation Shortcut
 translate.service	Translation Service
@@ -187,13 +187,12 @@ translate.api	API URL (base URL or chat/completions)
 translate.model	Model Name
 translate.target	Target Language
 translate.key_source	API Key Source
-translate.key.none	No Key (Bilibili Public Service or Local API)
-translate.key.environment	Environment Variable COWTYPE_TRANSLATE_KEY
-translate.key.environment_hint	Uses the settings process key first, then the key inherited by the current user's Fcitx5 process. Never written to the configuration file.
+translate.key.none	No Key
+translate.key.environment	Environment Variable
 translate.error.environment	Neither this process nor the current Fcitx5 provides a valid COWTYPE_TRANSLATE_KEY. Launch from a terminal that exports it, or use the desktop keyring.
-translate.key.secret	Desktop Keyring (Secret Service)
+translate.key.secret	Desktop Keyring
 translate.key_value	New API Key (leave blank to keep the stored key)
-translate.config_hint	The API URL, model and target language are saved locally. Keys are never written to the configuration file.
+translate.config_hint	Bilibili Translation does not require an API key. The environment variable is COWTYPE_TRANSLATE_KEY.
 translate.save	Save Translation Settings
 translate.check	Test API (send Hello, world!)
 translate.forget_key	Delete Stored Key for This API
