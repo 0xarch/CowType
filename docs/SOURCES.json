@@ -1102,5 +1102,17 @@
       }
     ],
     "dependencies": "Existing system libime/Fcitx/libc only."
+  },
+  "emoji_families_2026_11_22": {
+    "paths": [
+      "src/engine/symbols.rs",
+      "src/session/mod.rs",
+      "src-data-tools/emoji/aliases.tsv",
+      "src-settings/app/main.py",
+      "src-data-tools/emoji/tone-families.tsv"
+    ],
+    "implementation": "Original CowType Unicode family generator groups pinned emoji-test fully-qualified sequences by official names with only skin-tone qualifiers removed. Preserves gender/roles and bridges atomic/ZWJ handshake forms. Family collapse occurs before candidate budgeting, with bounded round-robin keyword allocation, reversible per-session subchoice and GTK grouped check buttons. Unicode-3.0 inputs retained; derived family output and original GPL direction aliases have separate provenance/digests in emoji/sources.json. No new source/model dependencies.",
+    "configuration": "EmojiSkinTonePicker default true; EmojiDefaultSkinTone 0..5 default 0. Only actual annotated Unicode sequences offered; ZWJ/variation selectors preserved.",
+    "privacy": "Selection state remains in the input field; symbol candidates are custom and not learned. Tests use synthetic text and isolated XDG paths."
   }
 }

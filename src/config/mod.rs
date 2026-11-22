@@ -18,6 +18,8 @@ pub struct Settings {
     pub remember_mode: bool,
     pub statistical_model: bool,
     pub emoji: bool,
+    pub emoji_skin_tone_picker: bool,
+    pub emoji_default_skin_tone: u8,
     pub voice: bool,
     pub voice_resident: bool,
     pub voice_hotkey: u32,
@@ -48,6 +50,8 @@ impl Default for Settings {
             remember_mode: false,
             statistical_model: false,
             emoji: false,
+            emoji_skin_tone_picker: true,
+            emoji_default_skin_tone: 0,
             voice: false,
             voice_resident: true,
             voice_hotkey: shortcut_default_index("VoiceHotkey"),
@@ -126,6 +130,13 @@ impl Settings {
             settings.page_size = value.parse().map_err(|_| "invalid page size")?;
             if !(3..=9).contains(&settings.page_size) {
                 return Err("page size must be 3–9");
+            }
+        }
+        if let Some(value) = values.get("EmojiDefaultSkinTone") {
+            settings.emoji_default_skin_tone =
+                value.parse().map_err(|_| "invalid emoji skin tone")?;
+            if settings.emoji_default_skin_tone > 5 {
+                return Err("invalid emoji skin tone");
             }
         }
         for (name, target) in [
@@ -227,6 +238,7 @@ impl Settings {
             ("RememberMode", &mut settings.remember_mode),
             ("StatisticalModel", &mut settings.statistical_model),
             ("Emoji", &mut settings.emoji),
+            ("EmojiSkinTonePicker", &mut settings.emoji_skin_tone_picker),
             ("UnicodePrefix", &mut settings.unicode_prefix),
             ("Translate", &mut settings.translate),
             ("Voice", &mut settings.voice),
@@ -374,6 +386,22 @@ mod hotkey_tests {
     }
     #[test]
     fn cldr_symbols_are_explicit_and_default_off() {
+        let defaults = Settings::parse("Version=1\n").unwrap();
+        assert!(defaults.emoji_skin_tone_picker);
+        assert_eq!(defaults.emoji_default_skin_tone, 0);
+        for tone in 0..=5 {
+            let value = Settings::parse(&format!(
+                "Version=1\nEmojiDefaultSkinTone={tone}\nEmojiSkinTonePicker=False\n"
+            ))
+            .unwrap();
+            assert_eq!(value.emoji_default_skin_tone, tone);
+            assert!(!value.emoji_skin_tone_picker);
+        }
+        for value in ["6", "-1", "invalid"] {
+            assert!(
+                Settings::parse(&format!("Version=1\nEmojiDefaultSkinTone={value}\n")).is_err()
+            );
+        }
         assert!(!Settings::parse("Version=1\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=True\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=auto\n").is_err());

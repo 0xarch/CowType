@@ -46,9 +46,25 @@
   ],
   "output": {
     "path": "src-data-tools/emoji/keywords.tsv",
-    "bytes": 1523566,
-    "sha256": "ab1ece8f3175e1466336a1531001264fb3a7335ab92658879bf571594911b1d1",
-    "pairs": 63822,
-    "conversion": "prepare.py: exact keyword aliases, complete-name-first; fully-qualified emoji sequences, unchanged ordinary symbols"
+    "bytes": 1523690,
+    "sha256": "54527d3a00e3d6a6cb53eb16312ea3f2336cc9036a190372ee3f9173b00fa98b",
+    "pairs": 63830,
+    "conversion": "prepare.py: exact CLDR keywords plus separately attributed CowType direction aliases; alias-first, complete-name-first; fully-qualified emoji sequences, unchanged ordinary symbols"
+  },
+  "local_aliases": {
+    "path": "src-data-tools/emoji/aliases.tsv",
+    "author": "CowType contributors",
+    "license": "GPL-3.0-or-later",
+    "bytes": 262,
+    "sha256": "6ebf79c298474c721b9e877fa6bacb88497187d98cf8daf5ba7845f2bd613b0f",
+    "purpose": "Original common direction aliases; supplements, does not modify, pinned CLDR sources."
+  },
+  "tone_families": {
+    "path": "src-data-tools/emoji/tone-families.tsv",
+    "bytes": 38611,
+    "sha256": "2b185b6b9814abc92ab332c024fefd9499ae84fcd88515d46985df712f84046f",
+    "families": 332,
+    "license": "Unicode-3.0",
+    "conversion": "prepare.py compile_tone_families: group official fully-qualified emoji-test sequences by exact names after removing only skin-tone qualifiers. Preserve gender and role qualifiers and full code point sequences."
   }
 }

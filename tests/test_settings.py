@@ -73,6 +73,18 @@ class SettingsTests(unittest.TestCase):
         values['Emoji'] = 'True'
         settings.save(values)
         self.assertEqual(settings.load()['Emoji'], 'True')
+    def test_emoji_skin_tone_choices_validate_and_roundtrip(self):
+        values = settings.load()
+        self.assertEqual(values['EmojiSkinTonePicker'], 'True')
+        self.assertEqual(values['EmojiDefaultSkinTone'], '0')
+        for tone in range(6):
+            values.update(Emoji='True', EmojiSkinTonePicker='False', EmojiDefaultSkinTone=str(tone))
+            settings.save(values)
+            self.assertEqual(settings.load(), values)
+        for invalid in ('6', '-1', 'dark', '1.0'):
+            with self.assertRaises(ValueError):
+                settings.validate(dict(values, EmojiDefaultSkinTone=invalid))
+
     def test_roundtrip_unknown_key_private_permissions(self):
         values = settings.load()
         values.update(PageSize='9', Sentence='False', FutureOption='preserved')

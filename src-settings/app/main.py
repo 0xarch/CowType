@@ -148,6 +148,24 @@ def main():
                 row.connect('notify::active', self.save)
                 group.add(row)
                 self.controls[key] = row
+            self.emoji_options = self.group('input', 'group.emoji')
+            picker = Adw.SwitchRow(title=tr('setting.EmojiSkinTonePicker'), subtitle=tr('hint.emoji_skin_tone_picker'))
+            picker.set_active(self.values['EmojiSkinTonePicker'].lower() == 'true')
+            picker.connect('notify::active', self.save)
+            self.emoji_options.add(picker)
+            self.controls['EmojiSkinTonePicker'] = picker
+            self.skin_tone_row = Adw.ActionRow(title=tr('setting.EmojiDefaultSkinTone'))
+            tones = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8, valign=Gtk.Align.CENTER)
+            self.skin_tone_buttons = []
+            for tone, label in enumerate(('👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿')):
+                button = Gtk.CheckButton(label=label)
+                if self.skin_tone_buttons: button.set_group(self.skin_tone_buttons[0])
+                button.set_active(tone == int(self.values['EmojiDefaultSkinTone']))
+                button.connect('toggled', lambda widget: self.save() if widget.get_active() else None)
+                self.skin_tone_buttons.append(button)
+                tones.append(button)
+            self.skin_tone_row.add_suffix(tones)
+            self.emoji_options.add(self.skin_tone_row)
             self.page_size = Adw.SpinRow.new_with_range(3, 9, 1)
             self.page_size.set_title(tr('setting.PageSize'))
             self.page_size.set_value(int(self.values['PageSize']))
@@ -201,14 +219,14 @@ def main():
             if self.load_error:
                 error_group = self.group('input', None)
                 error_group.add(Adw.ActionRow(title=self.load_error))
-                for row in [*self.controls.values(), *self.feature_hotkeys.values(), self.page_size, self.hotkey]: row.set_sensitive(False)
+                for row in [*self.controls.values(), *self.feature_hotkeys.values(), self.page_size, self.hotkey, *self.skin_tone_buttons]: row.set_sensitive(False)
             self.ready = True
             self.stack.set_visible_child_name(args.page if args.page in self.pages else 'input')
             self.window.present()
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 19
+                    assert len(self.pages) == 5 and len(self.controls) == 20
                     assert not self.controls['Translate'].get_active()
                     assert self.translation_provider.get_selected() == 0
                     assert self.translation_bilibili_model.get_model().get_n_items() == 3
@@ -218,6 +236,25 @@ def main():
                     assert self.controls['UnicodePrefix'].get_active()
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
+                    assert not self.emoji_options.get_visible()
+                    assert self.controls['EmojiSkinTonePicker'].get_active()
+                    assert len(self.skin_tone_buttons) == 6
+                    assert self.skin_tone_buttons[0].get_active()
+                    self.ready = False
+                    self.controls['Emoji'].set_active(True)
+                    self.update_visibility()
+                    assert self.emoji_options.get_visible()
+                    self.skin_tone_buttons[3].set_active(True)
+                    assert self.skin_tone_buttons[3].get_active()
+                    assert not self.skin_tone_buttons[0].get_active()
+                    self.controls['EmojiSkinTonePicker'].set_active(False)
+                    self.update_visibility()
+                    assert self.skin_tone_row.get_visible()
+                    self.skin_tone_buttons[0].set_active(True)
+                    self.controls['EmojiSkinTonePicker'].set_active(True)
+                    self.controls['Emoji'].set_active(False)
+                    self.update_visibility()
+                    self.ready = True
                     assert self.controls['StatisticalModel'].get_visible()
                     assert not self.controls['StatisticalModel'].get_active()
                     assert len(self.feature_hotkeys) == 5
@@ -269,6 +306,7 @@ def main():
                 GLib.timeout_add(1000, check_visible)
 
         def update_visibility(self):
+            self.emoji_options.set_visible(self.controls['Emoji'].get_active())
             self.controls['VoiceModifierHold'].set_visible(config.VOICE_HOTKEYS[self.hotkey.get_selected()] not in ('None', *tuple(f'F{i}' for i in range(1, 13))))
             self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
 
@@ -277,6 +315,7 @@ def main():
             self.update_visibility()
             try:
                 values = self.values.copy()
+                values['EmojiDefaultSkinTone'] = str(next(i for i, button in enumerate(self.skin_tone_buttons) if button.get_active()))
                 values['PageSize'] = str(int(self.page_size.get_value()))
                 values.update({name: config.SHORTCUTS[name][1][row.get_selected()] for name, row in self.feature_hotkeys.items()})
                 values.update({key: str(row.get_active()) for key, row in self.controls.items()})

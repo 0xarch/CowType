@@ -288,6 +288,43 @@ int main(int argc, char **argv) {
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="山");
             CHECK(a.inputPanel().candidateList()->candidate(1).text().toString()=="⛰️");
             CHECK(press(engine,pinyin,a,FcitxKey_2)); CHECK(a.committed.back()=="⛰️");
+            // Tone families occupy one parent candidate; both click and keys
+            // enter the same submenu without committing the input prematurely.
+            type(engine,pinyin,a,"thumbsup");
+            CHECK(a.inputPanel().candidateList()->size()==1);
+            const auto beforeTone=a.committed.size();
+            a.inputPanel().candidateList()->candidate(0).select(&a);
+            CHECK(a.committed.size()==beforeTone);
+            CHECK(a.inputPanel().clientPreedit().toString()=="thumbsup");
+            CHECK(a.inputPanel().candidateList()->size()==5);
+            CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            CHECK(a.inputPanel().candidateList()->size()==1);
+            CHECK(press(engine,pinyin,a,FcitxKey_space));
+            CHECK(press(engine,pinyin,a,FcitxKey_Page_Down));
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="👍🏿");
+            CHECK(press(engine,pinyin,a,FcitxKey_1));
+            CHECK(a.committed.size()==beforeTone+1 && a.committed.back()=="👍🏿");
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=True\nEmojiSkinTonePicker=False\nEmojiDefaultSkinTone=3\nLearning=False\n"; }
+            addon->reloadConfig();type(engine,pinyin,a,"thumbsup");
+            CHECK(a.inputPanel().candidateList()->size()==1);
+            CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="👍🏽");
+            CHECK(press(engine,pinyin,a,FcitxKey_1));CHECK(a.committed.back()=="👍🏽");
+            type(engine,pinyin,a,"rightpointingarrow");
+            bool selectedArrow=false;
+            for(unsigned page=0;page<100 && !selectedArrow;++page) {
+                auto arrows=a.inputPanel().candidateList();
+                CHECK(arrows);
+                for(int i=0;i<arrows->size();++i) {
+                    if(arrows->candidate(i).text().toString()=="→") {
+                        arrows->candidate(i).select(&a);selectedArrow=true;break;
+                    }
+                }
+                if(!selectedArrow) {
+                    if(!arrows->toPageable()->hasNext())break;
+                    CHECK(press(engine,pinyin,a,FcitxKey_Page_Down));
+                }
+            }
+            CHECK(selectedArrow && a.committed.back()=="→");
             { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=False\nLearning=False\n"; }
             addon->reloadConfig(); type(engine,pinyin,a,"shan");
             CHECK(a.inputPanel().candidateList()->candidate(1).text().toString()!="⛰️");

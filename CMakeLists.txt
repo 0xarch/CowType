@@ -50,7 +50,7 @@ set(RUST_TARGET "${CMAKE_BINARY_DIR}/rust-target")
 file(GLOB_RECURSE RUST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.rs")
 add_custom_command(OUTPUT "${RUST_TARGET}/release/libcowtype.a" "${RUST_TARGET}/release/cowtype"
     COMMAND ${CMAKE_COMMAND} -E env "CARGO_TARGET_DIR=${RUST_TARGET}" ${CARGO_EXECUTABLE} build --release --offline --locked --features native-ffi
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" DEPENDS ${RUST_SOURCES} ${I18N_RESOURCES} src-data-tools/emoji/keywords.tsv src/config/shortcuts.tsv Cargo.toml Cargo.lock VERBATIM)
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" DEPENDS ${RUST_SOURCES} ${I18N_RESOURCES} src-data-tools/emoji/keywords.tsv src-data-tools/emoji/tone-families.tsv src/config/shortcuts.tsv Cargo.toml Cargo.lock VERBATIM)
 add_custom_target(cowtype-rust ALL DEPENDS "${RUST_TARGET}/release/libcowtype.a" "${RUST_TARGET}/release/cowtype")
 add_library(cowtype-core STATIC IMPORTED GLOBAL)
 set_target_properties(cowtype-core PROPERTIES IMPORTED_LOCATION "${RUST_TARGET}/release/libcowtype.a")

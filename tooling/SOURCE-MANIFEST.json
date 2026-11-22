@@ -35,13 +35,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "88264f28ee590e25200b0d06e2dab62a2e1d042fbf5cafffb13036e78d629302",
-      "bytes": 11483
+      "sha256": "dd392ad7e45a0b83a69c821e7ada3dd36315b9a0f7e6c505d07d6fafd6d9208d",
+      "bytes": 11965
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "a60bc65b85ccc2f1da095f3adf9fcf9589a0a97cd21128941c42dbc0e7937df9",
-      "bytes": 17114
+      "sha256": "1c8866395d438c666317eb4407638e95b6ab0e6846ac35062b9afa958b7441b5",
+      "bytes": 17153
     },
     {
       "path": "Cargo.lock",
@@ -138,13 +138,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "403b89e8025d7978219ddc745631c98f6ea9c268ba9a29db40f217b7470f16fd",
-      "bytes": 49391
+      "sha256": "b62d4b1f7542eed52074d6a04d1c51f241b369da6c6043f8a823b0888f119bb2",
+      "bytes": 50543
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "f4938ecab5fd7b17ca39fcb61a98e941f5644a97da64a2a902064883dc85246f",
-      "bytes": 8317
+      "sha256": "90d8c245c6ca041f5125281c9b8fe4e57c26a38db37e7d4ee937aac65d56f11c",
+      "bytes": 8883
     },
     {
       "path": "i18n/README.md",
@@ -153,13 +153,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "b0e5e58895cee79d36511bfb5a94da6021be31cfd9dbb1d4d4564f17d2a6fe71",
-      "bytes": 13643
+      "sha256": "cc84f1a6e0a545aa7d7c544c50df839c1712c65fb40d23fc88ecdc30847823fa",
+      "bytes": 13931
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "316d83396257a1faf5fa25b4784cec3fe469f7eda6efd72b52fe207654416fa6",
-      "bytes": 12281
+      "sha256": "c03cd4dc534d297818185cdf9974cf30db3fb5352f692646a177fb17d31b0089",
+      "bytes": 12546
     },
     {
       "path": "packaging/README.md",
@@ -203,23 +203,33 @@
     },
     {
       "path": "src-data-tools/emoji/README.md",
-      "sha256": "874f82675730ea550e42faa00cd6d0c3007037bf556ace72c6867427fe0aadcc",
-      "bytes": 1555
+      "sha256": "dfe65219b38bc4ec593259029527cd10ba6d6046e0250a4db0b8e432baf56cbd",
+      "bytes": 2885
+    },
+    {
+      "path": "src-data-tools/emoji/aliases.tsv",
+      "sha256": "6ebf79c298474c721b9e877fa6bacb88497187d98cf8daf5ba7845f2bd613b0f",
+      "bytes": 262
     },
     {
       "path": "src-data-tools/emoji/keywords.tsv",
-      "sha256": "ab1ece8f3175e1466336a1531001264fb3a7335ab92658879bf571594911b1d1",
-      "bytes": 1523566
+      "sha256": "54527d3a00e3d6a6cb53eb16312ea3f2336cc9036a190372ee3f9173b00fa98b",
+      "bytes": 1523690
     },
     {
       "path": "src-data-tools/emoji/prepare.py",
-      "sha256": "5db8a89952f673a790762e02b55be9d2312429b90d3351800239c816d7dc50a7",
-      "bytes": 3173
+      "sha256": "c4571526d881e14aa11628fb671e0493e8ae7e5402a28c2ae3441c973b026f77",
+      "bytes": 5218
     },
     {
       "path": "src-data-tools/emoji/sources.json",
-      "sha256": "20c38351c07ebaf97705fc3ee8bbf97f1735f6253d2faaf1d3daf185cceef6a2",
-      "bytes": 2267
+      "sha256": "926898e8cc238583e4eb054b6ceebd9c5f76e9407cec959fc5c94552f038e65e",
+      "bytes": 3144
+    },
+    {
+      "path": "src-data-tools/emoji/tone-families.tsv",
+      "sha256": "2b185b6b9814abc92ab332c024fefd9499ae84fcd88515d46985df712f84046f",
+      "bytes": 38611
     },
     {
       "path": "src-data-tools/manifest/notices/THUOCL-LICENSE",
@@ -363,8 +373,8 @@
     },
     {
       "path": "src-settings/README.md",
-      "sha256": "cd9b870876d046cccbb2884e67109ee5df414a9942985a0d11295047c7126cfd",
-      "bytes": 474
+      "sha256": "67e2ab87e774e47490023af97ebf8927231960ab2d04f23cf75aa12e9208ad6c",
+      "bytes": 723
     },
     {
       "path": "src-settings/app/launch.py",
@@ -373,8 +383,8 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "305bfc6a9548dc82cb589a93480cd5dd20867726c10ff309bc6813c0a4bc283a",
-      "bytes": 22636
+      "sha256": "473068cbe82d79497ccc832793a44c6c9f79f8a7ebf6fbd7d2e2ffbc502bf1ab",
+      "bytes": 25305
     },
     {
       "path": "src-settings/app/translation.py",
@@ -383,8 +393,8 @@
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "792a8f792eafe0111027c87dbe67e46a551a10a7f5a4f0c21088e48c260aa6bb",
-      "bytes": 5420
+      "sha256": "9e13a0dd8885015b22b2dcb8bdb2e7e58f6b0a83261c08449bf1864702b3aa7b",
+      "bytes": 5634
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -543,8 +553,8 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "88bc7481642e16ed1acb20358428b00b5d5b1f87832561fff18e2eee3ee4ff9a",
-      "bytes": 15510
+      "sha256": "49eb85b3e3ca58e902dfb79c06ae955a9741fba865732cb4ad3ac40352d24c09",
+      "bytes": 16743
     },
     {
       "path": "src/config/shortcuts.tsv",
@@ -568,8 +578,8 @@
     },
     {
       "path": "src/engine/symbols.rs",
-      "sha256": "f158f3e672f721693469b5e38e2175176bd0257f7995ad1bdb9e818adf7585ea",
-      "bytes": 3073
+      "sha256": "823b13aae165a953bddd84957ec1edd4ce5ed21670a0d89d2f022fd785f70d08",
+      "bytes": 6371
     },
     {
       "path": "src/engine/wubi.rs",
@@ -578,8 +588,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "cd2c78f84704fc8d1512c8f23f772336e9e9fe2458ecdd0395853e7b14237595",
-      "bytes": 19437
+      "sha256": "5e7bb0186b1c712b7f6bf34300b37e7866e13ee4f69aacf47246f2133778f046",
+      "bytes": 19579
     },
     {
       "path": "src/i18n/mod.rs",
@@ -603,8 +613,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "5e141bf6a804a2512edb570dbbe36b3254bac1031c980837e8f58ba52170b6e7",
-      "bytes": 17809
+      "sha256": "32cc0ec3bff7d06c0e44352879f471ba666be512dbb37cc742e776ae99ba5c9d",
+      "bytes": 20198
     },
     {
       "path": "src/session/punctuation.rs",
@@ -703,8 +713,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "17178b8bf69440ca8f6b707c99da3374e9e236a135eb5d7d4cce7ec5a8fc48fc",
-      "bytes": 37287
+      "sha256": "7e16ae5cd48af2287dff380f607c5c7d60aa6acb43deb74fca56a2df9ba1a3ab",
+      "bytes": 39591
     },
     {
       "path": "tests/native/internal-code.cpp",
@@ -748,8 +758,8 @@
     },
     {
       "path": "tests/symbols.rs",
-      "sha256": "1c2575d9995a69205ebe5d52bda44afbf7112c94f4f63920448d5bf36b7a8ea5",
-      "bytes": 4250
+      "sha256": "8b9098b08442cc1dad2ce39c10ff2a7992fe67b7dece97723ad6114091b2b9a6",
+      "bytes": 9991
     },
     {
       "path": "tests/test_development.py",
@@ -763,13 +773,13 @@
     },
     {
       "path": "tests/test_emoji_data.py",
-      "sha256": "5587a9fb499c8e83a8672ea226f0c12863a3717dce1a2cf77bed9f25628b8159",
-      "bytes": 1587
+      "sha256": "525446bee07731e6fa762c81c425d3001b8cd457b541dcfff8182e769d38d836",
+      "bytes": 3069
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "59d9e6b4b1192567a16ec5b0c69023fbc2b9cc3f5a1a82f04634697e673707a1",
-      "bytes": 7120
+      "sha256": "5149e28e6632ab887dbe10f3a3c3a5b3e38a069dcc1216b87ee8dbd0e7658db5",
+      "bytes": 7743
     },
     {
       "path": "tests/test_settings_startup.py",

@@ -234,3 +234,8 @@ translate.lang.ar	阿拉伯语
 translate.lang.vi	越南语
 translate.lang.th	泰语
 translate.lang.id	印度尼西亚语
+group.emoji	表情肤色
+setting.EmojiSkinTonePicker	多肤色选择
+hint.emoji_skin_tone_picker	选中表情后展开肤色选项；关闭时直接使用默认肤色。
+setting.EmojiDefaultSkinTone	默认肤色
+error.emoji_skin_tone	无效的默认表情肤色。

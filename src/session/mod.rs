@@ -69,6 +69,8 @@ pub struct SessionConfig {
     pub initials: bool,
     pub learning: bool,
     pub emoji: bool,
+    pub emoji_skin_tone_picker: bool,
+    pub emoji_default_skin_tone: u8,
 }
 impl Default for SessionConfig {
     fn default() -> Self {
@@ -81,6 +83,8 @@ impl Default for SessionConfig {
             initials: false,
             learning: false,
             emoji: false,
+            emoji_skin_tone_picker: true,
+            emoji_default_skin_tone: 0,
         }
     }
 }
@@ -132,6 +136,12 @@ struct Selection {
 }
 
 #[derive(Debug)]
+struct SkinToneChoice {
+    parent: Vec<Candidate>,
+    selected: usize,
+}
+
+#[derive(Debug)]
 pub struct Session {
     engine: Option<Arc<Engine>>,
     config: SessionConfig,
@@ -144,6 +154,7 @@ pub struct Session {
     learning: Option<SharedLearning>,
     last_undo: Vec<Undo>,
     punctuation: Punctuation,
+    skin_tone_choice: Option<SkinToneChoice>,
 }
 
 impl Session {
@@ -160,6 +171,7 @@ impl Session {
             learning: None,
             last_undo: Vec::new(),
             punctuation: Punctuation::default(),
+            skin_tone_choice: None,
         }
     }
     pub fn set_learning(&mut self, learning: Option<SharedLearning>) {
@@ -264,6 +276,33 @@ impl Session {
         let Some(candidate) = self.candidates.get(global_index).cloned() else {
             return self.frame();
         };
+        if self.skin_tone_choice.is_none()
+            && self.config.emoji
+            && self.config.emoji_skin_tone_picker
+            && candidate.custom
+        {
+            let variants = crate::engine::symbols::variants(&candidate.text);
+            if !variants.is_empty() {
+                let children: Vec<_> = variants
+                    .iter()
+                    .map(|&text| Candidate {
+                        text: text.to_owned(),
+                        ..candidate.clone()
+                    })
+                    .collect();
+                self.skin_tone_choice = Some(SkinToneChoice {
+                    parent: std::mem::replace(&mut self.candidates, children),
+                    selected: global_index,
+                });
+                self.selected_candidate = self
+                    .candidates
+                    .iter()
+                    .position(|c| c.text == candidate.text)
+                    .unwrap_or(0);
+                return self.snapshot(true, None);
+            }
+        }
+        self.skin_tone_choice = None;
         let raw: String = self.remaining.drain(..candidate.consumed_bytes).collect();
         self.selections.push(Selection {
             reading: candidate.reading,
@@ -321,6 +360,26 @@ impl Session {
             return self.frame();
         }
         let active = self.active();
+        if self.skin_tone_choice.is_some() {
+            match event.key {
+                Key::Escape | Key::Backspace => {
+                    let parent = self.skin_tone_choice.take().unwrap();
+                    self.candidates = parent.parent;
+                    self.selected_candidate = parent.selected;
+                    return self.snapshot(true, None);
+                }
+                Key::Enter => return self.choose(self.selected_candidate),
+                Key::Character(c) if !c.is_ascii_digit() => {
+                    self.skin_tone_choice = None;
+                    self.refresh();
+                }
+                Key::Delete => {
+                    self.skin_tone_choice = None;
+                    self.refresh();
+                }
+                _ => {}
+            }
+        }
         match event.key {
             Key::Character(ch) if ch.is_ascii_alphabetic() || (ch == '\'' && active) => {
                 self.remaining.insert(self.cursor, ch);
@@ -428,6 +487,7 @@ impl Session {
         self.selected_candidate / self.config.page_size * self.config.page_size
     }
     fn refresh(&mut self) {
+        self.skin_tone_choice = None;
         self.candidates = self
             .engine
             .as_ref()
@@ -459,7 +519,11 @@ impl Session {
             }
         }
         if self.config.emoji {
-            crate::engine::symbols::augment(&self.remaining, &mut self.candidates);
+            crate::engine::symbols::augment(
+                &self.remaining,
+                &mut self.candidates,
+                self.config.emoji_default_skin_tone,
+            );
         }
         self.selected_candidate = 0;
     }
@@ -494,6 +558,7 @@ impl Session {
         self.last_undo = updates;
     }
     fn clear(&mut self) {
+        self.skin_tone_choice = None;
         self.remaining.clear();
         self.selections.clear();
         self.candidates.clear();

@@ -234,3 +234,8 @@ translate.lang.ar	Arabic
 translate.lang.vi	Vietnamese
 translate.lang.th	Thai
 translate.lang.id	Indonesian
+group.emoji	Emoji skin tones
+setting.EmojiSkinTonePicker	Choose a skin tone
+hint.emoji_skin_tone_picker	Choose a skin tone after selecting an emoji. When off, use the default skin tone.
+setting.EmojiDefaultSkinTone	Default skin tone
+error.emoji_skin_tone	Invalid default emoji skin tone.
