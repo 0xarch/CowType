@@ -257,14 +257,14 @@ learning.weight	偏好权重
 learning.save	保存修改
 learning.applying	正在应用修改…
 learning.applied	记忆已更新。
-learning.pending	修改已排队，等待新版 CowType 应用；请刷新查看结果。
+learning.pending	修改已排队，等待应用；请刷新查看结果。
 learning.error.conflict	记录已变化或目标词条已存在，请刷新后重试。
 learning.error.data	无法读取或修改记忆，原记录已保留。
 learning.error.value	请填写有效的拼音、词句和正整数权重。
-learning.error.writer	学习记录正由另一实例保存，当前实例不会覆盖它。
+learning.error.writer	学习记录正由另一实例保存，当前实例不会覆盖。
 custom.title	自定义词库
 custom.manage	编辑自定义词库
-custom.hint	完整输入触发字母即可匹配。有效编辑自动保存并生效，无需手动编译。
+custom.hint	完整输入触发字母即可匹配。有效编辑自动保存并生效。
 custom.search	搜索触发字母或内容
 custom.add	添加词条
 custom.edit	编辑词条

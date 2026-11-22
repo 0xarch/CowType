@@ -163,8 +163,8 @@
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "cad1176e1b640fc4ca7c6b75176633039343fa1d5364226a82db64d5210bc849",
-      "bytes": 15107
+      "sha256": "62faa3526a234e7e491899396bc0d4cab969ec454c04e29646e629a25c05fc3a",
+      "bytes": 15068
     },
     {
       "path": "packaging/README.md",
