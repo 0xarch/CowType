@@ -35,13 +35,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "ac8fabd32882e49e388ff870817a8d4e7b8377b391259f998b6bddeeb789c328",
-      "bytes": 9677
+      "sha256": "a756c766072405536eebfa9d6dbf84519081fe5da6eb6c09218f6c9e72d1a28e",
+      "bytes": 9881
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "c59097b02c4498872b2157ebf7260798385fb65806cfe501f5bc7c8120b690d0",
-      "bytes": 15775
+      "sha256": "a563412ad4cf5bcbef13b997d66acf3e170d07786a18ad3f09a9e18844e247d9",
+      "bytes": 16276
     },
     {
       "path": "Cargo.lock",
@@ -113,8 +113,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "713c265094b0b13741bc4bb13c9ac74f924aae1ae553a86f6179cc8056fdaaf1",
-      "bytes": 9845
+      "sha256": "4a0f5b5e8e70d812b263d9e8ebe12a60916fd67eac6594367d4ce3b50789af0b",
+      "bytes": 10326
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -123,8 +123,8 @@
     },
     {
       "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
-      "sha256": "c28ab05fc938fa68661b8f22b0f3b638916a520823e627686ba945445e598c51",
-      "bytes": 5358
+      "sha256": "10053fc8ea8ba686c00d5ed35a7dab7032210fad7f247a5f364b9ed9adf745b7",
+      "bytes": 5909
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "bedd08ffe7cb59224f586f57ec1b0b0c054fec680315607725a7d05340d658c3",
-      "bytes": 43127
+      "sha256": "7bce53fa42078b970f5e3aa3187a52f69bc98e5fdc83067b44bd95a42d8c14df",
+      "bytes": 45233
     },
     {
       "path": "docs/USAGE.md",
@@ -168,17 +168,17 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "e61bb5e3083d90d477f77ebede30a7eebf7be7a22ff0cc52a286853fe934c1c5",
+      "sha256": "f247b65e92d61113ec29d5f1a741af006cb815b3c633b7fc61ffdfa66aa6bf35",
       "bytes": 1611
     },
     {
       "path": "packaging/debian/control.in",
-      "sha256": "ecf1c60e6986c1bba2f96f39f09b4cb76b1823a032fdbf84dd62a655b6a3d00a",
+      "sha256": "9cfe38ed95fa670a0dab44cedd22e7a4028e93061a66711d5825dc0b442210d5",
       "bytes": 631
     },
     {
       "path": "packaging/rpm/cowtype.spec.in",
-      "sha256": "8920e3652a772ddf58de642fd65b8006abd7e411427a54d99bafc88b51b15039",
+      "sha256": "0b1e0ff790c0a11731d8cbe1450823cc3be48bb78ac91381ecc2c0a78d32b832",
       "bytes": 1039
     },
     {
@@ -233,12 +233,17 @@
     },
     {
       "path": "src-fcitx5/README.md",
-      "sha256": "c9fc1425552fc683891dc8ab80478b91613420f587e4fecdd649b253e969ae0e",
-      "bytes": 1102
+      "sha256": "40e038efabadc1934202b3ee52c7619cd51f1f9cbd76602e92c0a37890ea5252",
+      "bytes": 1592
+    },
+    {
+      "path": "src-fcitx5/compat/paths.h",
+      "sha256": "1e7d47591ff7e8469a1ccebfacd4e2538456f840bf7d1659af6f8751e73afe53",
+      "bytes": 929
     },
     {
       "path": "src-fcitx5/config/cowtype-addon.conf.in",
-      "sha256": "c5fb9527ddaa880e64bc590df0e5cc59647484e4ce4739f2248af8e02a6ec1fb",
+      "sha256": "ebf9d3a1160ad21eaa3c0a6f9026988590d13b7a83af10e4636eda9fd56e27e6",
       "bytes": 231
     },
     {
@@ -253,8 +258,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "8b465738bd6579a2b7772e70462d4bdc4b29416c331d20d7d70e698a786cb02e",
-      "bytes": 44926
+      "sha256": "942b5df3157c2c465bc4afb6b99e06ccd9ec1a430e6f974ea84686da95939c9a",
+      "bytes": 44962
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -698,8 +703,8 @@
     },
     {
       "path": "tests/native/isolation.h",
-      "sha256": "2c2b214102a8ce4e15275b683462b68e2697f7c957a371060a230229e8773565",
-      "bytes": 846
+      "sha256": "871dd4e7c1ba97bd25c41d2305e67f071bcf9724c2c2e761d9bc1cf158da5af1",
+      "bytes": 771
     },
     {
       "path": "tests/native/loading.cpp",
@@ -813,12 +818,12 @@
     },
     {
       "path": "tooling/platform-probe.sh",
-      "sha256": "0f2aafbcb1edf09f97d0ec888cda0bef7690580eec50708e502ab8bead711157",
-      "bytes": 988
+      "sha256": "24285b062ab0aa918c5bfdf9f0c62d18e2412f635970397ffa895628ad4f83a2",
+      "bytes": 985
     },
     {
       "path": "tooling/platform_trials.py",
-      "sha256": "7f8cfe10971170464bc3a6a0e209241c6fcead0f3f941017c9cca16c3afe31e9",
+      "sha256": "5405fe7fa7fea126de341b270e2fb2146a4502d92c46078f647bf66ab11ed306",
       "bytes": 6158
     },
     {

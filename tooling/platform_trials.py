@@ -81,7 +81,7 @@ def record(directory, distro, arch, steps):
     versions = versions_file.read_text() if versions_file.exists() else ''
     core = next((line.split('=', 1)[1] for line in versions.splitlines() if line.startswith('Fcitx5Core=')), '')
     if status == 'failed' and stages.get('probe') == 'failure' and core:
-        reason = 'Fcitx5 ' + core + ' is below required 5.1.23'
+        reason = 'Fcitx5 ' + core + ' is below required 5.1.11'
     result = dict(distro=distro, arch=arch, status=status, reason=reason, fcitx5=core,
                   image=image, stages=stages, versions=versions)
     (directory / 'result.json').write_text(json.dumps(result, indent=2) + '\n')

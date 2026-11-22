@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Uses the public Fcitx5 5.1.23 API.
+// Uses public Fcitx5 APIs; optional version differences live in compat/.
 #include "cowtype2.h"
 #include "messages.h"
 #include "diagnostics.h"

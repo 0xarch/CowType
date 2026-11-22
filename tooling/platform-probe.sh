@@ -21,7 +21,7 @@ esac
   printf 'Fcitx5Core=%s\n' "$(pkg-config --modversion Fcitx5Core)"
 } > build/platform-report/versions.txt
 cat build/platform-report/versions.txt
-if ! pkg-config --atleast-version=5.1.23 Fcitx5Core; then
-  echo 'Fcitx5 is below required version 5.1.23; dependency requirement is unchanged.' >&2
+if ! pkg-config --atleast-version=5.1.11 Fcitx5Core; then
+  echo 'Fcitx5 is below required version 5.1.11; compatibility baseline is 5.1.11.' >&2
   exit 1
 fi

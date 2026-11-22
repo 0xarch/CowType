@@ -9,3 +9,5 @@ C++20 插件接入 Rust ABI、libime 拼音、五笔、候选窗口、热键及�
 `unicode/` 是独立的 Unicode 标量输入模块，拥有独立模式和快捷键，不依赖 GB18030 或 iconv，见[Unicode 说明](unicode/README.md)。
 
 `engine/translate.h` 通过非阻塞私有管道启动单次翻译子进程，将 HTTP 和 Secret Service 操作隔离在 Fcitx5 事件循环之外。`TranslateHotkey` 使用同一快捷键注册表；按字段保留输入、请求与候选状态，确认后提交，并在取消、失焦和配置变更时丢弃结果，见[互译说明](../src-translate/README.md)。
+
+`compat/paths.h` 集中封装 Fcitx5 的目录接口差异：CMake 根据构建环境版本选择，>= 5.1.19 使用 `StandardPaths`，5.1.11–5.1.18 使用 `StandardPath`，返回统一的 `std::filesystem::path`。原生探针共享此封装并继续拒绝非隔离目录；不通过绕过隔离测试来兼容旧系统。插件运行时最低要求为 5.1.11，依赖中声明同一基线；按各发行版原生库分别构建，不承诺新系统产物可在旧系统直接安装。

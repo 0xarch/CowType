@@ -990,5 +990,51 @@
     ],
     "validation": "2026-11-22 GitHub Actions run 44978388218: six full build/install passes, eight native Fcitx5 minimum-version failures, zero skipped. Deepin loong64 ran through QEMU; no full LoongArch64 compilation or microphone validation claimed.",
     "models": "No model downloads or bundled models."
+  },
+  "fcitx_compatibility_2026_11_22": {
+    "paths": [
+      "src-fcitx5/compat/paths.h",
+      "tests/native/isolation.h",
+      "CMakeLists.txt"
+    ],
+    "implementation": "Original CowType compile-time API adapter: Fcitx5 >=5.1.19 uses StandardPaths, older supported versions use StandardPath with filesystem value normalization. Runtime API baseline 5.1.11, including custom submode information; no copied upstream implementation.",
+    "references": [
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.11",
+        "path": "src/lib/fcitx-utils/standardpath.h",
+        "sha256": "a380af17ff8982a2d8ba395586d4ac13d1576997f5ac30e982bb5f90599b78cd",
+        "use": "Public API declarations only; not redistributed."
+      },
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.19",
+        "path": "src/lib/fcitx-utils/standardpaths.h",
+        "sha256": "98f97903dd295cf675cbbd9c7fa5e0ed06ad7ccf9cf5502fcc5eb40da37e1276",
+        "use": "Public API declarations only; not redistributed."
+      },
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.11",
+        "path": "src/lib/fcitx/candidatelist.h",
+        "sha256": "9174e213961f3f000266d367fe69b54b680e10889fe065828aec5d006fdd910e",
+        "use": "Public API declarations only; not redistributed."
+      },
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.11",
+        "path": "src/lib/fcitx-utils/capabilityflags.h",
+        "sha256": "21a3f1c779a3ef1c69ea2ed356e2c47a8844243a633fe2d70e7dc3eadb198a0d",
+        "use": "Public API declarations only; not redistributed."
+      },
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.11",
+        "path": "src/lib/fcitx/inputcontextmanager.h",
+        "sha256": "65376132a15cadb23c6bbb25ffb164a4a39a9c82af339be0a2bd27125202c260",
+        "use": "Public API declarations only; not redistributed."
+      }
+    ],
+    "dependencies": "Existing system Fcitx5 dependency only; no new bundled code or models."
   }
 }

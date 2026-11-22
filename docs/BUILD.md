@@ -32,7 +32,7 @@ bash build-arch.sh
 
 ## 开发：单独构建与测试
 
-需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.23、libime >= 1.1.7 、Boost、OpenSSL 与 librsvg（rsvg-convert）；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
+需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.11、libime >= 1.1.7 、Boost、OpenSSL 与 librsvg（rsvg-convert）；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
 
 首次运行离线命令前，先准备 Cargo 依赖（需要网络）：
 
@@ -114,7 +114,7 @@ python3 tooling/package_linux.py --source . --format rpm --distro opensusetumble
 
 ## Ubuntu
 
-Ubuntu 暂不列入自动构建支持范围。2026-11-22 的 GitHub Actions 重试中（x86_64 和 ARM64），Ubuntu 26.04 官方仓库提供 Fcitx5 5.1.19，而 CowType 当前需要 Fcitx5 >= 5.1.23，编译前的依赖检查因版本不足停止。Debian unstable 生成的 Deb 包面向其原生库版本，不应直接视作 Ubuntu 兼容包。
+Ubuntu 暂不列入自动构建支持范围。2026-11-22 的 GitHub Actions 重试中（x86_64 和 ARM64），Ubuntu 26.04 官方仓库提供 Fcitx5 5.1.19，而 兼容层引入前 CowType 要求 Fcitx5 >= 5.1.23，编译前的依赖检查因版本不足停止。Debian unstable 生成的 Deb 包面向其原生库版本，不应直接视作 Ubuntu 兼容包。
 
 需要在 Ubuntu 自行构建的用户，应自行准备满足版本要求的 Fcitx5 运行库及开发包，确保它们的版本与安装路径一致，并满足 libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、OpenSSL、Boost、librsvg、Rust/Cargo（语音依赖要求 Rust >= 1.88）等条件。Debian 系的 libime 开发包拆分为 `libimecore-dev` 与 `libimepinyin-dev`，并没有本项目可用的统一 `libime-dev` 包。
 
@@ -134,3 +134,7 @@ Ubuntu 暂不列入自动构建支持范围。2026-11-22 的 GitHub Actions 重�
 这些版本记录对应本次试构建，不代表后续软件源永远不变。自行构建需要先准备满足要求且版本一致的 Fcitx5 运行库和开发包，并核对 libime、GTK、libadwaita 及 Rust 等其他依赖；不要降低版本检查来绕过失败。Debian unstable 的 Deb 包或其他发行版的 RPM 不应视作这些系统的兼容包。
 
 Deepin 25 的 ARM64（`linuxdeepin/deepin:crimson-arm64`）与 LoongArch64（`linuxdeepin/deepin:crimson-loong64`）镜像均存在且可运行，原生 Fcitx5 同为 5.1.12，因依赖不足继续暂缓；不能据此断言其架构代码编译失败。完整 14 项结果、验证边界和日志入口见[本轮报告](PLATFORM-TRIALS-2026-11-22.md)。
+
+## Fcitx5 版本兼容
+
+新增兼容层后，构建和运行基线调整为 Fcitx5 >= 5.1.11。>= 5.1.19 的原生测试使用新目录 API，旧版使用等价的旧接口，隔离路径检查保持启用。上表是兼容层引入前的历史结果；降低基线后仍需在各目标系统完成编译、安装及插件测试才能加入支持列表。libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、语音 Rust >= 1.88 等其他实际要求不随之降低。
