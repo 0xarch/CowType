@@ -997,9 +997,10 @@
       "tests/native/isolation.h",
       "CMakeLists.txt",
       "src-fcitx5/compat/strings.h",
-      "tests/native/fcitx-compat.cpp"
+      "tests/native/fcitx-compat.cpp",
+      "src-fcitx5/compat/addon.h"
     ],
-    "implementation": "Original CowType compile-time API adapter: Fcitx5 >=5.1.19 uses StandardPaths, older supported versions use StandardPath with filesystem value normalization. Runtime API baseline 5.1.11, including custom submode information; no copied upstream implementation. Dictionary token consumption uses the public tokenizer from 5.1.20; older versions use an original boundary scanner plus the pre-existing public unescapeForValue API. This threshold follows actual API availability rather than assuming every newer API exists in 5.1.19.",
+    "implementation": "Original CowType compile-time API adapter: Fcitx5 >=5.1.19 uses StandardPaths, older supported versions use StandardPath with filesystem value normalization. Runtime API baseline 5.1.11, including custom submode information; no copied upstream implementation. Dictionary token consumption uses the public tokenizer from 5.1.20; older versions use an original boundary scanner plus the pre-existing public unescapeForValue API. This threshold follows actual API availability rather than assuming every newer API exists in 5.1.19. Addon factory export and probe symbol selection use the actual availability of the upstream V2 macro, with the original factory macro on older framework versions.",
     "references": [
       {
         "repository": "https://github.com/fcitx/fcitx5",
@@ -1042,6 +1043,13 @@
         "path": "src/lib/fcitx-utils/stringutils.h",
         "sha256": "c1e20c4205af3c6ff97e6024ca7f5df730f30168529b2a9039add8e5ea727e8e",
         "use": "Public escape decoder declarations; no upstream implementation copied."
+      },
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.11",
+        "path": "src/lib/fcitx/addoninstance.h",
+        "sha256": "18aeb5c2c0aeb7c04b7cf2b8612201f909f83fea765ff460abbd8c347dbbf477",
+        "use": "Public original factory macro declaration only; macro invoked, not reimplemented."
       }
     ],
     "dependencies": "Existing system Fcitx5 dependency only; no new bundled code or models."

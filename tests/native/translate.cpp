@@ -37,7 +37,7 @@ int main(int argc,char **argv){
         char name[]="cowtype-translate-test",disable[]="--disable=all";char *args[]={name,disable,nullptr};
         Instance instance(2,args);instance.initialize();
         void *module=dlopen(argv[1],RTLD_NOW|RTLD_LOCAL);CHECK(module);
-        auto factory=reinterpret_cast<AddonFactory *(*)()>(dlsym(module,"fcitx_addon_factory_instance_cowtype"));CHECK(factory);
+        auto factory=reinterpret_cast<AddonFactory *(*)()>(dlsym(module,cowtype::compat::factorySymbol));CHECK(factory);
         {
             std::unique_ptr<AddonInstance> addon(factory()->create(&instance.addonManager()));
             auto *engine=dynamic_cast<InputMethodEngine *>(addon.get());CHECK(engine);

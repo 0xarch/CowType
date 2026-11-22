@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
         // Open exactly this build's module. Never load any installed CowType addon.
         void *module = dlopen(argv[1], RTLD_NOW | RTLD_LOCAL);
         if (!module) { throw std::runtime_error(dlerror()); }
-        auto factory = reinterpret_cast<AddonFactory *(*)()>(dlsym(module, "fcitx_addon_factory_instance_cowtype")); CHECK(factory);
+        auto factory = reinterpret_cast<AddonFactory *(*)()>(dlsym(module, cowtype::compat::factorySymbol)); CHECK(factory);
         {
             std::unique_ptr<AddonInstance> addon(factory()->create(&instance.addonManager()));
             auto *engine = dynamic_cast<InputMethodEngine *>(addon.get()); CHECK(engine);

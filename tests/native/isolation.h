@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 #include "../../src-fcitx5/compat/paths.h"
+#include "../../src-fcitx5/compat/addon.h"
 #include <cstdlib>
 #include <iostream>
 #include <string>

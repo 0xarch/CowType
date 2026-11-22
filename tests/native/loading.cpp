@@ -39,7 +39,7 @@ int main(int argc,char **argv) {
         char name[]="cowtype-loading-test", disabled[]="--disable=all";char *args[]={name,disabled,nullptr};
         Instance instance(2,args);instance.initialize();
         auto *module=dlopen(argv[1],RTLD_NOW|RTLD_LOCAL);if(!module)throw std::runtime_error(dlerror());
-        auto factory=reinterpret_cast<AddonFactory *(*)()>(dlsym(module,"fcitx_addon_factory_instance_cowtype"));
+        auto factory=reinterpret_cast<AddonFactory *(*)()>(dlsym(module,cowtype::compat::factorySymbol));
         if(!factory)throw std::runtime_error("Missing factory");
         {
             const auto began=now(CLOCK_MONOTONIC);

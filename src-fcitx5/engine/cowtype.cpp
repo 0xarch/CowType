@@ -10,6 +10,7 @@
 #include "translate.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
+#include "../compat/addon.h"
 #include <fcitx-config/configuration.h>
 #include <fcitx/addonfactory.h>
 #include <fcitx/addonmanager.h>
@@ -674,4 +675,4 @@ class Factory final : public AddonFactory {
     AddonInstance *create(AddonManager *manager) override { return new Cowtype(manager->instance()); }
 };
 } // namespace
-FCITX_ADDON_FACTORY_V2(cowtype, Factory)
+COWTYPE_ADDON_FACTORY(Factory)
