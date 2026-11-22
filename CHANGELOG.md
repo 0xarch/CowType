@@ -2,6 +2,8 @@
 
 ## 未发布
 
+- 修复桌面菜单启动的设置窗口未继承 Key 时无法测试接口：可从当前用户的 Fcitx5 环境中读取同名 Key，并明确提示两处均缺失的情况。
+
 - Bilibili 翻译预设支持切换官方 2B、9B、35B-A3B 三种模型，默认保留 35B-A3B。
 
 - 新增默认关闭的 API 互译：Bilibili Index-Translate 公共服务或自定义 OpenAI Chat Completions 接口，默认 F10，使用统一快捷键范围及冲突检测。

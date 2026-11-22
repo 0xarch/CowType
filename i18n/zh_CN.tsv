@@ -189,6 +189,8 @@ translate.target	目标语言
 translate.key_source	API Key 来源
 translate.key.none	不使用 Key（Bilibili 公共服务或本地接口）
 translate.key.environment	环境变量 COWTYPE_TRANSLATE_KEY
+translate.key.environment_hint	优先读取设置进程的 Key；缺少时读取当前用户 Fcitx5 进程继承的 Key。不会写入配置文件。
+translate.error.environment	设置进程和当前 Fcitx5 均未提供有效的 COWTYPE_TRANSLATE_KEY；请从已导出该变量的终端启动，或改用桌面密钥环。
 translate.key.secret	桌面密钥环（Secret Service）
 translate.key_value	新 API Key（留空保留已存密钥）
 translate.config_hint	地址、模型和目标语言保存在本机设置中；Key 不写入配置文件。

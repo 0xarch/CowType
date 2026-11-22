@@ -46,6 +46,8 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
     key_mode = Adw.ComboRow(title=tr('translate.key_source'), model=Gtk.StringList.new([
         tr('translate.key.' + source) for source in key_sources]))
     key_mode.set_selected(key_sources.index(values['key_source'])); rows.add(key_mode)
+    environment_hint = Adw.ActionRow(title=tr('translate.key.environment_hint'))
+    environment_hint.set_title_lines(0); rows.add(environment_hint)
     key = Adw.PasswordEntryRow(title=tr('translate.key_value')); rows.add(key)
     status = Adw.ActionRow(title=tr('translate.error.config') if error else tr('translate.config_hint'))
     status.set_title_lines(0); rows.add(status)
@@ -60,6 +62,7 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
         api.set_sensitive(custom); model.set_sensitive(custom)
         model.set_visible(custom); bilibili_model.set_visible(not custom)
         key_mode.set_sensitive(custom)
+        environment_hint.set_visible(custom and key_sources[key_mode.get_selected()] == 'environment')
         key.set_visible(custom and key_sources[key_mode.get_selected()] == 'secret')
         forget.set_visible(custom and key_sources[key_mode.get_selected()] == 'secret')
         if not custom:

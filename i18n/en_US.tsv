@@ -189,6 +189,8 @@ translate.target	Target Language
 translate.key_source	API Key Source
 translate.key.none	No Key (Bilibili Public Service or Local API)
 translate.key.environment	Environment Variable COWTYPE_TRANSLATE_KEY
+translate.key.environment_hint	Uses the settings process key first, then the key inherited by the current user's Fcitx5 process. Never written to the configuration file.
+translate.error.environment	Neither this process nor the current Fcitx5 provides a valid COWTYPE_TRANSLATE_KEY. Launch from a terminal that exports it, or use the desktop keyring.
 translate.key.secret	Desktop Keyring (Secret Service)
 translate.key_value	New API Key (leave blank to keep the stored key)
 translate.config_hint	The API URL, model and target language are saved locally. Keys are never written to the configuration file.

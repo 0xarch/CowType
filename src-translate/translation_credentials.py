@@ -2,6 +2,7 @@
 """Delegate persistent secrets to the desktop Secret Service through libsecret."""
 import hashlib
 import os
+from pathlib import Path
 from translation_config import TranslationError, endpoint
 
 
@@ -47,11 +48,57 @@ def valid_key(value):
     return isinstance(value, str) and bool(value.strip()) and len(value) <= 4096 and all(32 <= ord(c) < 127 for c in value)
 
 
+def _fcitx_owner():
+    """Resolve only the current user's active Fcitx service, never scan processes."""
+    import gi
+    gi.require_version('Gio', '2.0')
+    from gi.repository import Gio, GLib
+    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+    def call(method, name):
+        return bus.call_sync('org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
+                             method, GLib.Variant('(s)', (name,)), None, Gio.DBusCallFlags.NONE,
+                             1500, None).unpack()[0]
+    owner = call('GetNameOwner', 'org.fcitx.Fcitx5')
+    uid = call('GetConnectionUnixUser', owner)
+    if uid != os.getuid():
+        raise TranslationError('environment')
+    return owner, call('GetConnectionUnixProcessID', owner)
+
+
+def _process_environment_key(pid):
+    # Only this one named variable is returned; other environment entries are
+    # neither exposed nor persisted. Bound the read even for a corrupt /proc.
+    with Path('/proc', str(pid), 'environ').open('rb') as stream:
+        data = stream.read(1048577)
+    if len(data) > 1048576:
+        return ''
+    for item in data.split(b'\0'):
+        if item.startswith(b'COWTYPE_TRANSLATE_KEY='):
+            return item.split(b'=', 1)[1].decode('utf-8')
+    return ''
+
+
+def environment_key():
+    value = os.environ.get('COWTYPE_TRANSLATE_KEY')
+    if value is not None:
+        return value
+    try:
+        owner = _fcitx_owner()
+        value = _process_environment_key(owner[1])
+        # Reject an owner change while reading; do not attach a stale process's
+        # environment to a newly started Fcitx session.
+        return value if _fcitx_owner() == owner else ''
+    except Exception:
+        return ''
+
+
 def resolve(settings):
     if settings['key_source'] == 'none':
         return ''
     if settings['key_source'] == 'environment':
-        key = os.environ.get('COWTYPE_TRANSLATE_KEY', '')
+        key = environment_key()
+        if not valid_key(key):
+            raise TranslationError('environment')
     else:
         Secret, schema = _service()
         try:

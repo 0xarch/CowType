@@ -25,8 +25,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "3a8dc7617f9becd655447719591571a733324187fad842f03bdaea01080bad69",
-      "bytes": 6608
+      "sha256": "a53d59c4c2f4c8750f81764a085c8dd2b0d708656c60ff412efd334de29d0ce2",
+      "bytes": 6788
     },
     {
       "path": "CMakeLists.txt",
@@ -128,8 +128,8 @@
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "4b0b905b0f609f4c4b266259771d5a44d98f2db10acb1ab3ea77f502683a6699",
-      "bytes": 8063
+      "sha256": "630faa060d2d39171fd9c3023b0a0bb4280b5ab05bb9da6891629ead153b536c",
+      "bytes": 8141
     },
     {
       "path": "i18n/README.md",
@@ -138,13 +138,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "093b2aaff330c5f16e41f8f4e584c3fe2b390f3db55c822d8a6b4d8bec7963d1",
-      "bytes": 13746
+      "sha256": "449ebfaa33ec9b44fb272100876f79717dbdbcb01b374aa55178e25590c0d4d8",
+      "bytes": 14096
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "d48de6901a9f9e2ee01776bf628564e401302dd2fca1c35c8fb716342dadda4c",
-      "bytes": 12388
+      "sha256": "069641974fb6bc8f40363ba0b5fbe3d136edcb70f3d30f76a140e8cf06264f20",
+      "bytes": 12711
     },
     {
       "path": "packaging/README.md",
@@ -348,8 +348,8 @@
     },
     {
       "path": "src-settings/app/translation.py",
-      "sha256": "d846e9a2d7560528700637aed649c826c97ee011f1aeb34dda233da7bc05fa8c",
-      "bytes": 6672
+      "sha256": "7de97479b64f03cc436997be406f725b0a2ccdc24d84945b33b386e55abe6d1c",
+      "bytes": 6924
     },
     {
       "path": "src-settings/config/settings.py",
@@ -373,8 +373,8 @@
     },
     {
       "path": "src-translate/README.md",
-      "sha256": "babba1b9bb1bfdfbd8a9daff98f14e0e079d86d6631ed3988c84bd6ba2010cab",
-      "bytes": 6103
+      "sha256": "4f06b676ef4ca4e2e030dc80b5779ef7c214134897389397c5dd59199a31e68e",
+      "bytes": 6412
     },
     {
       "path": "src-translate/cowtype-translate.in",
@@ -398,8 +398,8 @@
     },
     {
       "path": "src-translate/translation_credentials.py",
-      "sha256": "071791ff7fbb86af0b9967b9f05e9b4ec1d7aa70bde245ab5a40d043395d3cbd",
-      "bytes": 2207
+      "sha256": "a3c5a94f83c377d4bf9d96933e62900725206fa50c7317f62ec7e9e711b72cf0",
+      "bytes": 4003
     },
     {
       "path": "src-voice/Cargo.lock",
@@ -743,8 +743,8 @@
     },
     {
       "path": "tests/test_translate.py",
-      "sha256": "2f2245c0d968c98953146a6a17865ce3725b96cd11fbcd4147500655d982b677",
-      "bytes": 10435
+      "sha256": "1d4658f926a3598f39dc1512376ebed259838b6343a63afbfb19842d4f0e8433",
+      "bytes": 12574
     },
     {
       "path": "tests/voice_resident.py",

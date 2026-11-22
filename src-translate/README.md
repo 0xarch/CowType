@@ -30,7 +30,7 @@
 自定义接口的 Key 来源可选：
 
 1. 不使用 Key，适合不需要鉴权的本地服务。
-2. **环境变量 `COWTYPE_TRANSLATE_KEY`**：由启动 Fcitx5 的进程环境提供。修改终端变量不会自动改变已经运行的 Fcitx5 环境。
+2. **环境变量 `COWTYPE_TRANSLATE_KEY`**：优先读取当前进程环境；从桌面菜单打开设置、未继承变量时，通过会话 D-Bus 定位当前用户的 Fcitx5，只读取其中的同名 Key。查询前后核对服务归属，不扫描其他进程，也不写入配置文件。修改终端变量不会自动改变已经运行的 Fcitx5 环境；若两处都没有 Key，需从已导出该变量的终端启动设置/Fcitx5，或使用密钥环。
 3. **桌面密钥环**：在设置的密码输入框填写 Key，通过 libsecret 的 Secret Service 接口保存到桌面默认集合；加密存储由桌面密钥环管理。需要可用、已解锁的 Secret Service 提供者（例如 GNOME Keyring 或支持该接口的 KWallet）及 Secret typelib。无可用密钥环时直接报错，不回退到明文文件或自制加密。Key 与 API 完整端点摘要绑定，修改接口后不会把旧服务的 Key 发给新服务。留空保留该接口已存 Key，也可单独删除。
 
 密钥环依赖：Arch 为 `libsecret`；Debian 为 `gir1.2-secret-1`；Fedora 为 `libsecret`；openSUSE 为 `typelib-1_0-Secret-1`。这些是可选依赖，环境变量模式不需要它们。

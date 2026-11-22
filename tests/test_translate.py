@@ -127,6 +127,33 @@ class TranslationTests(unittest.TestCase):
             with patch.dict(os.environ,COWTYPE_TRANSLATE_KEY=key),self.assertRaises(config.TranslationError):
                 client.translate('synthetic',self.settings)
         self.assertEqual(self.server.requests,[])
+    def test_environment_key_prefers_current_process(self):
+        with patch.object(credentials,'_fcitx_owner',side_effect=AssertionError('Unexpected D-Bus access')):
+            self.assertEqual(credentials.resolve(self.settings),'fixture-key')
+            with patch.dict(os.environ,COWTYPE_TRANSLATE_KEY=''):
+                with self.assertRaisesRegex(config.TranslationError,'translate.error.environment'):
+                    credentials.resolve(self.settings)
+    def test_settings_can_use_the_active_fcitx_environment(self):
+        with patch.dict(os.environ,clear=True), \
+             patch.object(credentials,'_fcitx_owner',return_value=(':1.synthetic',123)) as owner, \
+             patch.object(credentials,'_process_environment_key',return_value='fcitx-fixture-key') as read:
+            self.assertEqual(credentials.resolve(self.settings),'fcitx-fixture-key')
+            self.assertEqual(owner.call_count,2);read.assert_called_once_with(123)
+    def test_environment_lookup_rejects_missing_key_or_changed_owner(self):
+        for owner in [((':1.old',123),(':1.new',124)), ((':1.old',123),PermissionError())]:
+            with patch.dict(os.environ,clear=True), \
+                 patch.object(credentials,'_fcitx_owner',side_effect=owner), \
+                 patch.object(credentials,'_process_environment_key',return_value='stale-fixture-key'), \
+                 self.assertRaisesRegex(config.TranslationError,'translate.error.environment'):
+                credentials.resolve(self.settings)
+        with patch.dict(os.environ,clear=True), \
+             patch.object(credentials,'_fcitx_owner',side_effect=PermissionError()), \
+             self.assertRaisesRegex(config.TranslationError,'translate.error.environment'):
+            credentials.resolve(self.settings)
+    def test_proc_environment_only_extracts_the_named_key(self):
+        data=b'OTHER_SECRET=not-returned\0COWTYPE_TRANSLATE_KEY=fcitx-fixture-key\0COWTYPE_TRANSLATE_API=not-returned\0'
+        with patch.object(Path,'open',return_value=io.BytesIO(data)):
+            self.assertEqual(credentials._process_environment_key(123),'fcitx-fixture-key')
     def test_timeout_is_sanitized(self):
         class Timeout:
             def open(self,*_,**__):raise TimeoutError('private fixture-key')
