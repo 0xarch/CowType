@@ -256,7 +256,9 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 21
+                    assert len(self.pages) == 5 and len(self.controls) == 22
+                    assert self.controls['SystemDictionary'].get_visible()
+                    assert not self.controls['SystemDictionary'].get_active()
                     assert not self.controls['Translate'].get_active()
                     assert self.translation_provider.get_selected() == 0
                     assert self.translation_bilibili_model.get_model().get_n_items() == 3
