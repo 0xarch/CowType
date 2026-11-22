@@ -35,13 +35,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "a756c766072405536eebfa9d6dbf84519081fe5da6eb6c09218f6c9e72d1a28e",
-      "bytes": 9881
+      "sha256": "0047285899132c24f377a1da00836fcddd559d07a7e252575169ba6a9142ee30",
+      "bytes": 9990
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "a563412ad4cf5bcbef13b997d66acf3e170d07786a18ad3f09a9e18844e247d9",
-      "bytes": 16276
+      "sha256": "8020c86b9a3a60eec5882a8af2c8dbc0878cdebcd2350568ef5c2b350ee408ef",
+      "bytes": 16969
     },
     {
       "path": "Cargo.lock",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "7bce53fa42078b970f5e3aa3187a52f69bc98e5fdc83067b44bd95a42d8c14df",
-      "bytes": 45233
+      "sha256": "537560bbaedf3fdcf74b8db1889196a5330fe5610ba9e7b114529d1d65de4883",
+      "bytes": 45908
     },
     {
       "path": "docs/USAGE.md",
@@ -233,13 +233,18 @@
     },
     {
       "path": "src-fcitx5/README.md",
-      "sha256": "40e038efabadc1934202b3ee52c7619cd51f1f9cbd76602e92c0a37890ea5252",
-      "bytes": 1592
+      "sha256": "983aa6ea553223b6ec8a5091e6ce9766f37c173c05cb5f1c4c904a7d27e99139",
+      "bytes": 2006
     },
     {
       "path": "src-fcitx5/compat/paths.h",
       "sha256": "1e7d47591ff7e8469a1ccebfacd4e2538456f840bf7d1659af6f8751e73afe53",
       "bytes": 929
+    },
+    {
+      "path": "src-fcitx5/compat/strings.h",
+      "sha256": "71cb061f66ac7855b1b92b4080427b22cec9ccc7c08dc75ecb985f568e5cb94b",
+      "bytes": 1896
     },
     {
       "path": "src-fcitx5/config/cowtype-addon.conf.in",
@@ -268,8 +273,8 @@
     },
     {
       "path": "src-fcitx5/engine/dictionary.h",
-      "sha256": "2a592e91130cc09cfccd68bf13587bf9f29ac76f680a54a7b3995fb2b9ea9f82",
-      "bytes": 15034
+      "sha256": "87bc2fc75e3449a46f2c4918a1417ff0416c1464fff1032d04e4c0accb73e638",
+      "bytes": 14978
     },
     {
       "path": "src-fcitx5/engine/level.h",
@@ -685,6 +690,11 @@
       "path": "tests/native/fake-voice.py",
       "sha256": "5624f85621efa2977f2f8305e324427ea0eb913ca0681e50a98db0057dd98eb5",
       "bytes": 1366
+    },
+    {
+      "path": "tests/native/fcitx-compat.cpp",
+      "sha256": "a49b663601480ef2d06ca93239d17ee6d9b36e65d793d8b9bb2624f995691bb6",
+      "bytes": 957
     },
     {
       "path": "tests/native/fcitx.cpp",

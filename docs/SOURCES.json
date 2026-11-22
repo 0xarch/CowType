@@ -995,9 +995,11 @@
     "paths": [
       "src-fcitx5/compat/paths.h",
       "tests/native/isolation.h",
-      "CMakeLists.txt"
+      "CMakeLists.txt",
+      "src-fcitx5/compat/strings.h",
+      "tests/native/fcitx-compat.cpp"
     ],
-    "implementation": "Original CowType compile-time API adapter: Fcitx5 >=5.1.19 uses StandardPaths, older supported versions use StandardPath with filesystem value normalization. Runtime API baseline 5.1.11, including custom submode information; no copied upstream implementation.",
+    "implementation": "Original CowType compile-time API adapter: Fcitx5 >=5.1.19 uses StandardPaths, older supported versions use StandardPath with filesystem value normalization. Runtime API baseline 5.1.11, including custom submode information; no copied upstream implementation. Dictionary token consumption uses the public tokenizer from 5.1.20; older versions use an original boundary scanner plus the pre-existing public unescapeForValue API. This threshold follows actual API availability rather than assuming every newer API exists in 5.1.19.",
     "references": [
       {
         "repository": "https://github.com/fcitx/fcitx5",
@@ -1033,6 +1035,13 @@
         "path": "src/lib/fcitx/inputcontextmanager.h",
         "sha256": "65376132a15cadb23c6bbb25ffb164a4a39a9c82af339be0a2bd27125202c260",
         "use": "Public API declarations only; not redistributed."
+      },
+      {
+        "repository": "https://github.com/fcitx/fcitx5",
+        "version": "5.1.19",
+        "path": "src/lib/fcitx-utils/stringutils.h",
+        "sha256": "c1e20c4205af3c6ff97e6024ca7f5df730f30168529b2a9039add8e5ea727e8e",
+        "use": "Public escape decoder declarations; no upstream implementation copied."
       }
     ],
     "dependencies": "Existing system Fcitx5 dependency only; no new bundled code or models."

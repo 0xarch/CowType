@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <fcitx-utils/stringutils.h>
+#include "../compat/strings.h"
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -301,8 +301,7 @@ inline CompiledPinyin compilePinyin(const PinyinSources &s) {
           std::vector<std::string> fields;
           while (!rest.empty()) {
             std::string field;
-            auto used = fcitx::stringutils::consumeMaybeEscapedValue(
-                rest, FCITX_WHITESPACE, &field);
+            auto used = cowtype::compat::consumeValue(rest, &field);
             if (used.empty())
               break;
             fields.push_back(std::move(field));
