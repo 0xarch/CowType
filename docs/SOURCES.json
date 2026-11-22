@@ -1063,5 +1063,36 @@
     },
     "license": "Rust/rustup: MIT OR Apache-2.0; compiler tool only, not bundled.",
     "models": "No model downloads."
+  },
+  "legacy_libime_candidates_2026_11_22": {
+    "paths": [
+      "src-fcitx5/engine/libime.h",
+      "src-fcitx5/engine/diagnostics.h"
+    ],
+    "implementation": "Original guard excluding unencoded literal fallback nodes from dictionary source lookups. Older libime exposes these alongside decoded candidates; no upstream implementation copied. Diagnostics check write return values and handle partial writes/EINTR.",
+    "references": [
+      {
+        "repository": "https://github.com/fcitx/libime",
+        "version": "1.1.10",
+        "path": "src/libime/pinyin/pinyincontext.cpp",
+        "sha256": "79f2fd41e7a235af646e0f31c2ae33fc6133554e615a120f004fc68d8e6b4c00",
+        "use": "Public candidate/pinyin behavior inspection only."
+      },
+      {
+        "repository": "https://github.com/fcitx/libime",
+        "version": "1.1.10",
+        "path": "src/libime/pinyin/pinyinencoder.cpp",
+        "sha256": "41e9a1fe0465e1b19c81eda5916e5f8a2337d2473beb60511edcdafbae2e37a0",
+        "use": "Public candidate/pinyin behavior inspection only."
+      },
+      {
+        "repository": "https://github.com/fcitx/libime",
+        "version": "1.1.17",
+        "path": "src/libime/pinyin/pinyincontext.cpp",
+        "sha256": "1450e2fcd60da9b21ec2802a60dbe5aec563245e3e308b14a9dd324a7909c79b",
+        "use": "Public candidate/pinyin behavior inspection only."
+      }
+    ],
+    "dependencies": "Existing system libime/Fcitx/libc only."
   }
 }

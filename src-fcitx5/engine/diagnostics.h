@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <chrono>
+#include <cerrno>
 #include <cstdlib>
 #include <filesystem>
 #include <mutex>
@@ -28,7 +29,14 @@ inline void ctDiagnostic(const std::string &fields) noexcept {
         if(info.st_size>1024*1024 && ftruncate(fd,0)!=0) {::close(fd);return;}
         const auto epoch=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         auto line="epoch_ms="+std::to_string(epoch)+" pid="+std::to_string(getpid())+" "+fields+"\n";
-        (void)write(fd,line.data(),line.size());::close(fd);
+        size_t offset=0;
+        while(offset<line.size()) {
+            const auto written=write(fd,line.data()+offset,line.size()-offset);
+            if(written<0 && errno==EINTR) continue;
+            if(written<=0) break;
+            offset+=static_cast<size_t>(written);
+        }
+        ::close(fd);
     } catch(...) { /* Diagnostics never interrupt input. */ }
 }
 

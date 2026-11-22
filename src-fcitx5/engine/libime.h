@@ -86,7 +86,7 @@ public:
             for (const auto *node : candidate.sentence()) {
                 const auto *pinyin = dynamic_cast<const libime::PinyinLatticeNode *>(node);
                 unsigned source = 2;
-                if (pinyin) {
+                if (pinyin && !pinyin->encodedPinyin().empty()) {
                     const auto &encoded = pinyin->encodedPinyin();
                     const auto reading = libime::PinyinEncoder::decodeFullPinyin(encoded.data(), encoded.size());
                     for (unsigned i = 0; i < 3; ++i) {

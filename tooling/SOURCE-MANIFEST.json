@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "025f61c77f953126add260bf33b9580a5aa98c6e3554ca5b48fc263f142826f5",
-      "bytes": 10187
+      "sha256": "f2ce3a7f4d1f8c7643f349e056c993e201c537da3a276995658fac7e95493249",
+      "bytes": 10376
     },
     {
       "path": "CMakeLists.txt",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "07284aa3e33aef7d6bf6c802326bc26054b9c38ab195935f4497921778996922",
-      "bytes": 46945
+      "sha256": "241934966a5c848b70b85a15c49604b95e10700c6553c1d88a0c923e2a913863",
+      "bytes": 48390
     },
     {
       "path": "docs/USAGE.md",
@@ -268,8 +268,8 @@
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
-      "sha256": "d2e32448abb9a37f9c110535c6da23070dd73473e97e09e6f7644ba0e2889047",
-      "bytes": 1987
+      "sha256": "176899c7206f9f1577e012fd01b2529a93271862cec048ae5f7f80c840c61e5b",
+      "bytes": 2252
     },
     {
       "path": "src-fcitx5/engine/dictionary.h",
@@ -283,8 +283,8 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "988a7a61cadc2a75db2ec9d8cf4bd58ab149762c82b53bdb520121aa14ebab94",
-      "bytes": 7123
+      "sha256": "3e7ca6de71145bcb5e5bd811f4cb215755766fde755404b208e22fff058d20b9",
+      "bytes": 7159
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
