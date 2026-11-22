@@ -4,7 +4,7 @@
 |---|---|
 | build-arch.sh | Arch x86_64 一键准备、生产构建与打包入口；安装包输出到 dist/ |
 | src/ | Rust 本体：词典、候选、CLDR 表情符号匹配、组句、会话、学习、配置、i18n、C ABI 和 CLI |
-| src-fcitx5/ | C++ Fcitx5 插件、libime 适配、候选显示、热键、配置和诊断；gb18030/ 和 unicode/ 提供独立码表输入，engine/shortcuts.h 派发统一功能快捷键；include/cowtype2.h 定义 ABI |
+| src-fcitx5/ | C++ Fcitx5 插件、libime 适配、候选显示、热键、配置和诊断；gb18030/ 和 unicode/ 提供独立码表输入，engine/shortcuts.h 派发统一功能快捷键；compat/ 集中处理不同 Fcitx5 版本的目录、转义解析及工厂导出；include/cowtype2.h 定义 ABI |
 | src-settings/ | Python GTK4/libadwaita 设置程序、配置读写、启动器、桌面入口和文案读取 |
 | src-voice/ | Rust 语音宿主、PulseAudio/PipeWire-Pulse 捕获、音频计量、会话与 IPC；paraformer/ 含 ONNX 后端、准备脚本、许可和测试 |
 | src-data-tools/ | 公开词典的获取、转换、安装、移除与来源校验；manifest/sources.json 锁定词库版本和许可；emoji/ 维护 CLDR 关键词转换与来源 |

@@ -6,7 +6,7 @@ development.py 检查项目源码清单和文档链接，`--refresh` 更新 SOUR
 
 `icons.cmake` 从 scalable SVG 增量生成构建目录内的 hicolor PNG；这些派生文件不参与源码清单、摘要校验或源码归档。
 
-`prepare_release.py` 检查成功构建收集的四发行版、六个架构组合的安装包、源码和 PKGBUILD，拒绝缺失、空文件、符号链接或额外附件，并生成 SHA256SUMS。发布工作流在此检查通过后才创建 Tag 和 Release；`release_notes.py` 从当前版本的 CHANGELOG 提取发布说明。
+`prepare_release.py` 检查成功构建收集的14 个系统/架构组合的安装包、源码和 PKGBUILD，拒绝缺失、空文件、符号链接或额外附件，并生成 SHA256SUMS。发布工作流在此检查通过后才创建 Tag 和 Release；`release_notes.py` 从当前版本的 CHANGELOG 提取发布说明。
 
 `platform_trials.py` 定义手动试构建矩阵、检查容器镜像的平台可用性、记录各阶段结果并生成汇总；`platform-probe.sh` 仅在一次性容器内安装原生 Fcitx5 开发包并检查最低版本。完整依赖、开发测试、生产打包和安装验证复用 `ci-linux.sh`。试构建记录见[平台报告](../docs/PLATFORM-TRIALS-2026-11-22.md)。
 

@@ -87,18 +87,21 @@ GitHub Actions 已验证以下 Linux 目标的容器构建、安装包和插件�
 | Fedora 45 | x86_64、ARM64 | `.rpm` |
 | openSUSE Tumbleweed | x86_64 | `.rpm` |
 | Debian unstable | x86_64、ARM64 | `.deb` |
+| Ubuntu 26.04 | x86_64、ARM64 | `.deb` |
+| Deepin 23 | x86_64 | `.deb` |
+| Deepin 25 | x86_64、ARM64、LoongArch64（QEMU 验证） | `.deb` |
+| openSUSE Leap 16.0 | x86_64 | `.rpm` |
+| openKylin 3.0 | x86_64 | `.deb` |
 
 在 [Releases](https://github.com/0xarch/CowType/releases) 下载对应的发布包，
 或在 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载（下载 Actions 产物需要登录 GitHub）定期主线构建。
 注：主线构建不保证总是新于发布包。
 
-包经过容器内构建、安装和合成输入事件测试；这不代表完整桌面或真实麦克风验收。新增 ARM64 包目前从 Actions 下载，将随下次发布提供；既有 0.4.0 Release 附件仍为 x86_64。主线构建可能在部分情况下存在问题。
+包经过容器内构建、安装和合成输入事件测试；这不代表完整桌面或真实麦克风验收。新增系统和架构的包目前从 Actions 下载，将随下次发布提供；既有 0.4.0 Release 附件仍为原四目标 x86_64。主线构建可能在部分情况下存在问题。
 
 请使用本发行版的软件包管理器安装对应的包。Debian unstable 和 openSUSE Tumbleweed 都是滚动目标，安装包面向各自的原生依赖；Deb 包不保证兼容 Debian 稳定版或 Ubuntu，Tumbleweed 的 RPM 不保证兼容 Leap 或 Fedora。
 
-由于 Ubuntu 26.04 的 Fcitx5 版本过于老旧，Ubuntu 目前不在自动构建范围内，版本要求与自行构建方式见[Ubuntu 构建说明](docs/BUILD.md#ubuntu)。
-
-Deepin 23、25、openSUSE Leap 16.0 和 openKylin 3.0 也因 Fcitx5 版本不足暂不提供预编译包。ARM64、LoongArch64 及全部系统的本轮结果和失败原因见[容器构建报告](docs/PLATFORM-TRIALS-2026-11-22.md)，自行构建要求见[构建说明](docs/BUILD.md#deepinopensuse-leap-和-openkylin)。
+Fcitx5 兼容层支持 >= 5.1.11，已解除 Ubuntu、Deepin、Leap、openKylin 的原版本门槛。Deepin LoongArch64 已通过 QEMU 整包验证，全部系统、架构的结果与先前失败原因见[容器构建报告](docs/PLATFORM-TRIALS-2026-11-22.md)。依赖与工具链准备见[构建说明](docs/BUILD.md#fcitx5-版本兼容)。
 
 ### Arch Linux
 

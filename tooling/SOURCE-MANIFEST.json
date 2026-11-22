@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "853592216e678a5d4cbd47a48adf7d13f7d42d86176d2283fec98bb5e552994d",
-      "bytes": 11365
+      "sha256": "e98ca0881037142f929f9ec58592e7b2010e5d1a683c724abe9e333fda8ee40d",
+      "bytes": 10818
     },
     {
       "path": "CMakeLists.txt",
@@ -88,8 +88,8 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "bf863c0f48c088f5a83258ee451178dc53f137115ddc6b8a2f0dbd03cbfc0f34",
-      "bytes": 2126
+      "sha256": "339d13c05dbf9501e853f3c4716e13726656ac357532c3e1ec2296473d2274f3",
+      "bytes": 2208
     },
     {
       "path": "assets/icons/README.md",
@@ -113,8 +113,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "d7696443f00879300ea0ebd344cef53a16d139146b83e55a2bc0641581d6c224",
-      "bytes": 10666
+      "sha256": "da0d4c314e3cc42c58e29a8797eccb1fbdc03af80257043771ea8bb8b50620cb",
+      "bytes": 10549
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -123,8 +123,8 @@
     },
     {
       "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
-      "sha256": "10053fc8ea8ba686c00d5ed35a7dab7032210fad7f247a5f364b9ed9adf745b7",
-      "bytes": 5909
+      "sha256": "1df3a2e825aa9c284bf0855c3a8ea3646b60d39aa511478022ded6b231c653a2",
+      "bytes": 7477
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "d57876605926c48276ca3f0c7faebea78598391cd7768b5939910ff1eb0e6d1e",
-      "bytes": 49171
+      "sha256": "403b89e8025d7978219ddc745631c98f6ea9c268ba9a29db40f217b7470f16fd",
+      "bytes": 49391
     },
     {
       "path": "docs/USAGE.md",
@@ -163,8 +163,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "0bcb92b75a1d4d0c147bab048533aa599763ea9ed05be85521fa9ba06cecf1b9",
-      "bytes": 4894
+      "sha256": "a525cb9bac2cddb5c77cc69c99f32350efa7a4ba5151204fad23d54ce495e0fa",
+      "bytes": 5472
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
@@ -793,8 +793,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "49a82e4293ec9a527b903fac8f2402d8930656373e0ea83156aa49df23e98a51",
-      "bytes": 2190
+      "sha256": "596fa2c2947d79d48f1d5d5452d0e51f565d74f5399be63e6ad34c9ac3c2a6a1",
+      "bytes": 2182
     },
     {
       "path": "tooling/ci-linux.sh",

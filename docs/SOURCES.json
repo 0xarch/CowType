@@ -988,7 +988,7 @@
         "upstream_rootfs": "https://github.com/openkylin/openkylin-rootfs"
       }
     ],
-    "validation": "2026-11-22 GitHub Actions run 44978388218: six full build/install passes, eight native Fcitx5 minimum-version failures, zero skipped. Deepin loong64 ran through QEMU; no full LoongArch64 compilation or microphone validation claimed.",
+    "validation": "Final GitHub Actions run 44987013285 on de1dedba6fb50bbdd93cbba6b6a4561468182a6a: all 14 target combinations passed full build, tests, native packaging and installed-package validation (13 native x86_64/ARM64; one Deepin loong64 under QEMU); zero failures or skips. Earlier dependency/API/toolchain/test-timing and repository-download failures and repairs are recorded in docs/PLATFORM-TRIALS-2026-11-22.md. No microphone or real model accuracy claims.",
     "models": "No model downloads or bundled models."
   },
   "fcitx_compatibility_2026_11_22": {

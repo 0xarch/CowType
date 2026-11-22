@@ -1,70 +1,65 @@
 # 2026-11-22 多系统、多架构容器构建报告
 
-兼容层引入前的首轮在 GitHub Actions 的一次性容器中重试已有系统、暂缓系统及新增系统/架构，共 **14 项：6 项通过、8 项失败、0 项跳过**。8 项失败均发生在 Fcitx5 最低版本预检查，未进入完整依赖安装和源码编译；当时要求为 **Fcitx5 >= 5.1.23**，本轮未降低要求或添加第三方软件源。
+引入 Fcitx5 兼容层后，**14 个目标在同一次常规 GitHub Actions 中全部完成编译、测试、打包、安装和插件验证：14 通过、0 失败、0 跳过**。其中 13 个为原生 x86_64/ARM64 构建，1 个为 QEMU 下的 Deepin LoongArch64。
 
-- [完整试构建及每项日志](https://github.com/0xarch/CowType/actions/runs/44978388218)，源码提交 `3b1488d561e65199e648a6f0ae3e6c9ef30d91f2`。整体状态为失败，如实反映 8 项依赖不足；汇总任务成功完成，并非所有平台构建失败。
-- [同一提交的常规四目标构建](https://github.com/0xarch/CowType/actions/runs/44978343510)全部通过。
-- 后续将本轮已验证的两个 ARM64 目标加入[常规构建](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml)，与四个既有 x86_64 目标共同持续验证。
+- [13 个原生目标全部通过](https://github.com/0xarch/CowType/actions/runs/44986227966)，提交 `dd62532409bf043bf00f408cb239d739994ab108`。
+- [全部通过的最终 14 目标构建](https://github.com/0xarch/CowType/actions/runs/44987013285)，提交 `de1dedba6fb50bbdd93cbba6b6a4561468182a6a`。
+- [兼容层前的首轮试构建](https://github.com/0xarch/CowType/actions/runs/44978388218)：6 项通过、8 项因当时统一要求 Fcitx5 >= 5.1.23 而停止、0 项跳过。该历史版本门槛已由兼容实现替代。
 
-## 已有系统：全部通过
+## 全部目标
 
-| 发行版 | 架构 | 容器镜像 | Fcitx5 | 结果 |
-|---|---|---|---|---|
-| Arch Linux | x86_64 | `archlinux:latest` | 5.1.23 | 通过 |
-| Fedora 45 | x86_64 | `fedora:45` | 5.1.23 | 通过 |
-| Debian unstable | x86_64 | `debian:unstable` | 5.1.23 | 通过 |
-| openSUSE Tumbleweed | x86_64 | `opensuse/tumbleweed:latest` | 5.1.23 | 通过 |
+| 类别 | 系统版本 | 架构 | 镜像 | Fcitx5 | 结果 |
+|---|---|---|---|---|---|
+| 已有 | Arch Linux | x86_64 | `archlinux:latest` | 5.1.23 | 通过 |
+| 已有 | Fedora 45 | x86_64 | `fedora:45` | 5.1.23 | 通过 |
+| 已有 | Debian unstable | x86_64 | `debian:unstable` | 5.1.23 | 通过 |
+| 已有 | openSUSE Tumbleweed | x86_64 | `opensuse/tumbleweed:latest` | 5.1.23 | 通过 |
+| 原暂缓 | Ubuntu 26.04 | x86_64 | `ubuntu:26.04` | 5.1.19 | 通过 |
+| 原暂缓 | Deepin 23 | x86_64 | `linuxdeepin/deepin:23` | 5.1.11 | 通过 |
+| 原暂缓 | Deepin 25 | x86_64 | `linuxdeepin/deepin:25` | 5.1.12 | 通过 |
+| 原暂缓 | openSUSE Leap 16.0 | x86_64 | `registry.opensuse.org/opensuse/leap:16.0` | 5.1.13 | 通过 |
+| 新系统 | openKylin 3.0（huanghe） | x86_64 | `openkylin/openkylin:latest` | 5.1.19 | 通过 |
+| 新架构 | Ubuntu 26.04 | ARM64 | `ubuntu:26.04` | 5.1.19 | 通过 |
+| 新架构 | Deepin 25 | ARM64 | `linuxdeepin/deepin:crimson-arm64` | 5.1.12 | 通过 |
+| 新架构 | Debian unstable | ARM64 | `debian:unstable` | 5.1.23 | 通过 |
+| 新架构 | Fedora 45 | ARM64 | `fedora:45` | 5.1.23 | 通过 |
+| 新架构 | Deepin 25 | LoongArch64 | `linuxdeepin/deepin:crimson-loong64` | 5.1.12 | 通过（QEMU） |
 
-## 新增系统
+全部请求的镜像和对应架构都存在，0 项因镜像缺失而跳过。`latest`、unstable 和 Tumbleweed 表示本次运行时的内容，不保证将来软件源版本不变；本轮未扩展到 openKylin ARM64 或 Deepin 23 ARM64。
 
-| 发行版 | 架构 | 容器镜像 | Fcitx5 | 结果与失败原因 |
-|---|---|---|---|---|
-| openKylin 3.0（huanghe） | x86_64 | `openkylin/openkylin:latest` | 5.1.19 | 失败：低于 5.1.23，暂不加入支持列表 |
+ARM64 使用 GitHub 原生 `ubuntu-24.04-arm` runner，运行目标发行版自己的容器，未交叉编译或模拟。LoongArch64 在 x86_64 runner 上通过 QEMU 运行 Deepin 原生 `loong64` 用户空间；这只代表模拟环境验证，不代表龙芯实体机、音频设备或模型性能验收。
 
-`latest` 镜像中的 `/etc/os-release` 确认为 openKylin 3.0；名称不是对后续滚动镜像内容的保证。本轮未测试 openKylin ARM64。
+Deepin `:25` 标签在本次测试中仅提供 amd64；其他架构使用其[上游发布流程](https://github.com/deepin-community/deepin-docker/blob/89c6874e827eaace16000eb403d1e1ef5ef07eff/.github/workflows/build-docker.yml)提供的 `crimson-arm64`、`crimson-loong64`。
 
-## 暂缓系统：重试后仍暂缓
+## 先前失败原因及处理
 
-| 发行版 | 架构 | 容器镜像 | Fcitx5 | 结果与失败原因 |
-|---|---|---|---|---|
-| Ubuntu 26.04 | x86_64 | `ubuntu:26.04` | 5.1.19 | 失败：低于 5.1.23 |
-| Deepin 23 | x86_64 | `linuxdeepin/deepin:23` | 5.1.11 | 失败：低于 5.1.23 |
-| Deepin 25 | x86_64 | `linuxdeepin/deepin:25` | 5.1.12 | 失败：低于 5.1.23 |
-| openSUSE Leap 16.0 | x86_64 | `registry.opensuse.org/opensuse/leap:16.0` | 5.1.13 | 失败：低于 5.1.23 |
+| 影响范围 | 实际原因 | 处理与验证 |
+|---|---|---|
+| Ubuntu、Deepin、Leap、openKylin | 原统一版本门槛 5.1.23 阻止进入编译，掩盖了可兼容的 API 差异 | 基线调整为 5.1.11；按实际接口可用性集中封装，保留完整编译和安装测试 |
+| Fcitx5 < 5.1.19 | 没有新 `StandardPaths` 目录 API | `compat/paths.h` 使用旧 `StandardPath`，统一路径类型与顺序；原生测试仍拒绝访问隔离根目录以外的路径 |
+| Fcitx5 < 5.1.20（包含 5.1.19） | 没有 `consumeMaybeEscapedValue` 字段解析接口 | `compat/strings.h` 使用本项目边界扫描与旧版已有的 `unescapeForValue`；测试引号、空格、反斜线、换行和中文字段 |
+| Deepin 23 | 没有 `FCITX_ADDON_FACTORY_V2` 工厂宏 | `compat/addon.h` 按宏是否存在选择新旧导出，探针共享符号选择，并通过框架真实插件发现验证 |
+| Deepin 各架构 | 原生 Rust 1.81 过旧，核心使用的 `is_none_or` 与语音依赖最低 Rust 1.88 不满足 | 仅在一次性 CI 容器内准备固定 Rust 1.88.0 minimal；rustup 1.28.2 按架构内置 SHA-256 校验，系统库保持原生 |
+| 较老 libime（Deepin 1.1.8/1.1.10） | 原始文本回退候选没有拼音编码，却被传给词典来源查询，导致 `invalid full pinyin` | 跳过无编码节点的来源查询；词典与输入交互测试覆盖旧库 |
+| Ubuntu、openKylin | libc 严格检查将忽略 `write` 返回值视为编译错误 | 检查写入结果，处理短写和 EINTR；保留 `-Werror` |
+| openKylin | 默认行内预编辑偏好关闭，文本在候选窗显示，原测试仅检查行内显示 | 测试显式设置合成输入框偏好，并同时验证行内与候选窗两种路径；产品仍遵循用户偏好 |
+| openKylin 安装阶段 | 官方 `archive.build.openkylin.top` 无法连接，下载 Qt 等可选推荐包失败 | 安装验证仅安装必要依赖，保留下载重试；未更换软件源、忽略必要依赖或跳过安装 |
+| LoongArch64/QEMU | 原测试固定等待假语音进程 200ms、假翻译进程 400ms，模拟运行启动较慢导致误报 | 对异步结果使用最长 10s 的实际状态等待，保留修饰键长按时序断言；本地以 650ms 假翻译响应验证。最终模拟环境结果以上表为准 |
 
-这些结果只说明原生软件源在本次测试时未满足最低依赖。后续依赖更新后可重试；自行升级依赖的步骤见[构建文档](BUILD.md)。不将 Debian unstable 或 Tumbleweed 的包视为这些系统的兼容包。
+只有目录 API 以 5.1.19 为分界；字段解析 API 实际在 5.1.20 才加入，工厂导出则直接检查宏存在性。没有把“>= 5.1.19”错误地当作所有新接口都可用。最低版本与包依赖同步调整，运行时代码无需调用 5.1.23 新增的 `updatePreedit(bool)`。
 
-## 新增架构
+## 检查和产物
 
-| 发行版 | 架构 | 容器镜像 | Fcitx5 | 结果与后续处理 |
-|---|---|---|---|---|
-| Ubuntu 26.04 | ARM64 | `ubuntu:26.04` | 5.1.19 | 失败：低于 5.1.23，暂缓 |
-| Deepin 25 | ARM64 | `linuxdeepin/deepin:crimson-arm64` | 5.1.12 | 失败：低于 5.1.23，暂缓 |
-| Debian unstable | ARM64 | `debian:unstable` | 5.1.23 | 通过，加入常规构建 |
-| Fedora 45 | ARM64 | `fedora:45` | 5.1.23 | 通过，加入常规构建 |
-| Deepin 25 | LoongArch64 | `linuxdeepin/deepin:crimson-loong64` | 5.1.12 | 失败：低于 5.1.23，暂缓 |
+常规构建先在共享源任务中运行 Rust 核心、语音宿主、Python 数据/模型/设置测试，准备锁定的雾凇、五笔及 Cargo vendor。每个目标在自己的发行版容器中：
 
-ARM64 在 GitHub 原生 `ubuntu-24.04-arm` runner 上运行目标发行版容器，没有交叉编译或 QEMU。LoongArch64 在 x86_64 runner 上启用 QEMU，实际运行镜像并确认 `uname -m` 为 `loongarch64`，成功安装原生 `loong64` 开发包后因依赖版本停止。它未被跳过，也未完成 CowType 编译，不能据此声称 LoongArch64 已受支持或存在架构编译错误。
+1. 使用原生 Fcitx5、libime、GTK 等库进行开发构建，运行 10 项 CTest 和 55 项 Python 测试。
+2. 另外进行关闭开发测试的生产构建，生成 CowType 与 cowtype-voice 0.4.0 原生包。
+3. 实际安装包，再验证 ELF 链接、图标、数据、合成 Fcitx5 事件、假翻译进程和已安装设置程序的 GTK 启动。
 
-Deepin 的 `:25` 标签仅覆盖本次使用的 amd64；其他架构采用其[上游容器构建流程](https://github.com/deepin-community/deepin-docker/blob/89c6874e827eaace16000eb403d1e1ef5ef07eff/.github/workflows/build-docker.yml)发布的 `crimson-arm64`、`crimson-loong64` 标签。
+测试使用隔离 XDG 路径及合成输入、假语音/翻译进程，不访问用户词典、桌面配置、真实麦克风或翻译服务；不下载语音或统计模型，不代表真实模型准确率或硬件性能验收。生产包不包含测试、Rust 工具链、容器或模型。
 
-## 验证范围与产物
+成功的常规构建在 Actions 的 **Artifacts** 提供 `package-<目标>-<架构>`。Debian/Ubuntu/Deepin/OpenKylin 使用 Deb 的 `amd64`、`arm64`、`loong64` 文件架构名；Fedora ARM64 的 RPM 文件架构名为 `aarch64`，下载时按目标发行版和架构选择，不能跨发行版视作兼容包。LoongArch64 已完整通过，对应 `package-deepin25-loongarch64`，包名为 `cowtype_0.4.0-1.deepin25_loong64.deb`。
 
-源准备任务运行 Rust 核心、语音宿主和 Python 组件测试，再准备锁定的雾凇/五笔词库及 Cargo vendor。6 个通过的目标均完成：
+手动试构建还提供 `platform-report-<目标>-<架构>`（镜像清单、版本、阶段日志、result.json）、`platform-results` 汇总和通过目标的 `trial-package-*`。失败阶段及具体日志保留在对应运行中；Actions 产物有保留期限，下载需登录。
 
-1. 使用发行版原生依赖进行开发构建；9/9 CTest 与 55 项 Python 测试通过。
-2. 单独进行关闭开发测试的生产构建，生成 CowType 与 cowtype-voice 0.4.0 原生安装包。
-3. 在同一目标容器中实际安装包，检查依赖链接、图标、数据、合成 Fcitx5 输入事件、假翻译进程异步交互及已安装设置程序的 GTK 启动。
-
-测试使用隔离 XDG 路径及假语音/翻译进程，没有下载语音模型或调用真实麦克风、用户翻译服务；不代表真实桌面输入、音频设备或模型准确率验收。试构建失败的 8 项只安装了用于最低版本检查的依赖，不声称其余依赖已验证。
-
-每个目标的 `platform-report-<发行版>-<架构>` artifact 保存镜像清单、系统/版本信息、阶段日志和结构化结果；汇总见 `platform-results`。通过的目标还提供 `trial-package-<发行版>-<架构>`，包括新增的：
-
-- `trial-package-debianunstable-arm64`：`cowtype_0.4.0-1.debianunstable_arm64.deb`
-- `trial-package-fedora45-arm64`：`cowtype-0.4.0-1.fedora45.aarch64.rpm`
-
-Actions 产物有保留期限，下载需要登录。常规构建的对应 artifact 为 `package-debianunstable-arm64`、`package-fedora45-arm64`。当前 0.4.0 Release 附件保持原样，两个 ARM64 包将纳入下次发布的完整性检查；本轮不创建新版本、Tag 或 Release。
-
-## 兼容层后续重试
-
-首轮结果暴露了过严的统一版本门槛。后续新增集中 API 适配：>= 5.1.19 使用 `StandardPaths`，较早版本使用 `StandardPath`，统一处理新接口在不同版本返回 vector/span 的差异，保留隔离路径验证。构建与运行基线改为 5.1.11；其他依赖及测试要求保持。随后重新运行同一 14 项矩阵，只有完整构建、安装及插件测试通过后才更新支持列表。首轮表格保留，便于比较兼容层前后的失败阶段。
+当前 0.4.0 Release 附件保持原样，新系统和架构的包从 Actions 下载，将纳入下次发布的附件完整性检查。本轮不创建新版本、Tag 或 Release。构建方式见[BUILD](BUILD.md)，工作流使用见[打包说明](../packaging/README.md)。

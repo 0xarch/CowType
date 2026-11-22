@@ -90,7 +90,7 @@ PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 
 ## 多发行版与 GitHub Actions
 
-Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。常规矩阵包含四个 x86_64 目标及 Fedora 45、Debian unstable 两个 ARM64 目标，ARM64 使用原生 runner。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。新增及暂缓系统的手动试构建流程、容器镜像和完整结果见[平台报告](PLATFORM-TRIALS-2026-11-22.md)。
+Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。常规矩阵包含 Arch、Fedora 45、Debian unstable、Tumbleweed、Ubuntu 26.04、Deepin 23/25、Leap 16.0、openKylin 3.0 的 x86_64，以及 Fedora、Debian、Ubuntu、Deepin 25 的 ARM64，共 13 个原生目标。ARM64 使用原生 runner；Deepin 25 LoongArch64 使用独立 QEMU 作业验证。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。新增及暂缓系统的手动试构建流程、容器镜像和完整结果见[平台报告](PLATFORM-TRIALS-2026-11-22.md)。
 
 ## openSUSE Tumbleweed
 
@@ -112,31 +112,30 @@ python3 tooling/package_linux.py --source . --format rpm --distro opensusetumble
 
 生成的包可用 `sudo zypper install ./dist/cowtype-*.opensusetumbleweed.x86_64.rpm` 安装。Fcitx5 插件安装到 `/usr/lib64/fcitx5`。Python 通用包名由 Tumbleweed 的对应版本包提供，打包工具为 GTK/libadwaita 显式声明 typelib 运行依赖。
 
-## Ubuntu
+## Ubuntu、Deepin、openSUSE Leap 和 openKylin
 
-Ubuntu 暂不列入自动构建支持范围。2026-11-22 的 GitHub Actions 重试中（x86_64 和 ARM64），Ubuntu 26.04 官方仓库提供 Fcitx5 5.1.19，而 兼容层引入前 CowType 要求 Fcitx5 >= 5.1.23，编译前的依赖检查因版本不足停止。Debian unstable 生成的 Deb 包面向其原生库版本，不应直接视作 Ubuntu 兼容包。
+兼容层引入后，Ubuntu 26.04（Fcitx5 5.1.19）、Deepin 23（5.1.11）、Deepin 25（5.1.12）、Leap 16.0（5.1.13）和 openKylin 3.0（5.1.19）均已通过原生容器构建、打包、安装与插件验证。Ubuntu、Deepin 25 另已通过 ARM64 原生构建。完整镜像、依赖版本、先前失败及修复见[平台报告](PLATFORM-TRIALS-2026-11-22.md)。
 
-需要在 Ubuntu 自行构建的用户，应自行准备满足版本要求的 Fcitx5 运行库及开发包，确保它们的版本与安装路径一致，并满足 libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、OpenSSL、Boost、librsvg、Rust/Cargo（语音依赖要求 Rust >= 1.88）等条件。Debian 系的 libime 开发包拆分为 `libimecore-dev` 与 `libimepinyin-dev`，并没有本项目可用的统一 `libime-dev` 包。
+Debian 系依赖命令可参考 `tooling/ci-linux.sh` 的 apt 分支。libime 开发包拆分为 `libimecore-dev` 和 `libimepinyin-dev`，没有本项目可用的统一 `libime-dev`。Leap 使用同脚本的 zypper 分支及原生 typelib 包名。CI 只在一次性容器内安装依赖，不会对开发者桌面自动执行。
 
-准备依赖后，按上面的通用 CMake 开发步骤构建并运行测试，指定适合本机 Fcitx5 的 `CMAKE_INSTALL_LIBDIR`。不要仅修改最低版本检查来绕过配置失败；本项目不自动添加软件源或替换系统 Fcitx5。Ubuntu 的依赖升级、原生打包和桌面兼容性由使用者自行处理。
+手动构建仍需 Fcitx5 >= 5.1.11、libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、OpenSSL、Boost、librsvg 和 Rust/Cargo >= 1.88。Deepin 当前系统 Rust 1.81 需要另行准备新工具链；升级编译器即可，不需要替换系统 Fcitx5。按通用 CMake 步骤构建与测试，使用适合目标 Fcitx5 的 `CMAKE_INSTALL_LIBDIR`。
 
-## Deepin、openSUSE Leap 和 openKylin
+容器 CI 发现 Rust < 1.88 时，仅在 `/opt/cowtype-rust/` 准备 Rust 1.88.0 minimal，使用固定 rustup 1.28.2 并按架构校验 SHA-256。Fcitx5、libime、GTK 等仍来自发行版原生仓库。此引导工具不进入安装包；手动构建者自行管理自己的 Rust 工具链。
 
-2026-11-22 的 [GitHub Actions 容器重试](https://github.com/0xarch/CowType/actions/runs/44978388218) 中，以下镜像都在安装原生开发包后的 Fcitx5 最低版本预检查处失败，未进入完整编译，因此暂不提供自动构建包：
-
-| 发行版 | 容器镜像 | 实际 Fcitx5 版本 | CowType 最低要求 |
-|---|---|---|---|
-| Deepin 23 | `linuxdeepin/deepin:23` | 5.1.11 | 5.1.23 |
-| Deepin 25 | `linuxdeepin/deepin:25` | 5.1.12 | 5.1.23 |
-| openSUSE Leap 16.0 | `registry.opensuse.org/opensuse/leap:16.0` | 5.1.13 | 5.1.23 |
-| openKylin 3.0 | `openkylin/openkylin:latest` | 5.1.19 | 5.1.23 |
-
-这些版本记录对应本次试构建，不代表后续软件源永远不变。自行构建需要先准备满足要求且版本一致的 Fcitx5 运行库和开发包，并核对 libime、GTK、libadwaita 及 Rust 等其他依赖；不要降低版本检查来绕过失败。Debian unstable 的 Deb 包或其他发行版的 RPM 不应视作这些系统的兼容包。
-
-Deepin 25 的 ARM64（`linuxdeepin/deepin:crimson-arm64`）与 LoongArch64（`linuxdeepin/deepin:crimson-loong64`）镜像均存在且可运行，原生 Fcitx5 同为 5.1.12，因依赖不足继续暂缓；不能据此断言其架构代码编译失败。完整 14 项结果、验证边界和日志入口见[本轮报告](PLATFORM-TRIALS-2026-11-22.md)。
+容器安装 Deb 时使用 `--no-install-recommends` 并重试下载，验证全部必要依赖，不因 Qt 配置工具等可选推荐包的镜像故障受阻；正常桌面用户可按需安装推荐包。各包面向其原生依赖，不将 Debian unstable 的包视作 Ubuntu/Deepin/openKylin 的兼容包，也不将 Tumbleweed 的 RPM 当作 Leap 的包。
 
 ## Fcitx5 版本兼容
 
-新增兼容层后，构建和运行基线调整为 Fcitx5 >= 5.1.11。>= 5.1.19 的原生测试使用新目录 API，旧版使用等价的旧接口，隔离路径检查保持启用。上表是兼容层引入前的历史结果；降低基线后仍需在各目标系统完成编译、安装及插件测试才能加入支持列表。libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、语音 Rust >= 1.88 等其他实际要求不随之降低。
+构建和运行最低要求统一为 Fcitx5 >= 5.1.11；在 `src-fcitx5/compat/` 集中处理差异，不把版本判断散落到输入逻辑。
 
-容器 CI 会检查实际 Rust 版本。系统编译器过旧时，仅在一次性容器的 `/opt/cowtype-rust/` 下载并校验固定 rustup 1.28.2，准备 Rust 1.88.0 minimal；Fcitx5、libime、GTK 等仍使用发行版原生库。手动构建请自行提供满足要求的工具链，此 CI 引导流程不会运行在用户桌面。
+| 接口 | 新 API 条件 | 较早版本 |
+|---|---|---|
+| 标准目录 | >= 5.1.19 使用 `StandardPaths` | `StandardPath`，统一返回 filesystem 路径 |
+| 转义字段解析 | >= 5.1.20 使用上游 tokenizer | 原创边界扫描配合旧版 `unescapeForValue` |
+| 插件工厂 | 存在 V2 宏时使用命名导出 | 原始工厂导出；探针选择对应符号 |
+
+原生测试继续检查隔离路径，验证两种预编辑显示方式及新旧字段解析等价性。不能通过仅降低版本检查或跳过测试来宣称兼容。打包器仍根据目标系统实际 ELF 符号生成依赖；在较新系统构建的包不保证可以直接安装在旧系统上。
+
+## LoongArch64
+
+Deepin 25 镜像 `linuxdeepin/deepin:crimson-loong64` 存在并可运行，原生包管理架构名为 `loong64`。常规 Actions 通过 QEMU 运行原生用户空间、编译器和打包器，使用与其他目标相同的生产/开发构建及安装验证。最终结果和测试边界见[平台报告](PLATFORM-TRIALS-2026-11-22.md)，模拟环境通过不代表实体机或真实麦克风验收。
