@@ -3,6 +3,7 @@
 #pragma once
 #include "cowtype2.h"
 #include "dictionary.h"
+#include "spelling.h"
 #include <libime/pinyin/pinyindecoder.h>
 #include <cstdlib>
 #include <libime/pinyin/pinyinime.h>
@@ -44,6 +45,7 @@ public:
     LibimeDecoder(const std::string &path, const std::string &optional)
         : LibimeDecoder(cowtype::PinyinSources{path, optional, "", "", ""}, false) {}
     LibimeDecoder(const cowtype::PinyinSources &sources, bool statisticalModel) {
+        (void)cowtype::spellingSyllables();
         auto compiled = cowtype::loadPinyin(sources);
         warnings = compiled.warnings; cacheHit = compiled.cacheHit;
         dictionary_ = compiled.dictionary.get();
@@ -97,6 +99,11 @@ public:
         };
         auto &primary=workspace(flags&2);
         const auto &primaryCandidates=primary.candidates();
+        const bool exactWord=std::any_of(primaryCandidates.begin(),primaryCandidates.end(),[&](const auto &candidate) {
+            return candidate.size()==1 && !candidate.sentence().empty() && !hasCorrection(candidate) &&
+                candidate.sentence().back()->to()->index()==raw.size() &&
+                primary.candidateFullPinyin(candidate).find('\'')!=std::string::npos;
+        });
         // Typo edges can prune a literal sentence even when the surviving
         // multiword path has no correction marker. Preserve the plain sentence
         // search for composed best paths, as well as explicit corrections.
@@ -151,6 +158,13 @@ public:
                 std::replace(reading.begin(),reading.end(),'\'',' ');
                 ranked.push_back({candidate.toString(),std::move(reading),consumed,corrected,literal,bool(pass),tier(candidate)});
             }
+        }
+        // A reliable full dictionary word needs no repair. Otherwise add a
+        // small, separately budgeted exact-word branch without deleting native
+        // candidates or running another sentence decoder for every variant.
+        if((flags&2) && !exactWord) {
+            for(auto &match:cowtype::spellingMatches(*dictionary_,raw))
+                ranked.push_back({std::move(match.text),std::move(match.reading),raw.size(),true,false,false,match.source});
         }
         // Full non-corrections protect intentional readings/initials; complete
         // corrections precede partial words instead of trailing thousands of them.

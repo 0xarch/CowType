@@ -24,3 +24,5 @@
 学习记忆：`src/learning/edits.rs` 提供带版本冲突检查的私有编辑队列及单写者锁，`service.rs` 统一保存学习和设置修改；`src-settings/config/memory.py` 处理快照与请求，`app/memory.py` 提供分页编辑界面。
 
 自定义词库：`src/custom/` 提供完整字母触发索引及后台文件更新，`src-settings/config/custom.py` 原子保存词条，`app/custom.py` 提供自动保存的分页编辑器。独立于系统/万象预编译词库和个人学习。
+
+`src-fcitx5/engine/spelling.h` 提供独立有界的重复键/相邻换位完整词补充，复用 libime 公开音节与 trie 接口，不持久化输入、不建立另一份词库、不引入模型。

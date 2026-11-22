@@ -36,6 +36,22 @@ int main(int argc,char **argv) {
     std::vector<Result> sentence;
     decoder.queryImpl("qingbaochiyunsu",15,emit,&sentence);
     assert(!sentence.empty() && sentence.front().text=="请保持匀速" && !sentence.front().corrected);
+    // Repair is a separate bounded exact-word branch, independent of initials.
+    auto compiled=cowtype::loadPinyin({argv[1],"","","",""});
+    for(const auto &input:{"nhiao","nihhao","nihaoo"}) {
+        const auto matches=cowtype::spellingMatches(*compiled.dictionary,input);
+        assert(std::any_of(matches.begin(),matches.end(),[](const auto &c){return c.text=="你好" && c.reading=="ni hao";}));
+    }
+    for(const auto &input:{"ni'hoa","1234","nnn", "abcdefghijklmnopqrstuvwxyz"})
+        assert(cowtype::spellingMatches(*compiled.dictionary,input).empty());
+    for(const auto &input:{"nhiao","nihhao"}) {
+        std::vector<Result> repaired;
+        decoder.queryImpl(input,15,emit,&repaired);
+        assert(std::any_of(repaired.begin(),repaired.end(),[&](const auto &c){return c.text=="你好" && c.consumed==std::string(input).size();}));
+        std::vector<Result> disabled;
+        decoder.queryImpl(input,13,emit,&disabled);
+        assert(std::none_of(disabled.begin(),disabled.end(),[](const auto &c){return c.corrected;}));
+    }
     // Append, erase, middle replacement, unrelated field, separators, invalid
     // inputs and all feature toggles must agree with a fresh stateless decoder.
     const std::vector<std::string> edits={"n","ni","nih","niha","nihao","niha","nih","ni","n","",

@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "95da48522a82e7e1106496fbb00162ccdc463c3f3220288c01e2614fcecd25eb",
-      "bytes": 13588
+      "sha256": "c7bc258571fdb28a56ae30e6c10225337464ddc5fd652241c0b7b0ab2e8b7980",
+      "bytes": 13799
     },
     {
       "path": "CMakeLists.txt",
@@ -88,8 +88,8 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "cf104829eb2e65c97d30b98c6bafcc2caff886b9e77df18fba82955fbad52a48",
-      "bytes": 2744
+      "sha256": "0edf2848e0723aaac1563ab8f552fd6654af6a35dcbe29849d6ba14e0ce45378",
+      "bytes": 2948
     },
     {
       "path": "assets/icons/README.md",
@@ -118,8 +118,8 @@
     },
     {
       "path": "docs/DICTIONARIES.md",
-      "sha256": "ffd9519d85ecc44ee8205493d0869486878c5b7afa80b815c06804ff346695de",
-      "bytes": 8557
+      "sha256": "b121351bbeb69bdd332819aa2ba2ae609370b75d4d9a5af76c0cfbd34c239051",
+      "bytes": 10132
     },
     {
       "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "421472aaf7cf13d317ac6bea9be6465abfa5ac398541d233ccd85ec71035cbfc",
-      "bytes": 57775
+      "sha256": "8e446b479fabaf4e9bcc5f8def19e5334adf15899a356865ddf6a58e9d286889",
+      "bytes": 58744
     },
     {
       "path": "docs/USAGE.md",
@@ -253,8 +253,8 @@
     },
     {
       "path": "src-fcitx5/README.md",
-      "sha256": "78868799a9ee883f0c711aa719d0b47eb9cbc2c28813b0e3cdfe4a743e3f827d",
-      "bytes": 2607
+      "sha256": "115e55d110b98b497d34c98916d772cd6f959bc0997913b2230cb4648e55b441",
+      "bytes": 2845
     },
     {
       "path": "src-fcitx5/compat/addon.h",
@@ -308,13 +308,18 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "ddaed9dc4bb7caa87fcbf84df2e765fb63fa44bb64f3bca3a993339b6b4b392f",
-      "bytes": 9810
+      "sha256": "0168ba7445c6ac7431c006fdd49519339b432f2f55dbdc0ea7d87a2ef98f768c",
+      "bytes": 10750
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
       "sha256": "53257121e66d525dbd21e4be753caa566198ca77b932a14d7991fd8e20aff972",
       "bytes": 4522
+    },
+    {
+      "path": "src-fcitx5/engine/spelling.h",
+      "sha256": "75383de38b51554a4008c8066a1bcb6199f14c5a34ec201b8585ee84a24002d4",
+      "bytes": 4818
     },
     {
       "path": "src-fcitx5/engine/translate.h",
@@ -723,8 +728,8 @@
     },
     {
       "path": "tests/native/correction.cpp",
-      "sha256": "cc0a513b6997e1366c38f634b055af0dc8832d2b0e9b8cedb8edf8bd7dc76141",
-      "bytes": 2946
+      "sha256": "139dc4512633ada0d929dedab756612ea2d7e5509cfaf58181ac0de0a7f28632",
+      "bytes": 4002
     },
     {
       "path": "tests/native/data.c",

@@ -1231,5 +1231,16 @@
       "src-fcitx5/engine/cowtype.cpp"
     ],
     "validation": "Synthetic config defaults/roundtrip/invalid value tests, native runtime ABI and isolated plugin checks; no live user settings or GUI automation."
+  },
+  "bounded_word_spelling": {
+    "date": "2026-11-22",
+    "license": "GPL-3.0-or-later",
+    "paths": [
+      "src-fcitx5/engine/spelling.h",
+      "src-fcitx5/engine/libime.h",
+      "tests/native/correction.cpp"
+    ],
+    "implementation": "Original CowType bounded duplicate-key deletion and adjacent-swap whole-word lookup. Uses installed public libime syllable conversion, DATrie traversal and PinyinDictionary matchWords APIs; does not copy WowType code, internal data structures, parameters or ranking weights. Primary implementing agent did not view WowType code; a separate static study supplied high-level requirements only. No model, new lexicon index or per-variant sentence decoding.",
+    "validation": "Synthetic repeated-key/swap exact-word, consumption, disabled correction and edit/reuse regression; independent fixed-1100-target before/after public-dictionary benchmark with bounded search, VmHWM and latency statistics, no user data or GUI."
   }
 }
