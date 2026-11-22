@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "0047285899132c24f377a1da00836fcddd559d07a7e252575169ba6a9142ee30",
-      "bytes": 9990
+      "sha256": "025f61c77f953126add260bf33b9580a5aa98c6e3554ca5b48fc263f142826f5",
+      "bytes": 10187
     },
     {
       "path": "CMakeLists.txt",
@@ -113,8 +113,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "4a0f5b5e8e70d812b263d9e8ebe12a60916fd67eac6594367d4ce3b50789af0b",
-      "bytes": 10326
+      "sha256": "d7696443f00879300ea0ebd344cef53a16d139146b83e55a2bc0641581d6c224",
+      "bytes": 10666
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "537560bbaedf3fdcf74b8db1889196a5330fe5610ba9e7b114529d1d65de4883",
-      "bytes": 45908
+      "sha256": "07284aa3e33aef7d6bf6c802326bc26054b9c38ab195935f4497921778996922",
+      "bytes": 46945
     },
     {
       "path": "docs/USAGE.md",
@@ -788,13 +788,18 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "6819ab1c6963af08c689bf8939dbe30543d7d66b7074ced615d11802db484d4e",
-      "bytes": 1520
+      "sha256": "6fcb8fc3a44e283f733b335f6fcc945661930963bae91dfe9f91ae68ebd838ac",
+      "bytes": 1896
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "715e47dc1a3c22d2c1cf64888eeac531f38530273a64a8a781422c09849c371e",
-      "bytes": 4854
+      "sha256": "8e90547d55918454e2fd8157ae11aa6bdc2ba190d3ce63fdec866d7ac6657266",
+      "bytes": 5104
+    },
+    {
+      "path": "tooling/ci-rust.py",
+      "sha256": "a614a008ae380504a4b28a217edaf4bd1ae837971803d5d247f2aac1d1b0bebb",
+      "bytes": 2087
     },
     {
       "path": "tooling/compile_i18n.py",

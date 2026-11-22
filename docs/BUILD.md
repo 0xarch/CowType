@@ -138,3 +138,5 @@ Deepin 25 的 ARM64（`linuxdeepin/deepin:crimson-arm64`）与 LoongArch64（`li
 ## Fcitx5 版本兼容
 
 新增兼容层后，构建和运行基线调整为 Fcitx5 >= 5.1.11。>= 5.1.19 的原生测试使用新目录 API，旧版使用等价的旧接口，隔离路径检查保持启用。上表是兼容层引入前的历史结果；降低基线后仍需在各目标系统完成编译、安装及插件测试才能加入支持列表。libime >= 1.1.7、GTK >= 4.10、libadwaita >= 1.5、语音 Rust >= 1.88 等其他实际要求不随之降低。
+
+容器 CI 会检查实际 Rust 版本。系统编译器过旧时，仅在一次性容器的 `/opt/cowtype-rust/` 下载并校验固定 rustup 1.28.2，准备 Rust 1.88.0 minimal；Fcitx5、libime、GTK 等仍使用发行版原生库。手动构建请自行提供满足要求的工具链，此 CI 引导流程不会运行在用户桌面。

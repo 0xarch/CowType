@@ -2,6 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Runs only in disposable CI containers; never installs on the developer desktop.
 set -euo pipefail
+if [[ -d /opt/cowtype-rust/cargo/bin ]]; then
+  export RUSTUP_HOME=/opt/cowtype-rust/rustup CARGO_HOME=/opt/cowtype-rust/cargo
+  export PATH="/opt/cowtype-rust/cargo/bin:$PATH"
+fi
 case "${1:?Usage: ci-linux.sh dependencies|build|verify DISTRO}" in
 dependencies)
   case "$2" in
@@ -21,12 +25,15 @@ dependencies)
     debian*|ubuntu*|deepin*|openkylin*)
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
-      apt-get install -y --no-install-recommends build-essential cmake ninja-build cargo rustc libimecore-dev libimepinyin-dev libboost-dev libssl-dev librsvg2-bin libfcitx5core-dev libfcitx5config-dev libfcitx5utils-dev fcitx5 python3 python3-gi libgtk-4-bin gir1.2-gtk-4.0 gir1.2-adw-1 dpkg-dev git pkg-config dbus-bin ca-certificates
+      apt-get install -y --no-install-recommends build-essential cmake ninja-build cargo rustc libimecore-dev libimepinyin-dev libboost-dev libssl-dev librsvg2-bin libfcitx5core-dev libfcitx5config-dev libfcitx5utils-dev fcitx5 python3 python3-gi libgtk-4-bin gir1.2-gtk-4.0 gir1.2-adw-1 dpkg-dev git pkg-config dbus-bin ca-certificates curl
       ;;
     *) exit 2 ;;
   esac
+  python3 tooling/ci-rust.py
   ;;
 build)
+  rustc --version
+  cargo --version
   # The source artifact contains verified default data and Cargo vendor inputs.
   archive=$(find dist -maxdepth 1 -name 'cowtype-*-source.tar.gz' -print -quit)
   test -n "$archive"
