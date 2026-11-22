@@ -1148,5 +1148,38 @@
         "use": "Public API lifecycle inspection only."
       }
     ]
+  },
+  "wowtype_grid_review_2026_11_22": {
+    "documentation": "docs/WOWTYPE-GRID.md",
+    "upstream": "https://github.com/Gloridust/WowType",
+    "revision": "ebbe4c88d52f7ca6ddf27c4b062f913b79ad269b",
+    "scope": "Read-only architectural review of Linux text-row grids, session navigation, paging and row-level mouse selection; macOS custom-cell UI contrasted only. No implementation or data copied into CowType and no grid feature added.",
+    "reviewed_files": [
+      {
+        "path": "fcitx5-addon/src/wowtype_engine.cpp",
+        "bytes": 133924,
+        "sha256": "115bf41bdfc1ddf8579e5ef4d59e399435e630d39929eea4872e6a5ae2710fe3"
+      },
+      {
+        "path": "fcitx5-addon/src/wowtype_engine.h",
+        "bytes": 44683,
+        "sha256": "a8e3959c1103bbfa03edf2889cdec794d4110de38b034ed65dd223d359d889ac"
+      },
+      {
+        "path": "core/src/session.rs",
+        "bytes": 147549,
+        "sha256": "83bc16785bda3a348246060e1caaadc6b82a8382b325fec09a659152d5e73ced"
+      },
+      {
+        "path": "core/include/wowtype_core.h",
+        "bytes": 51519,
+        "sha256": "25eb98c3f41c7e30ba12ba77cba46976b87a54a89243addf00d52c033a6c6ba7"
+      },
+      {
+        "path": "macos/Sources/App/CandidatePanel.swift",
+        "bytes": 23386,
+        "sha256": "1dba52d9c22c303e832bc18fe22b1d7412089e7c6086fdfcf1631a663899a46b"
+      }
+    ]
   }
 }

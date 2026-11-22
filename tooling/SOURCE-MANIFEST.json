@@ -138,13 +138,18 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "2f48d80f1fcda020fd94ee53eba9fa6f8a22e2178e50f2369af0ddd61b2923e4",
-      "bytes": 52912
+      "sha256": "ab01bb3aef79c7d4f21ed907d3d597cce6afbc4295e42c8aefad81a072719809",
+      "bytes": 54270
     },
     {
       "path": "docs/USAGE.md",
       "sha256": "d5dcb77a9eb968190aa92520fdfcfd8c1d48784186faa90ecaa300296064522e",
       "bytes": 9159
+    },
+    {
+      "path": "docs/WOWTYPE-GRID.md",
+      "sha256": "03d4f84186844284eab73a36a2aaf1208ed287f3ceea6ce24acbea502e7d5682",
+      "bytes": 4187
     },
     {
       "path": "i18n/README.md",
