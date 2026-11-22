@@ -22,5 +22,5 @@ CowType 是 Linux Fcitx5 输入法，包含 Rust 核心、C++ 平台插件、GTK
 发布流程：
 1. 更改版本号及相关内容、CHANGELOG
 2. 推送新版本号并触发 GitHub Actions
-3. GitHub Actions 全部构建通过后收集各发行版构建产物
+3. GitHub Actions 全部以新版本号构建通过后收集各发行版构建产物
 4. 发布 Tag 和 Release ，描述文本附带 CHANGELOG ， Release Assets 附带各发行版构建产物
