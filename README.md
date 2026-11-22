@@ -95,17 +95,16 @@ GitHub Actions 已验证以下 Linux 目标的容器构建、安装包和插件�
 
 在 [Releases](https://github.com/0xarch/CowType/releases) 下载对应的发布包，
 或在 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载（下载 Actions 产物需要登录 GitHub）定期主线构建。
-注：主线构建不保证总是新于发布包。
 
-包经过容器内构建、安装和合成输入事件测试；这不代表完整桌面或真实麦克风验收。0.4.1 Release 提供上述全部 14 个系统/架构目标的预编译包。主线构建可能在部分情况下存在问题。
+注：主线构建不保证总是新于发布包。主线构建可能在部分情况下存在问题。
 
-请使用本发行版的软件包管理器安装对应的包。Debian unstable 和 openSUSE Tumbleweed 都是滚动目标，安装包面向各自的原生依赖；Deb 包不保证兼容 Debian 稳定版或 Ubuntu，Tumbleweed 的 RPM 不保证兼容 Leap 或 Fedora。
+请使用发行版的软件包管理器安装对应的包。Debian unstable 和 openSUSE Tumbleweed 都是滚动目标，安装包面向各自的原生依赖；Deb 包不保证兼容 Debian 稳定版或 Ubuntu，Tumbleweed 的 RPM 不保证兼容 Leap 或 Fedora。
 
-Fcitx5 兼容层支持 >= 5.1.11，已解除 Ubuntu、Deepin、Leap、openKylin 的原版本门槛。Deepin LoongArch64 已通过 QEMU 整包验证，全部系统、架构的结果与先前失败原因见[容器构建报告](docs/PLATFORM-TRIALS-2026-11-22.md)。依赖与工具链准备见[构建说明](docs/BUILD.md#fcitx5-版本兼容)。
+手动构建的依赖与工具链准备见[构建说明](docs/BUILD.md#fcitx5-版本兼容)。
 
 ### Arch Linux
 
-除了预编译包以外， Arch Linux 用户可以直接从本仓库构建最新代码。
+Arch Linux 用户可以直接从本仓库快速构建最新代码。
 
 先安装依赖，再下载项目并运行根目录脚本：
 
