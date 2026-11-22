@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "31c2fb6f205d4b6b13d95e1658cca1751a05f555a70fed5999264e1ebf3d3cb0",
-      "bytes": 10714
+      "sha256": "c8b3e0a52e229aab720e56b08e5779a0b0c107f658afc526cf458cac9540a9da",
+      "bytes": 10892
     },
     {
       "path": "CMakeLists.txt",
@@ -703,8 +703,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "6542c8f57e7f4e11cea7c9c936d9ff61b5d6a279710028da6dd3fd4eaa2412e4",
-      "bytes": 36753
+      "sha256": "17178b8bf69440ca8f6b707c99da3374e9e236a135eb5d7d4cce7ec5a8fc48fc",
+      "bytes": 37287
     },
     {
       "path": "tests/native/internal-code.cpp",
@@ -723,13 +723,13 @@
     },
     {
       "path": "tests/native/loading.cpp",
-      "sha256": "1ba4dfdbbf0579a51cb8e36227e761fe02b7ae5eaf58f14f903a7bbe529ec6af",
-      "bytes": 4777
+      "sha256": "c0555bb2c30285ed6ef693e37cc3b2e6e78da17b211890929b184a020a2df8fc",
+      "bytes": 4800
     },
     {
       "path": "tests/native/translate.cpp",
-      "sha256": "8b112bfe3ca7a7eedf7054b448adef0d3a1e8303c05cbe2b5f46f20a3c273f22",
-      "bytes": 8436
+      "sha256": "443609e411d1a5c782502d3eafb12a7e006b89d6c814caaeca3372a14d94f118",
+      "bytes": 8459
     },
     {
       "path": "tests/native/unicode-code.cpp",

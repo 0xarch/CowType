@@ -20,7 +20,7 @@
 #define CHECK(x) do { if(!(x))throw std::runtime_error("Translation check failed at line "+std::to_string(__LINE__)); } while(0)
 using namespace fcitx;
 struct Field : InputContext {
-    Field(InputContextManager &manager):InputContext(manager,"cowtype-translation-test"){created();}
+    Field(InputContextManager &manager):InputContext(manager,"cowtype-translation-test"){created();setEnablePreedit(true);}
     ~Field()override{destroy();}
     const char *frontend()const override{return "cowtype-synthetic";}
     std::vector<std::string> commits;

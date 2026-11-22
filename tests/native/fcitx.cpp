@@ -20,7 +20,7 @@
 #define CHECK(x) do { if (!(x)) { throw std::runtime_error("Fcitx check failed at line " + std::to_string(__LINE__)); } } while(0)
 using namespace fcitx;
 struct Field : InputContext {
-    explicit Field(InputContextManager &manager) : InputContext(manager, "cowtype-test") { created(); }
+    explicit Field(InputContextManager &manager) : InputContext(manager, "cowtype-test") { created(); setEnablePreedit(true); }
     ~Field() override { destroy(); }
     const char *frontend() const override { return "cowtype-synthetic"; }
     std::vector<std::string> committed;
@@ -71,6 +71,13 @@ int main(int argc, char **argv) {
                 CHECK(false);
             }
             CHECK(a.inputPanel().clientPreedit().cursor() == 4);
+            // Distribution defaults may disable inline preedit. Both display
+            // paths must work, while each test field selects its own policy.
+            a.setEnablePreedit(false); press(engine, pinyin, a, FcitxKey_F35);
+            CHECK(a.inputPanel().clientPreedit().empty());
+            CHECK(a.inputPanel().preedit().toString() == "shan");
+            a.setEnablePreedit(true); press(engine, pinyin, a, FcitxKey_F35);
+            CHECK(a.inputPanel().clientPreedit().toString() == "shan");
             auto list = a.inputPanel().candidateList(); CHECK(list && list->size() > 0);
             auto firstCandidate=list->candidate(0).text().toString();
             CHECK(press(engine,pinyin,a,FcitxKey_bracketright));

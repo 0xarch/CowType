@@ -16,7 +16,7 @@
 #include "isolation.h"
 using namespace fcitx;
 struct LoadingField : InputContext {
-    explicit LoadingField(InputContextManager &manager):InputContext(manager,"cowtype-loading-test"){created();}
+    explicit LoadingField(InputContextManager &manager):InputContext(manager,"cowtype-loading-test"){created();setEnablePreedit(true);}
     ~LoadingField() override{destroy();}
     const char *frontend()const override{return "cowtype-synthetic";}
     void commitStringImpl(const std::string &)override{}
