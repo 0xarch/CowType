@@ -62,4 +62,4 @@ Deepin `:25` 标签在本次测试中仅提供 amd64；其他架构使用其[上
 
 手动试构建还提供 `platform-report-<目标>-<架构>`（镜像清单、版本、阶段日志、result.json）、`platform-results` 汇总和通过目标的 `trial-package-*`。失败阶段及具体日志保留在对应运行中；Actions 产物有保留期限，下载需登录。
 
-当前 0.4.0 Release 附件保持原样，新系统和架构的包从 Actions 下载，将纳入下次发布的附件完整性检查。本轮不创建新版本、Tag 或 Release。构建方式见[BUILD](BUILD.md)，工作流使用见[打包说明](../packaging/README.md)。
+以上记录对应版本发布前的 0.4.0 开发构建；0.4.1 发布会重新构建并验证全部 14 个目标，再将对应版本的预编译包、离线源码、PKGBUILD 和 SHA256SUMS 提供于 [Release](https://github.com/0xarch/CowType/releases/tag/v0.4.1)。构建方式见[BUILD](BUILD.md)，工作流使用见[打包说明](../packaging/README.md)。

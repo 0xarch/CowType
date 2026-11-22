@@ -145,7 +145,7 @@ public:
             });
         resourceTimer_->setEnabled(false);
         reloadConfig();
-        ctDiagnostic("event=addon_ready version=0.4.0 elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
+        ctDiagnostic("event=addon_ready version=0.4.1 elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
     }
     const Configuration *getConfig() const override { return &settingsLauncher_; }
     void reloadConfig() override {
@@ -656,7 +656,7 @@ private:
         else if(const char *warning=cowtype2_runtime_warning(runtime_.get());warning && *warning){panel.setAuxDown(Text(warning));}
         ic->updatePreedit(); ic->updateUserInterface(UserInterfaceComponent::InputPanel);
     }
-    uint64_t initializedAt_=[]{const auto began=now(CLOCK_MONOTONIC);ctDiagnostic("event=addon_start version=0.4.0");return began;}();
+    uint64_t initializedAt_=[]{const auto began=now(CLOCK_MONOTONIC);ctDiagnostic("event=addon_start version=0.4.1");return began;}();
     std::unique_ptr<Cowtype2Runtime,decltype(&cowtype2_runtime_free)> runtime_{cowtype2_runtime_new(),cowtype2_runtime_free};
     SettingsLauncher settingsLauncher_;
     unsigned configGeneration_=0;

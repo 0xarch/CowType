@@ -97,7 +97,7 @@ GitHub Actions 已验证以下 Linux 目标的容器构建、安装包和插件�
 或在 [Actions](https://github.com/0xarch/CowType/actions/workflows/linux-packages.yml) 中打开成功的运行，从 **Artifacts** 下载（下载 Actions 产物需要登录 GitHub）定期主线构建。
 注：主线构建不保证总是新于发布包。
 
-包经过容器内构建、安装和合成输入事件测试；这不代表完整桌面或真实麦克风验收。新增系统和架构的包目前从 Actions 下载，将随下次发布提供；既有 0.4.0 Release 附件仍为原四目标 x86_64。主线构建可能在部分情况下存在问题。
+包经过容器内构建、安装和合成输入事件测试；这不代表完整桌面或真实麦克风验收。0.4.1 Release 提供上述全部 14 个系统/架构目标的预编译包。主线构建可能在部分情况下存在问题。
 
 请使用本发行版的软件包管理器安装对应的包。Debian unstable 和 openSUSE Tumbleweed 都是滚动目标，安装包面向各自的原生依赖；Deb 包不保证兼容 Debian 稳定版或 Ubuntu，Tumbleweed 的 RPM 不保证兼容 Leap 或 Fedora。
 

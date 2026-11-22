@@ -35,22 +35,22 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "e98ca0881037142f929f9ec58592e7b2010e5d1a683c724abe9e333fda8ee40d",
-      "bytes": 10818
+      "sha256": "88264f28ee590e25200b0d06e2dab62a2e1d042fbf5cafffb13036e78d629302",
+      "bytes": 11483
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "ccdf7acd14fc8670f0ec294635fa768c53c8559b7e10ecf80f5bde8d2d0a049e",
+      "sha256": "a60bc65b85ccc2f1da095f3adf9fcf9589a0a97cd21128941c42dbc0e7937df9",
       "bytes": 17114
     },
     {
       "path": "Cargo.lock",
-      "sha256": "5d239202206385745c35da8577d2c0e8892f5ba26d46716f955d985ffef8b040",
+      "sha256": "aee8ffd4f58ce8c53a54415a537ae7053b7f715738335a9207a29bad8bc65b40",
       "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "d881c4ed9ccca3f9c84b0f0254b124c79030289034e9a1e0fa35aea1f0b812df",
+      "sha256": "bc1dd60f64cc49be3936eb9d5ec3e5866d85c273e9663eea99a4f469619ba600",
       "bytes": 322
     },
     {
@@ -123,8 +123,8 @@
     },
     {
       "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
-      "sha256": "1df3a2e825aa9c284bf0855c3a8ea3646b60d39aa511478022ded6b231c653a2",
-      "bytes": 7477
+      "sha256": "457d04fe00791c41618188df168545310ad55d5ed7ac16d29c01514e87ae0e1f",
+      "bytes": 7565
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -163,12 +163,12 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "a525cb9bac2cddb5c77cc69c99f32350efa7a4ba5151204fad23d54ce495e0fa",
-      "bytes": 5472
+      "sha256": "5e89a32945f4c4f86aa946ea3aab686c3903c0721f49e7f86cd5ca7285ed75da",
+      "bytes": 5457
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "f247b65e92d61113ec29d5f1a741af006cb815b3c633b7fc61ffdfa66aa6bf35",
+      "sha256": "e88a75a31774297dee39d8a6325b8b82562bae66cf54c79b58186bd0f34e6d6e",
       "bytes": 1611
     },
     {
@@ -268,7 +268,7 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "4f007494999b8a3ef360cfd049e0f2ca947c7f40e95bc312bf9d5cc395339501",
+      "sha256": "828c8788afe745add8c0d98072751988b7891e149506732592e7c6d950b402d1",
       "bytes": 44981
     },
     {
@@ -373,7 +373,7 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "4118a35b413c3c9b643371fe3a05917a2397832b0f2d805b06e8286159b5ae72",
+      "sha256": "305bfc6a9548dc82cb589a93480cd5dd20867726c10ff309bc6813c0a4bc283a",
       "bytes": 22636
     },
     {
@@ -433,12 +433,12 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "0b4a2a90199fd6572f7f415f2cc920e7205aa2d7deb173bdfa2b0a5eee0b5c4c",
+      "sha256": "ae9d4e030121c10cbea72e789a25c7b9ba3b04df4e112cf177446d6d5cba860c",
       "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "72ab01fcb4d306700faa2f1abfeff0ee10be347f39824670920d6039573fea86",
+      "sha256": "6ee977f811a2f15042aca2a786e9427188ceb99b24f66096d64555bb409f516a",
       "bytes": 473
     },
     {
@@ -828,7 +828,7 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "a3598c66d0d359848e045832b0e170d662ceede06dac84a2cbdfad39bc37da61",
+      "sha256": "af45ca086a41d249820b868a8f4f5ad63db8bd76c05b6c70ecaa0dfe35b78002",
       "bytes": 5404
     },
     {
