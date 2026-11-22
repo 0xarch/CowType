@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(CowType VERSION 0.3.0 LANGUAGES C CXX)
+project(CowType VERSION 0.4.0 LANGUAGES C CXX)
 include(GNUInstallDirs)
 option(BUILD_TESTING "Build CowType development tests" OFF)
 include(CTest)
