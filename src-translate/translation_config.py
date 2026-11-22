@@ -62,25 +62,77 @@ def validate(values):
 
 
 def path():
-    return Path(os.environ.get('XDG_CONFIG_HOME') or Path.home() / '.config') / 'cowtype/translate-v1.json'
+    return Path(os.environ.get('XDG_CONFIG_HOME') or Path.home() / '.config') / 'cowtype/translate-v2.json'
 
 
-def load():
-    filename = path()
+def profile_defaults():
+    return dict(version=2, provider='bilibili', target='auto',
+                bilibili=dict(model=BILIBILI_MODEL),
+                custom=dict(api='', model='', key_source='environment'))
+
+
+def settings_for(profiles, provider=None):
+    provider = profiles['provider'] if provider is None else provider
+    if provider == 'bilibili':
+        values = dict(DEFAULTS, model=profiles['bilibili']['model'], target=profiles['target'])
+    else:
+        values = dict(version=1, provider='custom', target=profiles['target'], **profiles['custom'])
+    return validate(values)
+
+
+def validate_profiles(profiles):
+    if (not isinstance(profiles, dict) or set(profiles) != set(profile_defaults())
+            or type(profiles.get('version')) is not int or profiles['version'] != 2
+            or profiles['provider'] not in ('bilibili', 'custom') or profiles['target'] not in LANGUAGES
+            or not isinstance(profiles['bilibili'], dict) or set(profiles['bilibili']) != {'model'}
+            or profiles['bilibili']['model'] not in BILIBILI_MODELS
+            or not isinstance(profiles['custom'], dict) or set(profiles['custom']) != {'api', 'model', 'key_source'}):
+        raise TranslationError('config')
+    custom = profiles['custom']
+    if (custom['key_source'] not in ('none', 'environment', 'secret')
+            or not isinstance(custom['api'], str) or len(custom['api']) > 2048
+            or not isinstance(custom['model'], str) or len(custom['model']) > 256
+            or any(ord(c) < 32 or ord(c) == 127 for c in custom['api'] + custom['model'])):
+        raise TranslationError('config')
+    # Inactive custom form drafts may be incomplete. Only the selected service
+    # must be callable; switching to a preset must not erase the custom fields.
+    settings_for(profiles)
+    return dict(profiles, bilibili=dict(profiles['bilibili']), custom=dict(custom))
+
+
+def _read(filename):
+    with filename.open('rb') as stream:
+        data = stream.read(16385)
+    if len(data) > 16384:
+        raise TranslationError('config')
+    return json.loads(data)
+
+
+def load_profiles():
     try:
-        with filename.open('rb') as stream:
-            data = stream.read(16385)
-        if len(data) > 16384:
-            raise TranslationError('config')
-        return validate(json.loads(data))
-    except FileNotFoundError:
-        return DEFAULTS.copy()
-    except (OSError, ValueError, UnicodeError):
+        if path().exists():
+            return validate_profiles(_read(path()))
+        legacy = path().with_name('translate-v1.json')
+        if not legacy.exists():
+            return profile_defaults()
+        values = validate(_read(legacy))
+        profiles = profile_defaults()
+        profiles.update(provider=values['provider'], target=values['target'])
+        if values['provider'] == 'bilibili':
+            profiles['bilibili']['model'] = values['model']
+        else:
+            profiles['custom'] = {key: values[key] for key in ('api', 'model', 'key_source')}
+        return validate_profiles(profiles)
+    except (OSError, ValueError, TypeError, UnicodeError):
         raise TranslationError('config') from None
 
 
-def save(values):
-    values = validate(values)
+def load():
+    return settings_for(load_profiles())
+
+
+def save_profiles(profiles):
+    profiles = validate_profiles(profiles)
     filename = path()
     if any(parent.is_symlink() for parent in (filename, *filename.parents)):
         raise TranslationError('config')
@@ -88,7 +140,7 @@ def save(values):
     fd, temporary = tempfile.mkstemp(prefix='.translate-', dir=filename.parent)
     try:
         with os.fdopen(fd, 'w') as stream:
-            json.dump(values, stream, ensure_ascii=False)
+            json.dump(profiles, stream, ensure_ascii=False)
             stream.write('\n')
             stream.flush()
             os.fsync(stream.fileno())
@@ -96,3 +148,14 @@ def save(values):
     finally:
         if os.path.exists(temporary):
             os.unlink(temporary)
+
+
+def save(values):
+    values = validate(values)
+    profiles = load_profiles()
+    profiles.update(provider=values['provider'], target=values['target'])
+    if values['provider'] == 'bilibili':
+        profiles['bilibili']['model'] = values['model']
+    else:
+        profiles['custom'] = {key: values[key] for key in ('api', 'model', 'key_source')}
+    save_profiles(profiles)

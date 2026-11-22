@@ -232,6 +232,8 @@ def main():
                     assert self.translation_bilibili_model.get_visible()
                     self.translation_bilibili_model.set_selected(2)
                     self.translation_provider.set_selected(1)
+                    self.translation_api.set_text('https://synthetic.invalid/v1')
+                    self.translation_model.set_text('synthetic-model')
                     self.translation_key_source.set_selected(2)
                     assert self.translation_key.get_visible()
                     self.translation_key.set_text('synthetic-unsaved-key')
@@ -239,6 +241,13 @@ def main():
                     self.translation_provider.set_selected(0)
                     assert not self.translation_key.get_visible()
                     assert not self.translation_key.get_text()
+                    self.translation_bilibili_model.set_selected(1)
+                    self.translation_provider.set_selected(1)
+                    assert self.translation_api.get_text() == 'https://synthetic.invalid/v1'
+                    assert self.translation_model.get_text() == 'synthetic-model'
+                    assert self.translation_key_source.get_selected() == 2
+                    self.translation_provider.set_selected(0)
+                    self.translation_bilibili_model.set_selected(2)
                     self.translation_target.set_selected(0)
                     assert self.controls['RememberMode'].get_visible()
                     self.hotkey.set_selected(config.VOICE_HOTKEYS.index('Alt_L'))

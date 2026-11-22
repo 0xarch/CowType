@@ -25,8 +25,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "a53d59c4c2f4c8750f81764a085c8dd2b0d708656c60ff412efd334de29d0ce2",
-      "bytes": 6788
+      "sha256": "6c9a60a0faefe22fd4b8fce6898cbced1c2dafd683fbcf9fb6cfa6f920b8af19",
+      "bytes": 6944
     },
     {
       "path": "CMakeLists.txt",
@@ -128,8 +128,8 @@
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "630faa060d2d39171fd9c3023b0a0bb4280b5ab05bb9da6891629ead153b536c",
-      "bytes": 8141
+      "sha256": "a85b93be984af06b3aad1d43bb7913ec2c200978552b43f2f28847fd196d6184",
+      "bytes": 8245
     },
     {
       "path": "i18n/README.md",
@@ -343,13 +343,13 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "dc60a6fe8b813255e25f8691bbea329c56264755a942effca739a55562d2b0ce",
-      "bytes": 21973
+      "sha256": "0ae94df2676ded33a64960566a069781f248d2bb80e9ba446b174fab003fbd29",
+      "bytes": 22636
     },
     {
       "path": "src-settings/app/translation.py",
-      "sha256": "7de97479b64f03cc436997be406f725b0a2ccdc24d84945b33b386e55abe6d1c",
-      "bytes": 6924
+      "sha256": "6734b222eb490576a4523702a7fcfc1b1bb1b62aac4dd2d86552442bff7aea09",
+      "bytes": 7030
     },
     {
       "path": "src-settings/config/settings.py",
@@ -373,8 +373,8 @@
     },
     {
       "path": "src-translate/README.md",
-      "sha256": "4f06b676ef4ca4e2e030dc80b5779ef7c214134897389397c5dd59199a31e68e",
-      "bytes": 6412
+      "sha256": "44857f4581e10586e24da551da6b45e7ed5361070a4b5e6be69e826e4b6577e3",
+      "bytes": 6607
     },
     {
       "path": "src-translate/cowtype-translate.in",
@@ -393,8 +393,8 @@
     },
     {
       "path": "src-translate/translation_config.py",
-      "sha256": "2bcfddabfebb9131e216aae35bf5235ad4a92a18c73a789371e6450736757111",
-      "bytes": 3953
+      "sha256": "8cee2790b22661bc95feaa95fbe4245a31f608eac95fd09daf7a24bb296b5d6d",
+      "bytes": 6859
     },
     {
       "path": "src-translate/translation_credentials.py",
@@ -743,8 +743,8 @@
     },
     {
       "path": "tests/test_translate.py",
-      "sha256": "1d4658f926a3598f39dc1512376ebed259838b6343a63afbfb19842d4f0e8433",
-      "bytes": 12574
+      "sha256": "efec72479cf6f27e8662d11295e5f6b2bebb75112f270b1e4119875040c308c1",
+      "bytes": 14415
     },
     {
       "path": "tests/voice_resident.py",

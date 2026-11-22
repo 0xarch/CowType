@@ -25,7 +25,7 @@
 
 ## 设置与 Key
 
-启用开关及 `TranslateHotkey` 在 `settings-v1.ini`，非敏感服务设置在 `$XDG_CONFIG_HOME/cowtype/translate-v1.json`，权限 0600。服务配置需显式点击“保存翻译配置”，不会把 Key 写入此文件。
+启用开关及 `TranslateHotkey` 在 `settings-v1.ini`，非敏感服务设置在 `$XDG_CONFIG_HOME/cowtype/translate-v2.json`，权限 0600。Bilibili 模型与自定义 API 地址、模型、Key 来源分别保存，切换服务或重开设置都保留。旧 `translate-v1.json` 只读迁移，首次保存写入 v2，原文件保留。服务配置需显式点击“保存翻译配置”，不会把 Key 写入此文件。
 
 自定义接口的 Key 来源可选：
 

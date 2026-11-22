@@ -56,6 +56,35 @@ class TranslationTests(unittest.TestCase):
         self.assertEqual(config.path().stat().st_mode & 0o777,0o600)
         self.assertNotIn('fixture-key', config.path().read_text())
         with self.assertRaises(config.TranslationError): config.save(dict(values,api_key='never store'))
+    def test_provider_profiles_survive_preset_switch_save_and_reopen(self):
+        values=dict(self.settings,key_source='secret',target='ja')
+        config.save(values)
+        for model in config.BILIBILI_MODELS:
+            config.save(dict(config.DEFAULTS,model=model,target='ja'))
+            profiles=config.load_profiles()
+            self.assertEqual(profiles['custom'],{name:values[name] for name in ('api','model','key_source')})
+            self.assertEqual(config.load()['model'],model)
+            profiles['provider']='custom';config.save_profiles(profiles)
+            self.assertEqual(config.load(),values)
+        self.assertEqual(json.loads(config.path().read_text())['version'],2)
+    def test_inactive_custom_drafts_do_not_block_a_preset(self):
+        profiles=config.profile_defaults()
+        profiles['custom'].update(api='unfinished',model='draft-model',key_source='secret')
+        config.save_profiles(profiles)
+        self.assertEqual(config.load(),config.DEFAULTS)
+        self.assertEqual(config.load_profiles()['custom']['api'],'unfinished')
+        profiles['provider']='custom'
+        with self.assertRaises(config.TranslationError):config.save_profiles(profiles)
+    def test_legacy_config_migrates_without_erasing_or_overwriting_original(self):
+        legacy=config.path().with_name('translate-v1.json');legacy.parent.mkdir()
+        legacy.write_text(json.dumps(self.settings))
+        original=legacy.read_text()
+        self.assertEqual(config.load(),self.settings)
+        self.assertFalse(config.path().exists())
+        config.save(dict(config.DEFAULTS,model=config.BILIBILI_MODELS[0]))
+        self.assertEqual(legacy.read_text(),original)
+        profiles=config.load_profiles();profiles['provider']='custom';config.save_profiles(profiles)
+        self.assertEqual(config.load(),self.settings)
     def test_invalid_config_preserved_and_symlink_rejected(self):
         config.path().parent.mkdir()
         config.path().write_text('{broken')

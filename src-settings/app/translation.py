@@ -26,26 +26,26 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
     app.controls['Translate'] = enabled
     error = False
     try:
-        values = config.load()
+        profiles = config.load_profiles()
     except config.TranslationError:
-        values, error = config.DEFAULTS.copy(), True
+        profiles, error = config.profile_defaults(), True
     rows = app.group('translate', 'translate.service')
     provider = Adw.ComboRow(title=tr('translate.provider'), model=Gtk.StringList.new([
         tr('translate.provider.bilibili'), tr('translate.provider.custom')]))
-    provider.set_selected(0 if values['provider'] == 'bilibili' else 1)
+    provider.set_selected(0 if profiles['provider'] == 'bilibili' else 1)
     rows.add(provider)
-    api = Adw.EntryRow(title=tr('translate.api')); api.set_text(values['api']); rows.add(api)
-    model = Adw.EntryRow(title=tr('translate.model')); model.set_text(values['model']); rows.add(model)
+    api = Adw.EntryRow(title=tr('translate.api')); api.set_text(profiles['custom']['api']); rows.add(api)
+    model = Adw.EntryRow(title=tr('translate.model')); model.set_text(profiles['custom']['model']); rows.add(model)
     bilibili_model = Adw.ComboRow(title=tr('translate.model'), model=Gtk.StringList.new(config.BILIBILI_MODELS))
-    bilibili_model.set_selected(config.BILIBILI_MODELS.index(values['model'] if values['model'] in config.BILIBILI_MODELS else config.BILIBILI_MODEL))
+    bilibili_model.set_selected(config.BILIBILI_MODELS.index(profiles['bilibili']['model']))
     rows.add(bilibili_model)
     target = Adw.ComboRow(title=tr('translate.target'), model=Gtk.StringList.new([
         tr('translate.lang.' + language) for language in config.LANGUAGES]))
-    target.set_selected(config.LANGUAGES.index(values['target'])); rows.add(target)
+    target.set_selected(config.LANGUAGES.index(profiles['target'])); rows.add(target)
     key_sources = ('none', 'environment', 'secret')
     key_mode = Adw.ComboRow(title=tr('translate.key_source'), model=Gtk.StringList.new([
         tr('translate.key.' + source) for source in key_sources]))
-    key_mode.set_selected(key_sources.index(values['key_source'])); rows.add(key_mode)
+    key_mode.set_selected(key_sources.index(profiles['custom']['key_source'])); rows.add(key_mode)
     environment_hint = Adw.ActionRow(title=tr('translate.key.environment_hint'))
     environment_hint.set_title_lines(0); rows.add(environment_hint)
     key = Adw.PasswordEntryRow(title=tr('translate.key_value')); rows.add(key)
@@ -59,14 +59,13 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
 
     def visibility(*_):
         custom = provider.get_selected() == 1
-        api.set_sensitive(custom); model.set_sensitive(custom)
+        api.set_visible(custom)
         model.set_visible(custom); bilibili_model.set_visible(not custom)
-        key_mode.set_sensitive(custom)
+        key_mode.set_visible(custom)
         environment_hint.set_visible(custom and key_sources[key_mode.get_selected()] == 'environment')
         key.set_visible(custom and key_sources[key_mode.get_selected()] == 'secret')
         forget.set_visible(custom and key_sources[key_mode.get_selected()] == 'secret')
         if not custom:
-            api.set_text(config.BILIBILI_API); model.set_text(config.BILIBILI_MODELS[bilibili_model.get_selected()]); key_mode.set_selected(0)
             key.set_text('')
     provider.connect('notify::selected', visibility)
     key_mode.connect('notify::selected', visibility)
@@ -80,11 +79,14 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
         nonlocal busy
         if busy or error or app.load_error:
             return
-        settings = dict(version=1, provider='bilibili' if provider.get_selected() == 0 else 'custom',
-                        api=api.get_text().strip(), model=model.get_text().strip(),
-                        target=config.LANGUAGES[target.get_selected()], key_source=key_sources[key_mode.get_selected()])
+        profiles = dict(version=2, provider='bilibili' if provider.get_selected() == 0 else 'custom',
+                        target=config.LANGUAGES[target.get_selected()],
+                        bilibili=dict(model=config.BILIBILI_MODELS[bilibili_model.get_selected()]),
+                        custom=dict(api=api.get_text().strip(), model=model.get_text().strip(),
+                                    key_source=key_sources[key_mode.get_selected()]))
         try:
-            config.validate(settings)
+            config.validate_profiles(profiles)
+            settings = config.settings_for(profiles)
         except config.TranslationError as failure:
             status.set_title(tr(failure.code)); return
         password = key.get_text(); key.set_text('')
@@ -100,7 +102,7 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
                             credentials.store(settings, password)
                         else:
                             credentials.resolve(settings)
-                    config.save(settings)
+                    config.save_profiles(profiles)
                     reload_fcitx(); message = 'translate.saved'
                 else:
                     loader = (lambda _: password) if password and settings['key_source'] == 'secret' else credentials.resolve
@@ -129,3 +131,5 @@ def build(app, Adw, Gtk, GLib, tr, reload_fcitx):
     app.translation_target = target
     app.translation_key_source = key_mode
     app.translation_bilibili_model = bilibili_model
+    app.translation_api = api
+    app.translation_model = model
