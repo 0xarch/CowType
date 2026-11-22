@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "reviewed_on": "2026-11-22",
+  "reviewed_on": "2026-11-23",
   "scope": "Project source snapshot; excludes build output, models and user data",
   "files": [
     {
@@ -35,22 +35,22 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "c7bc258571fdb28a56ae30e6c10225337464ddc5fd652241c0b7b0ab2e8b7980",
-      "bytes": 13799
+      "sha256": "365f131dc1542134e24a5d121c1393877853ea6fdb3696f318c2f13cd32b61ee",
+      "bytes": 14382
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "00d93cc2e86851605c12990cb2714d597077b33a77f15a661fdb27dc1595ed9c",
+      "sha256": "fcc2f2a268d59f7309e6f5d054df50cb0f1c66cf3d9395486c6de13706900627",
       "bytes": 17308
     },
     {
       "path": "Cargo.lock",
-      "sha256": "aee8ffd4f58ce8c53a54415a537ae7053b7f715738335a9207a29bad8bc65b40",
+      "sha256": "8a279467e6f6ff110b338d99b9d693413bb5e94fcc7603331f0f71bf7b9d656a",
       "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "bc1dd60f64cc49be3936eb9d5ec3e5866d85c273e9663eea99a4f469619ba600",
+      "sha256": "47902d35ae63abe3100658c9b68c9ac11b8668e7827834104c89d83c6f6edbb4",
       "bytes": 322
     },
     {
@@ -168,12 +168,12 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "5e89a32945f4c4f86aa946ea3aab686c3903c0721f49e7f86cd5ca7285ed75da",
-      "bytes": 5457
+      "sha256": "ad0443dc52e17b215923c617a1913343475ee96feba2e784246fb49cbb895edb",
+      "bytes": 5451
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "e88a75a31774297dee39d8a6325b8b82562bae66cf54c79b58186bd0f34e6d6e",
+      "sha256": "7a80bb3cf1e5d83e6211f3874033a6d58d191be9121106d65eff947709201c77",
       "bytes": 1611
     },
     {
@@ -288,7 +288,7 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "356f6e7e8a5cfe6b18b26e4be0e7b306f159fc19c857d60ca4c0af9e13cf4766",
+      "sha256": "f1301546c0a8606823a4af452b565769b7f0436ff8a274ffe909cf7b3f6b776f",
       "bytes": 45384
     },
     {
@@ -403,7 +403,7 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "afcc6b8d16ee8388760b756dbf5096a5060b250c835eb152fa3daf657007a2b1",
+      "sha256": "5ce12600cb3478bd244824275af8aa9cb32764b0d5248185482c494c1bc937fa",
       "bytes": 31262
     },
     {
@@ -478,12 +478,12 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "ae9d4e030121c10cbea72e789a25c7b9ba3b04df4e112cf177446d6d5cba860c",
+      "sha256": "b219811fd4ff71b685e6f12124cdc6e140a55fc3db4e3484f41fc92b9503db08",
       "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "6ee977f811a2f15042aca2a786e9427188ceb99b24f66096d64555bb409f516a",
+      "sha256": "00e885416e0704fceec446addc15faabd685deba26422b036a26338fe688bcff",
       "bytes": 473
     },
     {
@@ -908,7 +908,7 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "af45ca086a41d249820b868a8f4f5ad63db8bd76c05b6c70ecaa0dfe35b78002",
+      "sha256": "efa1a58fa22af4a104f10329f0507e9426d83f994a895824a3f0c9482843ce23",
       "bytes": 5404
     },
     {

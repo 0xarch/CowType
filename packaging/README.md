@@ -34,7 +34,7 @@ Debian 包内部版本保留 `-1~<目标>`，发布文件名使用 `-1.<目标>`
 
 先更新版本号和 CHANGELOG，推送 dev/main 触发 `Linux packages`。全部任务成功后，在同一提交上手动运行 `Publish verified release` 并填写成功 run ID。发布任务验证构建来源、分支和提交一致，再收集 14 个系统/架构原生包及离线源码、PKGBUILD，检查附件齐全、生成 SHA256SUMS，最后创建 Tag 和 Release。发布说明取自 CHANGELOG。
 
-普通构建不创建 Tag 或 Release；发布复用该提交已验证的产物，已有标签或 Release 不会自动覆盖。0.4.1 Release 提供全部 14 个目标的预编译包，附带离线源码、PKGBUILD 和 SHA256SUMS。
+普通构建不创建 Tag 或 Release；发布复用该提交已验证的产物，已有标签或 Release 不会自动覆盖。Release 提供全部 14 个目标的预编译包，附带离线源码、PKGBUILD 和 SHA256SUMS。
 
 ## 手动平台试构建
 

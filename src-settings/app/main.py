@@ -528,7 +528,7 @@ def main():
 
         def about(self, *_):
             dialog = Adw.AboutDialog(application_name=tr('app.name'), application_icon='cowtype',
-                version='0.4.1', license_type=Gtk.License.GPL_3_0, comments=tr('about.comments'),
+                version='0.4.2', license_type=Gtk.License.GPL_3_0, comments=tr('about.comments'),
                 website='https://github.com/0xarch/CowType', issue_url='https://github.com/0xarch/CowType/issues')
             dialog.present(self.window)
 
