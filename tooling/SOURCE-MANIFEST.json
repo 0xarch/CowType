@@ -14,6 +14,11 @@
       "bytes": 2983
     },
     {
+      "path": ".github/workflows/platform-trials.yml",
+      "sha256": "3a7968e0ef37b75970bf6b3832cf3496772f78f8aec9ca453cd3923aafcba320",
+      "bytes": 5730
+    },
+    {
       "path": ".github/workflows/publish-release.yml",
       "sha256": "0b6dafbaab5c4059a571dcb90237493e2ed08456d4b5ddacf1b1126b2e1a3a83",
       "bytes": 2651
@@ -768,8 +773,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "0c2e68f708b353e26a4149b67acca8f1232b47ea76a7cc0c65af25ce0b52eaa5",
-      "bytes": 4843
+      "sha256": "715e47dc1a3c22d2c1cf64888eeac531f38530273a64a8a781422c09849c371e",
+      "bytes": 4854
     },
     {
       "path": "tooling/compile_i18n.py",
@@ -800,6 +805,16 @@
       "path": "tooling/package_linux.py",
       "sha256": "c958c94eac87298d1d84b07534c8d03cd9b4ee22cc790438f8bf97490fb6e529",
       "bytes": 4738
+    },
+    {
+      "path": "tooling/platform-probe.sh",
+      "sha256": "0f2aafbcb1edf09f97d0ec888cda0bef7690580eec50708e502ab8bead711157",
+      "bytes": 988
+    },
+    {
+      "path": "tooling/platform_trials.py",
+      "sha256": "7f8cfe10971170464bc3a6a0e209241c6fcead0f3f941017c9cca16c3afe31e9",
+      "bytes": 6158
     },
     {
       "path": "tooling/prepare_release.py",

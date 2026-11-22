@@ -18,7 +18,7 @@ dependencies)
       # a real text font to render the headless GTK settings smoke test.
       zypper --non-interactive install --no-recommends gcc-c++ make cmake ninja rust cargo libime-devel boost-devel libopenssl-devel rsvg-convert fcitx5 fcitx5-devel python3 python3-gobject python3-gobject-Gdk gtk4-tools typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 dejavu-fonts rpm-build git pkgconf-pkg-config dbus-1 findutils file ca-certificates
       ;;
-    debian*|ubuntu*|deepin*)
+    debian*|ubuntu*|deepin*|openkylin*)
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
       apt-get install -y --no-install-recommends build-essential cmake ninja-build cargo rustc libimecore-dev libimepinyin-dev libboost-dev libssl-dev librsvg2-bin libfcitx5core-dev libfcitx5config-dev libfcitx5utils-dev fcitx5 python3 python3-gi libgtk-4-bin gir1.2-gtk-4.0 gir1.2-adw-1 dpkg-dev git pkg-config dbus-bin ca-certificates

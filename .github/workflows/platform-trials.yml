@@ -1,0 +1,134 @@
+name: Linux platform trials
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: platform-trials-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source:
+    name: Verify and prepare trial source
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test core and data tools
+        run: |
+          python3 tooling/development.py
+          cargo fmt --check
+          cargo fmt --check --manifest-path src-voice/Cargo.toml
+          CARGO_TARGET_DIR="$PWD/target" cargo test --locked --features native-ffi
+          CARGO_TARGET_DIR="$PWD/target" cargo test --locked --manifest-path src-voice/Cargo.toml
+          python3 -m unittest discover -s tests -p 'test_*.py'
+          python3 -m unittest discover -s src-voice/paraformer/tests -p 'test_*.py'
+          python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
+      - id: matrix
+        run: echo "value=$(python3 tooling/platform_trials.py matrix)" >> "$GITHUB_OUTPUT"
+      - name: Prepare pinned offline inputs
+        run: |
+          python3 src-data-tools/dictionaries/manage.py build-default --source-cache build/review --output build/data
+          cargo vendor --locked --versioned-dirs --manifest-path src-voice/Cargo.toml build/voice-vendor
+          python3 tooling/package_arch.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trial-prepared-source
+          path: |
+            dist/cowtype-*-source.tar.gz
+            dist/PKGBUILD
+          if-no-files-found: error
+  trials:
+    name: Trial ${{ matrix.distro }} ${{ matrix.arch }}
+    needs: source
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.source.outputs.matrix) }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check image platform availability
+        id: image
+        run: |
+          mkdir -p build/platform-report
+          python3 tooling/platform_trials.py inspect '${{ matrix.image }}' '${{ matrix.platform }}' build/platform-report >> "$GITHUB_OUTPUT"
+      - name: Enable LoongArch64 emulation
+        id: qemu
+        if: steps.image.outputs.available == 'true' && matrix.arch == 'loongarch64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: loong64
+      - uses: actions/download-artifact@v4
+        if: steps.image.outputs.available == 'true'
+        with:
+          name: trial-prepared-source
+          path: dist
+      - name: Start isolated native distribution container
+        id: container
+        if: steps.image.outputs.available == 'true'
+        run: |
+          docker run --detach --name cowtype-platform --platform '${{ matrix.platform }}' \
+            --volume "$PWD:/work" --workdir /work '${{ matrix.image }}' sleep infinity
+      - name: Check native Fcitx5 version
+        id: probe
+        if: steps.image.outputs.available == 'true'
+        run: docker exec cowtype-platform bash tooling/platform-probe.sh '${{ matrix.distro }}' 2>&1 | tee build/platform-report/probe.log
+      - name: Install build dependencies
+        id: dependencies
+        if: steps.image.outputs.available == 'true'
+        run: docker exec cowtype-platform bash tooling/ci-linux.sh dependencies '${{ matrix.distro }}' 2>&1 | tee build/platform-report/dependencies.log
+      - name: Build, test and package
+        id: build
+        if: steps.image.outputs.available == 'true'
+        run: docker exec cowtype-platform bash tooling/ci-linux.sh build '${{ matrix.distro }}' '${{ matrix.format }}' 2>&1 | tee build/platform-report/build.log
+      - name: Install and verify native package
+        id: verify
+        if: steps.image.outputs.available == 'true'
+        run: docker exec --env COWTYPE_VOICE_HELPER=/work/tests/native/fake-voice.py cowtype-platform bash tooling/ci-linux.sh verify '${{ matrix.distro }}' 2>&1 | tee build/platform-report/verify.log
+      - name: Record trial outcome
+        if: always()
+        env:
+          STAGES: ${{ toJSON(steps) }}
+        run: |
+          mkdir -p build/platform-report
+          stages=$(python3 -c 'import json,os; print(json.dumps({k:v["outcome"] for k,v in json.loads(os.environ["STAGES"]).items()}))')
+          python3 tooling/platform_trials.py record build/platform-report '${{ matrix.distro }}' '${{ matrix.arch }}' "$stages"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: platform-report-${{ matrix.distro }}-${{ matrix.arch }}
+          path: build/platform-report
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: steps.verify.outcome == 'success'
+        with:
+          name: trial-package-${{ matrix.distro }}-${{ matrix.arch }}
+          path: dist/packages/*
+          if-no-files-found: error
+      - name: Remove isolated container
+        if: always()
+        run: docker rm --force cowtype-platform || true
+  summary:
+    name: Summarize every requested platform
+    if: always()
+    needs: [source, trials]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: platform-report-*
+          path: build/platform-reports
+      - name: Generate report
+        run: |
+          python3 tooling/platform_trials.py summary build/platform-reports build/platform-results.md
+          cat build/platform-results.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: platform-results
+          path: build/platform-results.md
