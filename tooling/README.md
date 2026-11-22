@@ -11,3 +11,5 @@ development.py 检查项目源码清单和文档链接，`--refresh` 更新 SOUR
 `platform_trials.py` 定义手动试构建矩阵、检查容器镜像的平台可用性、记录各阶段结果并生成汇总；`platform-probe.sh` 仅在一次性容器内安装原生 Fcitx5 开发包并检查最低版本。完整依赖、开发测试、生产打包和安装验证复用 `ci-linux.sh`。试构建记录见[平台报告](../docs/PLATFORM-TRIALS-2026-11-22.md)。
 
 `ci-rust.py` 仅用于一次性 CI 容器：系统 Rust < 1.88 时，从 Rust 官方下载固定 rustup 1.28.2（按架构内置 SHA-256 校验），在 `/opt/cowtype-rust/` 安装固定 Rust 1.88.0 minimal 工具链。`ci-linux.sh` 在后续阶段显式复用该目录；已有足够新编译器时不下载。不会更新开发者桌面、替换系统库或下载模型。
+
+平台试构建可通过 `gh workflow run platform-trials.yml --ref dev -f targets=deepin23-x86_64,openkylin-x86_64` 仅重试指定组合；默认 `all`。筛选值必须属于固定矩阵，不接受任意镜像/脚本，汇总只列请求的目标；不同筛选的运行可同时进行。

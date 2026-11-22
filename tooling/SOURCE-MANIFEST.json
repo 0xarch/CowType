@@ -15,8 +15,8 @@
     },
     {
       "path": ".github/workflows/platform-trials.yml",
-      "sha256": "3a7968e0ef37b75970bf6b3832cf3496772f78f8aec9ca453cd3923aafcba320",
-      "bytes": 5730
+      "sha256": "8c07295ef09e5e99004e798384d840789cdd9313be0ed64074cb9f0c0852a764",
+      "bytes": 6131
     },
     {
       "path": ".github/workflows/publish-release.yml",
@@ -703,8 +703,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "7415f9f362761fb8c02e48f3d4745474c74c24151fe1f5984b0255cc69a20009",
-      "bytes": 34546
+      "sha256": "13586a1bdb872bf2bac0d7e86b48e123a112e8c62858b9c4228a3e2cf8f99ae2",
+      "bytes": 35064
     },
     {
       "path": "tests/native/internal-code.cpp",
@@ -793,8 +793,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "6fcb8fc3a44e283f733b335f6fcc945661930963bae91dfe9f91ae68ebd838ac",
-      "bytes": 1896
+      "sha256": "49a82e4293ec9a527b903fac8f2402d8930656373e0ea83156aa49df23e98a51",
+      "bytes": 2190
     },
     {
       "path": "tooling/ci-linux.sh",
@@ -843,8 +843,8 @@
     },
     {
       "path": "tooling/platform_trials.py",
-      "sha256": "5405fe7fa7fea126de341b270e2fb2146a4502d92c46078f647bf66ab11ed306",
-      "bytes": 6158
+      "sha256": "5d6c88f64645029bb8c42ae1c39485cc7ac1c7238224778c5d05eb36a0fed8f7",
+      "bytes": 6763
     },
     {
       "path": "tooling/prepare_release.py",

@@ -62,7 +62,14 @@ int main(int argc, char **argv) {
             for (unsigned i=0; i<100 && !a.inputPanel().candidateList(); ++i) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(5)); press(engine, pinyin, a, FcitxKey_F35);
             }
-            CHECK(a.inputPanel().clientPreedit().toString() == "shan");
+            if (a.inputPanel().clientPreedit().toString() != "shan") {
+                std::cerr << "Synthetic preedit mismatch: client_bytes=" << a.inputPanel().clientPreedit().toString().size()
+                          << " panel_bytes=" << a.inputPanel().preedit().toString().size()
+                          << " cursor=" << a.inputPanel().clientPreedit().cursor()
+                          << " client_capability=" << a.capabilityFlags().test(CapabilityFlag::Preedit)
+                          << " commits=" << a.committed.size() << '\n';
+                CHECK(false);
+            }
             CHECK(a.inputPanel().clientPreedit().cursor() == 4);
             auto list = a.inputPanel().candidateList(); CHECK(list && list->size() > 0);
             auto firstCandidate=list->candidate(0).text().toString();

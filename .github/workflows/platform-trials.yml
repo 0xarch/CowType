@@ -1,10 +1,16 @@
 name: Linux platform trials
 on:
   workflow_dispatch:
+    inputs:
+      targets:
+        description: 'all or comma-separated distro-arch targets (for example deepin23-x86_64,openkylin-x86_64)'
+        default: all
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
-  group: platform-trials-${{ github.ref }}
+  group: platform-trials-${{ github.ref }}-${{ inputs.targets }}
   cancel-in-progress: false
 jobs:
   source:
@@ -26,7 +32,9 @@ jobs:
           python3 -m unittest discover -s src-voice/paraformer/tests -p 'test_*.py'
           python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
       - id: matrix
-        run: echo "value=$(python3 tooling/platform_trials.py matrix)" >> "$GITHUB_OUTPUT"
+        env:
+          TRIAL_TARGETS: ${{ inputs.targets }}
+        run: echo "value=$(python3 tooling/platform_trials.py matrix --targets "$TRIAL_TARGETS")" >> "$GITHUB_OUTPUT"
       - name: Prepare pinned offline inputs
         run: |
           python3 src-data-tools/dictionaries/manage.py build-default --source-cache build/review --output build/data
@@ -125,8 +133,10 @@ jobs:
           pattern: platform-report-*
           path: build/platform-reports
       - name: Generate report
+        env:
+          TRIAL_TARGETS: ${{ inputs.targets }}
         run: |
-          python3 tooling/platform_trials.py summary build/platform-reports build/platform-results.md
+          python3 tooling/platform_trials.py summary build/platform-reports build/platform-results.md --targets "$TRIAL_TARGETS"
           cat build/platform-results.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
