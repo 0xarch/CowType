@@ -44,3 +44,48 @@ fn wubi_session_uses_same_selection_and_reset_contract() {
     );
     assert!(session.frame().preedit.is_empty());
 }
+
+#[test]
+fn double_pinyin_option_never_changes_late_wubi_attachment() {
+    let mut config = SessionConfig::default();
+    config.shuangpin = true;
+    let mut session = Session::new(None, config);
+    // An explicitly validated MS profile accepts its semicolon before loading.
+    session.set_pending_shuangpin_semicolon(true);
+    session.key(Event::press(Key::Character('n')));
+    assert!(session
+        .key(Event::press(Key::Character(';')))
+        .commit
+        .is_none());
+    assert_eq!(session.input(), "n;");
+    session.key(Event::press(Key::Escape));
+    let table = WubiTable::from_tsv("a\t工\t100\n".as_bytes())
+        .unwrap()
+        .value;
+    session.set_engine(Some(Arc::new(Engine::from_wubi(table))));
+    session.key(Event::press(Key::Character('a')));
+    assert_eq!(session.frame().candidates[0].text, "工");
+    assert_eq!(
+        session
+            .key(Event::press(Key::Character(';')))
+            .commit
+            .as_deref(),
+        Some("工；")
+    );
+}
+
+#[test]
+fn cold_wubi_does_not_claim_shuangpin_punctuation() {
+    let mut config = SessionConfig::default();
+    config.shuangpin = true;
+    let mut session = Session::new(None, config);
+    // Host supplies no double-pinyin capability for the Wubi resource.
+    session.set_pending_shuangpin_semicolon(false);
+    assert_eq!(
+        session
+            .key(Event::press(Key::Character(';')))
+            .commit
+            .as_deref(),
+        Some("；")
+    );
+}

@@ -289,3 +289,18 @@ setting.SystemDictionary	Use the system Fcitx/libime pinyin dictionary
 hint.system_dictionary	Off by default. Merges and prioritizes the system dictionary when enabled, which can change candidate ranking and increase query cost. Independent of the local statistical model.
 setting.AutoSpace	Automatically space Chinese and English
 hint.autospace	Add spaces between Chinese characters and Latin letters or digits in ordinary text fields that provide cursor context.
+setting.Shuangpin	Double pinyin input
+hint.shuangpin	Use two-key syllable codes. Automatic u-prefix Unicode input is disabled while double pinyin is enabled.
+setting.ShuangpinProfile	Double pinyin scheme
+setting.ShuangpinCustom	Custom scheme file (absolute path)
+error.shuangpin_profile	Invalid double pinyin scheme.
+error.shuangpin_path	The custom double pinyin scheme must use a valid absolute path.
+shuangpin.Ziranma	Natural Code
+shuangpin.MS	Microsoft
+shuangpin.Ziguang	Ziguang
+shuangpin.ABC	Intelligent ABC
+shuangpin.Zhongwenzhixing	Chinese Star
+shuangpin.PinyinJiajia	Pinyin Jiajia
+shuangpin.Xiaohe	Xiaohe
+shuangpin.GB	GB Standard
+shuangpin.Custom	Custom

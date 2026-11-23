@@ -109,7 +109,16 @@ fn one_mistaken_confirmation_does_not_override_dictionary_order() {
 #[derive(Debug)]
 struct ReversedProvider;
 impl CandidateProvider for ReversedProvider {
-    fn query(&self, raw: &str, _: bool, _: bool, _: bool, _: bool, _: usize) -> Vec<Candidate> {
+    fn query(
+        &self,
+        raw: &str,
+        _: bool,
+        _: bool,
+        _: bool,
+        _: bool,
+        _: usize,
+        _: bool,
+    ) -> Vec<Candidate> {
         vec![
             Candidate {
                 text: "那".into(),

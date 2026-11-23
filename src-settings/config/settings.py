@@ -10,7 +10,8 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "i18n"))
 from catalog import tr
 
-DEFAULTS = dict(AutoSpace='False', Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
+SHUANGPIN_PROFILES = ('Ziranma', 'MS', 'Ziguang', 'ABC', 'Zhongwenzhixing', 'PinyinJiajia', 'Xiaohe', 'GB', 'Custom')
+DEFAULTS = dict(Shuangpin='False', ShuangpinProfile='Ziranma', ShuangpinCustom='', AutoSpace='False', Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
                 Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', SystemDictionary='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', SymbolCandidateLimit='4', EmojiCandidateLimit='4', CorrectionCandidateLimit='5', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
 def shortcut_registry():
@@ -64,6 +65,11 @@ def validate(values):
     for key in ('SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit'):
         if not values[key].isdigit() or not 0 <= int(values[key]) <= 12:
             raise ValueError(tr('error.candidate_limit'))
+    if values['ShuangpinProfile'] not in SHUANGPIN_PROFILES:
+        raise ValueError(tr('error.shuangpin_profile'))
+    path = values['ShuangpinCustom']
+    if len(path) > 4096 or any(c in path for c in ('\0', '\n', '\r')) or (path and not Path(path).is_absolute()):
+        raise ValueError(tr('error.shuangpin_path'))
     assigned = set()
     aliases = {'Shift': ('Shift_L', 'Shift_R'), 'Control': ('Control_L', 'Control_R'),
                'Alt': ('Alt_L', 'Alt_R'), 'Super': ('Super_L', 'Super_R'), 'None': ()}
@@ -75,7 +81,7 @@ def validate(values):
         if assigned & physical:
             raise ValueError(tr('error.shortcut.conflict'))
         assigned.update(physical)
-    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *SHORTCUTS}:
+    for key in DEFAULTS.keys() - {'ShuangpinProfile', 'ShuangpinCustom', 'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *SHORTCUTS}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values

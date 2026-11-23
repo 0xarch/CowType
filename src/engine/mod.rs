@@ -56,11 +56,13 @@ pub trait CandidateProvider: std::fmt::Debug + Send + Sync {
         completion: bool,
         initials: bool,
         correction_limit: usize,
+        shuangpin: bool,
     ) -> Vec<Candidate>;
 }
 #[derive(Clone, Debug)]
 pub struct Engine {
     provider: Option<Arc<dyn CandidateProvider>>,
+    pub(crate) shuangpin_semicolon: bool,
     dictionary: Dictionary,
     syllables: Vec<Arc<str>>,
     index: BTreeMap<String, Vec<usize>>,
@@ -117,6 +119,7 @@ impl Engine {
                 .ln();
         Self {
             provider: None,
+            shuangpin_semicolon: false,
             dictionary,
             syllables,
             index,

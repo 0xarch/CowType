@@ -4,6 +4,7 @@
 #include "cowtype2.h"
 #include "dictionary.h"
 #include "spelling.h"
+#include "shuangpin.h"
 #include <libime/pinyin/pinyindecoder.h>
 #include <cstdlib>
 #include <libime/pinyin/pinyinime.h>
@@ -44,7 +45,7 @@ public:
     static std::string modelPath() { return installed("COWTYPE_STATISTICAL_MODEL_FILE", COWTYPE_LIBIME_MODEL_FILE); }
     LibimeDecoder(const std::string &path, const std::string &optional)
         : LibimeDecoder(cowtype::PinyinSources{path, optional, "", "", ""}, false) {}
-    LibimeDecoder(const cowtype::PinyinSources &sources, bool statisticalModel) {
+    LibimeDecoder(const cowtype::PinyinSources &sources, bool statisticalModel, unsigned profile=0, const std::string &customProfile="") {
         (void)cowtype::spellingSyllables();
         auto compiled = cowtype::loadPinyin(sources);
         warnings = compiled.warnings; cacheHit = compiled.cacheHit;
@@ -58,7 +59,9 @@ public:
         }
         ime_ = std::make_unique<libime::PinyinIME>(std::move(compiled.dictionary), std::move(model));
         ime_->setCorrectionProfile(std::make_shared<libime::PinyinCorrectionProfile>(libime::BuiltinPinyinCorrectionProfile::Qwerty));
+        ime_->setShuangpinProfile(cowtype::shuangpinProfile(profile,customProfile,ime_->correctionProfile().get()));
     }
+    bool shuangpinSemicolon() const { return ime_->shuangpinProfile()->validInput().contains(';'); }
     static void destroy(void *p) { delete static_cast<LibimeDecoder *>(p); }
     static void query(void *p,const char *raw,uint32_t flags,Cowtype2Emit emit,void *output) noexcept {
         try { static_cast<LibimeDecoder *>(p)->queryImpl(raw,flags,emit,output); }
@@ -68,7 +71,8 @@ public:
         std::lock_guard lock(mutex_);
         if(raw.empty() || raw.size()>128) return;
         std::transform(raw.begin(),raw.end(),raw.begin(),[](unsigned char c){return std::tolower(c);});
-        if(raw.find_first_not_of("abcdefghijklmnopqrstuvwxyz' ")!=std::string::npos) return;
+        const bool shuangpin=flags&16;
+        if(raw.find_first_not_of(shuangpin?"abcdefghijklmnopqrstuvwxyz;' ":"abcdefghijklmnopqrstuvwxyz' ")!=std::string::npos) return;
         std::replace(raw.begin(),raw.end(),' ','\'');
         auto workspace = [&](bool correction) -> libime::PinyinContext & {
             const unsigned slot=correction?1:0;
@@ -84,6 +88,7 @@ public:
                (!raw.starts_with(context->userInput()) && !context->userInput().starts_with(raw))) {
                 context=std::make_unique<libime::PinyinContext>(ime_.get());
                 context->setMaxSentenceLength(128);
+                context->setUseShuangpin(shuangpin);
                 contextFlags_[slot]=options;
             }
             const auto previous=context->userInput();
@@ -102,7 +107,7 @@ public:
         // Typo edges can prune a literal sentence even when the surviving
         // multiword path has no correction marker. Preserve the plain sentence
         // search for composed best paths, as well as explicit corrections.
-        const bool recover=(flags&2) && !primaryCandidates.empty() &&
+        const bool recover=!shuangpin && (flags&2) && !primaryCandidates.empty() &&
             (hasCorrection(primaryCandidates.front()) || primaryCandidates.front().size()>1);
         std::string typed=raw;
         typed.erase(std::remove(typed.begin(),typed.end(),'\''),typed.end());
@@ -173,12 +178,12 @@ public:
                 const bool literal=full==typed && consumed==raw.size();
                 if(pass && !literal) continue;
                 const bool corrected=hasCorrection(candidate);
-                if(!(flags&8)) {
+                if(!shuangpin && !(flags&8)) {
                     auto prefix=raw.substr(0,consumed);
                     prefix.erase(std::remove(prefix.begin(),prefix.end(),'\''),prefix.end());
                     if(full!=prefix && !((flags&4) && full.starts_with(prefix))) continue;
                 }
-                const bool protectedReading=!corrected && typedReading(reading,consumed);
+                const bool protectedReading=!corrected && (shuangpin || typedReading(reading,consumed));
                 std::replace(reading.begin(),reading.end(),'\'',' ');
                 ranked.push_back({candidate.toString(),std::move(reading),consumed,corrected,literal,bool(pass),tier(candidate),protectedReading});
             }
@@ -189,8 +194,8 @@ public:
         const bool exactReading=std::any_of(ranked.begin(),ranked.end(),[&](const auto &c) {
             return c.consumed==raw.size() && !c.corrected && typedReading(c.reading,c.consumed,false);
         });
-        const bool searchCorrections=(flags&2) && !exactReading;
-        const bool searchCompletions=(flags&4) && !exactReading;
+        const bool searchCorrections=!shuangpin && (flags&2) && !exactReading;
+        const bool searchCompletions=!shuangpin && (flags&4) && !exactReading;
         if(searchCorrections || searchCompletions) {
             for(auto &match:cowtype::spellingMatches(*dictionary_,raw,searchCompletions)) {
                 if(match.edits && !searchCorrections) continue;

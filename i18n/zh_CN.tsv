@@ -289,3 +289,18 @@ setting.SystemDictionary	使用系统 Fcitx/libime 拼音词库
 hint.system_dictionary	默认关闭。启用后合并系统词库并优先其来源，可能改变候选排序并增加查询开销；与本地统计模型开关相互独立。
 setting.AutoSpace	中英文自动加空格
 hint.autospace	在汉字与英文字母或数字之间添加空格；仅处理支持读取光标上下文的普通文本输入框。
+setting.Shuangpin	双拼输入
+hint.shuangpin	使用双键音节方案输入拼音；双拼输入中不触发 u 前缀 Unicode 匹配。
+setting.ShuangpinProfile	双拼方案
+setting.ShuangpinCustom	自定义方案文件（绝对路径）
+error.shuangpin_profile	无效的双拼方案。
+error.shuangpin_path	自定义双拼方案须使用有效的绝对路径。
+shuangpin.Ziranma	自然码
+shuangpin.MS	微软
+shuangpin.Ziguang	紫光
+shuangpin.ABC	智能 ABC
+shuangpin.Zhongwenzhixing	中文之星
+shuangpin.PinyinJiajia	拼音加加
+shuangpin.Xiaohe	小鹤
+shuangpin.GB	国标
+shuangpin.Custom	自定义

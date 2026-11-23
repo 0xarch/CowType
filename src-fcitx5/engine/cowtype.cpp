@@ -3,13 +3,13 @@
 #include "cowtype2.h"
 #include "messages.h"
 #include "diagnostics.h"
+#include "dbus.h"
 #include "voice.h"
 #include "level.h"
 #include "libime.h"
 #include "shortcuts.h"
 #include "translate.h"
 #include "autospace.h"
-#include "dbus.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
 #include "../compat/addon.h"
@@ -102,6 +102,7 @@ struct Resource {
     std::future<std::pair<EnginePtr, std::string>> pending;
     unsigned generation = 0;
     bool reload = false;
+    bool pendingSemicolon = false;
     std::string failure, requestedStamp;
 };
 
@@ -172,6 +173,14 @@ public:
         if(cowtype2_runtime_option(runtime_.get(),3) && cowtype2_runtime_option(runtime_.get(),4) && cowtype2_runtime_option(runtime_.get(),8))
             voice_.prepare(environment("COWTYPE_VOICE_HELPER",COWTYPE_VOICE_EXECUTABLE));
         for (int scheme = 0; scheme < 2; ++scheme) start(scheme);
+        instance_->inputContextManager().foreach([this](InputContext *ic) {
+            auto *state=ic->propertyFor(&factory_);
+            if(state->scheme>=0) {
+                attach(ic,state->scheme);
+                if(state->active && ic->hasFocus()) render(ic,false);
+            }
+            return true;
+        });
         ctDiagnostic("event=config_reload elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
     }
     void activate(const InputMethodEntry &entry, InputContextEvent &event) override {
@@ -289,7 +298,7 @@ public:
         // its next character starts a Unicode code point. Digits must reach
         // the code buffer before the ordinary numeric candidate selection.
         if(!event.isRelease() && !(modifiers&(4|8|64|128)) && code<128
-           && !state->translating && cowtype2_runtime_option(runtime_.get(),16) && !cowtype2_session_mode(state->session.get())) {
+           && !state->translating && (state->scheme!=0 || !cowtype2_runtime_option(runtime_.get(),25)) && cowtype2_runtime_option(runtime_.get(),16) && !cowtype2_session_mode(state->session.get())) {
             const std::string_view preedit=cowtype2_session_preedit(state->session.get());
             if((preedit=="u" || preedit=="U") && cowtype2_session_cursor(state->session.get())==1
                && cowtype::UnicodeCode::accepts(preedit,char(code))
@@ -602,10 +611,13 @@ private:
         const bool statisticalModel = !scheme && cowtype2_runtime_option(runtime_.get(),12);
         const auto system = scheme || !cowtype2_runtime_option(runtime_.get(),19) ? "" : LibimeDecoder::systemPath();
         const auto model = statisticalModel ? LibimeDecoder::modelPath() : "";
+        const auto profile=scheme || !cowtype2_runtime_option(runtime_.get(),25)?0:cowtype2_runtime_option(runtime_.get(),24);
+        const std::string customProfile=profile==8?cowtype2_runtime_string(runtime_.get(),0):"";
         const auto cache = LibimeDecoder::installed("XDG_CACHE_HOME", (environment("HOME", "") + "/.cache").c_str());
         cowtype::PinyinSources sources{path, optional, system, cache.empty() ? "" : cache + "/cowtype/dictionaries", data + "/compiled"};
         std::string stamp = statisticalModel ? "model-on;" : "model-off;";
-        for(const auto &file:{path,optional,system,model}) {
+        stamp+=std::to_string(profile)+";";
+        for(const auto &file:{path,optional,system,model,customProfile}) {
             std::error_code error;
             const auto size=std::filesystem::file_size(file,error);
             const auto modified=std::filesystem::last_write_time(file,error);
@@ -614,11 +626,21 @@ private:
         if(resource.requestedStamp==stamp && (resource.engine || resource.pending.valid())) {
             ctDiagnostic("event=dictionary_reuse scheme="+std::to_string(scheme));return;
         }
+        resource.pendingSemicolon=false;
+        if(!scheme && cowtype2_runtime_option(runtime_.get(),25)) {
+            // Read only the bounded profile during configuration reload; never
+            // guess whether a punctuation key belongs to a loading decoder.
+            try {resource.pendingSemicolon=cowtype::shuangpinProfile(profile,customProfile,nullptr)->validInput().contains(';');}
+            catch(const std::exception &) { /* Worker reports the profile error without its contents. */ }
+        }
+        // A different decoder configuration must never reinterpret input using
+        // the previous profile while its replacement is loading or has failed.
+        if(resource.engine) {resource.engine.reset();++resource.generation;}
         if(resource.pending.valid()) {resource.reload=true;return;}
         resource.requestedStamp=std::move(stamp);
         ctDiagnostic("event=dictionary_start scheme="+std::to_string(scheme));
         resourceTimer_->setTime(now(CLOCK_MONOTONIC)+20000);resourceTimer_->setOneShot();
-        resource.pending = std::async(std::launch::async, [path, optional, scheme, sources, statisticalModel] {
+        resource.pending = std::async(std::launch::async, [path, optional, scheme, sources, statisticalModel, profile, customProfile] {
             const auto began=now(CLOCK_MONOTONIC);
             EnginePtr engine(scheme ? cowtype2_engine_new(path.c_str(), optional.c_str(), 1) : cowtype2_engine_external_new(), cowtype2_engine_free);
             std::string error = engine ? "" : cowtype2_last_error();
@@ -626,7 +648,8 @@ private:
             const auto decoderBegan=now(CLOCK_MONOTONIC);
             if(engine && !scheme) {
                 try {
-                    auto decoder=std::make_unique<LibimeDecoder>(sources,statisticalModel);
+                    auto decoder=std::make_unique<LibimeDecoder>(sources,statisticalModel,profile,customProfile);
+                    if(!cowtype2_engine_shuangpin_semicolon(engine.get(),decoder->shuangpinSemicolon())) throw std::runtime_error("Decoder input configuration failed");
                     if(!cowtype2_engine_set_decoder(engine.get(),decoder.get(),LibimeDecoder::query,LibimeDecoder::destroy)) throw std::runtime_error("Decoder attachment failed");
                     if (decoder->warnings) {
                         error = ct_tr("warning.dictionary_optional");
@@ -644,9 +667,14 @@ private:
         auto &resource = resources_[scheme];
         if (resource.pending.valid() && resource.pending.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             const auto began=now(CLOCK_MONOTONIC);
-            auto result = resource.pending.get(); resource.failure = std::move(result.second);
-            if (result.first) { resource.engine = std::move(result.first); ++resource.generation; }
-            if (resource.reload) { resource.reload = false; start(scheme); }
+            auto result = resource.pending.get();
+            if (resource.reload) {
+                // This result belongs to an earlier configuration generation.
+                resource.reload = false; start(scheme);
+            } else {
+                resource.failure = std::move(result.second);
+                resource.engine = std::move(result.first); ++resource.generation;
+            }
             ctDiagnostic("event=dictionary_attached scheme="+std::to_string(scheme)+" elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-began)/1000));
             return true;
         }
@@ -662,6 +690,7 @@ private:
         } else if (state->generation != resource.generation) {
             cowtype2_session_set_engine(state->session.get(), resource.engine.get()); state->generation = resource.generation;
         }
+        cowtype2_session_pending_shuangpin_semicolon(state->session.get(),scheme==0 && !resource.engine && resource.pendingSemicolon);
         if(state->configGeneration!=configGeneration_){cowtype2_session_configure(state->session.get(),runtime_.get());state->configGeneration=configGeneration_;}
         const auto elapsed=(now(CLOCK_MONOTONIC)-began)/1000;
         if(elapsed>=20) ctDiagnostic("event=slow_session_attach scheme="+std::to_string(scheme)+" elapsed_ms="+std::to_string(elapsed));

@@ -20,6 +20,18 @@ class SettingsTests(unittest.TestCase):
     def tearDown(self):
         self.env.stop()
         self.temporary.cleanup()
+    def test_shuangpin_and_autospace_configuration(self):
+        values = settings.load()
+        self.assertEqual(values['Shuangpin'], 'False')
+        self.assertEqual(values['AutoSpace'], 'False')
+        self.assertEqual(values['ShuangpinProfile'], 'Ziranma')
+        for profile in settings.SHUANGPIN_PROFILES:
+            values.update(Shuangpin='True', ShuangpinProfile=profile, ShuangpinCustom=str(self.root / 'scheme.conf'), AutoSpace='True')
+            settings.save(values)
+            self.assertEqual(settings.load(), values)
+        for change in (dict(ShuangpinProfile='invalid'), dict(ShuangpinCustom='relative.conf'), dict(AutoSpace='maybe')):
+            with self.assertRaises(ValueError):
+                settings.validate(dict(values, **change))
     def test_shortcut_conflicts_and_disabled_bindings(self):
         for changes in [dict(ModeHotkey='F7'), dict(InternalCodeHotkey='F8'), dict(VoiceHotkey='F6'), dict(InternalCodeHotkey='F13')]:
             with self.assertRaises(ValueError):

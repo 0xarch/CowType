@@ -65,21 +65,27 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 17 translation enabled (default off); 18 translation key index;
  * 19 optional system pinyin dictionary (default off, independent of option 12);
  * 20 symbol candidate limit; 21 Emoji candidate limit; 22 correction candidate limit.
- * Candidate limits use 0–12 and default to 4, 4, and 5 respectively.
- * 23 automatic Han/ASCII spacing (default off). */
+ * 23 automatic Chinese/English spacing; 24 shuangpin profile index; 25 shuangpin enabled.
+ * Candidate limits use 0–12 and default to 4, 4, and 5 respectively. */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
+/* String option 0: custom shuangpin profile path; borrowed until reload/free. */
+const char *cowtype2_runtime_string(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);
 bool cowtype2_session_custom_prefix(const Cowtype2Session *, const char *raw);
 bool cowtype2_session_forget(Cowtype2Session *);
 /* Decoder callback context is owned by the engine after successful attachment.
  * Must serialize its shared state; must not throw across the C boundary. */
-/* flags low bits: 0 sentence, 1 correction, 2 completion, 3 initials;
+/* flags low bits: 0 sentence, 1 correction, 2 completion, 3 initials; 4 shuangpin;
  * correction candidate limit is encoded in bits 8–11 (0–12).
  * emit final flag: 0 original reading, 1 correction, 2 completion.
  * The session preserves provider order unless explicit learned preference differs. */
 typedef void (*Cowtype2Emit)(void *, const char *, const char *, size_t, uint32_t);
 typedef void (*Cowtype2Query)(void *, const char *, uint32_t, Cowtype2Emit, void *);
+/* Configure profile-specific punctuation before publishing the engine to sessions. */
+bool cowtype2_engine_shuangpin_semicolon(Cowtype2Engine *, bool enabled);
+/* Validated profile capability while a pinyin session has no attached engine. */
+void cowtype2_session_pending_shuangpin_semicolon(Cowtype2Session *, bool enabled);
 bool cowtype2_engine_set_decoder(Cowtype2Engine *, void *, Cowtype2Query, void (*)(void *));
 #ifdef __cplusplus
 }

@@ -65,6 +65,7 @@ pub struct SessionConfig {
     pub chinese_punctuation: bool,
     pub sentence: bool,
     pub correction: bool,
+    pub shuangpin: bool,
     pub completion: bool,
     pub initials: bool,
     pub learning: bool,
@@ -83,6 +84,7 @@ impl Default for SessionConfig {
             chinese_punctuation: true,
             sentence: false,
             correction: false,
+            shuangpin: false,
             completion: true,
             initials: false,
             learning: false,
@@ -164,6 +166,7 @@ pub struct Session {
     last_undo: Vec<Undo>,
     punctuation: Punctuation,
     skin_tone_choice: Option<SkinToneChoice>,
+    pending_shuangpin_semicolon: bool,
 }
 
 impl Session {
@@ -182,6 +185,7 @@ impl Session {
             last_undo: Vec::new(),
             punctuation: Punctuation::default(),
             skin_tone_choice: None,
+            pending_shuangpin_semicolon: false,
         }
     }
     pub fn set_custom(&mut self, custom: crate::custom::service::Shared) {
@@ -240,6 +244,9 @@ impl Session {
         let mut input: String = self.selections.iter().map(|s| s.raw.as_str()).collect();
         input.push_str(&self.remaining);
         input
+    }
+    pub fn set_pending_shuangpin_semicolon(&mut self, enabled: bool) {
+        self.pending_shuangpin_semicolon = enabled;
     }
     pub fn set_engine(&mut self, engine: Option<Arc<Engine>>) {
         self.engine = engine;
@@ -410,7 +417,18 @@ impl Session {
             }
         }
         match event.key {
-            Key::Character(ch) if ch.is_ascii_alphabetic() || (ch == '\'' && active) => {
+            Key::Character(ch)
+                if ch.is_ascii_alphabetic()
+                    || (ch == '\'' && active)
+                    || (self.config.shuangpin
+                        && self
+                            .engine
+                            .as_ref()
+                            .map_or(self.pending_shuangpin_semicolon, |e| {
+                                !e.is_wubi() && e.shuangpin_semicolon
+                            })
+                        && ch == ';') =>
+            {
                 self.remaining.insert(self.cursor, ch);
                 self.cursor += ch.len_utf8();
                 self.refresh();
@@ -521,13 +539,14 @@ impl Session {
             .engine
             .as_ref()
             .map(|e| {
-                e.query_configured_with_limit(
+                e.query_configured_input(
                     &self.remaining,
                     self.config.sentence,
                     self.config.correction,
                     self.config.completion,
                     self.config.initials,
                     self.config.correction_candidate_limit,
+                    self.config.shuangpin && !e.is_wubi(),
                 )
             })
             .unwrap_or_default();

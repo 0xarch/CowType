@@ -4,10 +4,24 @@ use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
 };
+pub const SHUANGPIN_PROFILES: [&str; 9] = [
+    "Ziranma",
+    "MS",
+    "Ziguang",
+    "ABC",
+    "Zhongwenzhixing",
+    "PinyinJiajia",
+    "Xiaohe",
+    "GB",
+    "Custom",
+];
 #[derive(Clone, Debug)]
 pub struct Settings {
-    pub auto_space: bool,
     pub page_size: usize,
+    pub auto_space: bool,
+    pub shuangpin: bool,
+    pub shuangpin_profile: u32,
+    pub shuangpin_custom: String,
     pub punctuation: bool,
     pub sentence: bool,
     pub correction: bool,
@@ -44,8 +58,11 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Self {
-            auto_space: false,
             page_size: 5,
+            auto_space: false,
+            shuangpin: false,
+            shuangpin_profile: 0,
+            shuangpin_custom: String::new(),
             punctuation: true,
             sentence: true,
             correction: true,
@@ -138,6 +155,22 @@ impl Settings {
             return Err("unsupported settings version");
         }
         let mut settings = Self::default();
+        if let Some(value) = values.get("ShuangpinProfile") {
+            settings.shuangpin_profile = SHUANGPIN_PROFILES
+                .iter()
+                .position(|name| name == value)
+                .ok_or("invalid shuangpin profile")?
+                as u32;
+        }
+        if let Some(value) = values.get("ShuangpinCustom") {
+            if value.len() > 4096
+                || value.contains(['\0', '\n', '\r'])
+                || (!value.is_empty() && !Path::new(value).is_absolute())
+            {
+                return Err("invalid shuangpin profile path");
+            }
+            settings.shuangpin_custom = value.to_string();
+        }
         if let Some(value) = values.get("PageSize") {
             settings.page_size = value.parse().map_err(|_| "invalid page size")?;
             if !(3..=9).contains(&settings.page_size) {
@@ -255,6 +288,7 @@ impl Settings {
         }
         for (name, target) in [
             ("AutoSpace", &mut settings.auto_space),
+            ("Shuangpin", &mut settings.shuangpin),
             ("Punctuation", &mut settings.punctuation),
             ("Sentence", &mut settings.sentence),
             ("Correction", &mut settings.correction),
@@ -413,6 +447,25 @@ mod hotkey_tests {
         let new = Settings::parse("Version=1\nUnicodeHotkey=Control_R\nInternalCodeHotkey=Alt_L\n")
             .unwrap();
         assert_ne!(new.unicode_hotkey, new.internal_code_hotkey);
+    }
+    #[test]
+    fn shuangpin_and_autospace_are_optional_and_validated() {
+        let defaults = Settings::parse("Version=1\n").unwrap();
+        assert!(!defaults.auto_space && !defaults.shuangpin);
+        assert_eq!(defaults.shuangpin_profile, 0);
+        for (index, name) in SHUANGPIN_PROFILES.iter().enumerate() {
+            let settings = Settings::parse(&format!("Version=1\nShuangpin=True\nShuangpinProfile={name}\nShuangpinCustom=/tmp/scheme.conf\nAutoSpace=True\n")).unwrap();
+            assert!(settings.shuangpin && settings.auto_space);
+            assert_eq!(settings.shuangpin_profile, index as u32);
+            assert_eq!(settings.shuangpin_custom, "/tmp/scheme.conf");
+        }
+        for line in [
+            "ShuangpinProfile=invalid",
+            "ShuangpinCustom=relative",
+            "AutoSpace=maybe",
+        ] {
+            assert!(Settings::parse(&format!("Version=1\n{line}\n")).is_err());
+        }
     }
     #[test]
     fn cldr_symbols_are_explicit_and_default_off() {

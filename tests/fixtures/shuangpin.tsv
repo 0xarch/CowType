@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Synthetic independent words for double pinyin conversion and raw byte ranges.
+ni	你	100
+hao	好	90
+ni hao	你好	200
+shan	山	100
+an	安	100
+ling	林	100

@@ -361,6 +361,7 @@ pub unsafe extern "C" fn cowtype2_session_mode(h: *const SessionHandle) -> u32 {
 // Runtime is a new ABI-2 extension, independent from dictionary handle lifetime.
 pub struct RuntimeHandle {
     settings: crate::config::Settings,
+    shuangpin_custom: CString,
     service: crate::learning::service::Service,
     custom: crate::custom::service::Service,
     service_warning: CString,
@@ -374,6 +375,7 @@ pub extern "C" fn cowtype2_runtime_new() -> *mut RuntimeHandle {
             Err(e) => (crate::config::Settings::default(), e),
         };
         Box::into_raw(Box::new(RuntimeHandle {
+            shuangpin_custom: cstring(&settings.shuangpin_custom),
             settings,
             service: crate::learning::service::Service::new(crate::learning::path()),
             custom: crate::custom::service::Service::new(crate::custom::path()),
@@ -396,6 +398,7 @@ pub unsafe extern "C" fn cowtype2_runtime_reload(h: *mut RuntimeHandle) -> bool 
         };
         match crate::config::Settings::load(&crate::config::path()) {
             Ok(settings) => {
+                h.shuangpin_custom = cstring(&settings.shuangpin_custom);
                 h.settings = settings;
                 h.warning = CString::default();
                 true
@@ -438,6 +441,8 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         21 => s.emoji_candidate_limit as u32,
         22 => s.correction_candidate_limit as u32,
         23 => s.auto_space as u32,
+        24 => s.shuangpin_profile,
+        25 => s.shuangpin as u32,
         _ => 0,
     }
 }
@@ -473,6 +478,7 @@ pub unsafe extern "C" fn cowtype2_session_configure(
         c.chinese_punctuation = r.settings.punctuation;
         c.sentence = r.settings.sentence;
         c.correction = r.settings.correction;
+        c.shuangpin = r.settings.shuangpin;
         c.completion = r.settings.completion;
         c.initials = r.settings.initials;
         c.learning = r.settings.learning;
@@ -535,6 +541,7 @@ impl crate::engine::CandidateProvider for NativeProvider {
         completion: bool,
         initials: bool,
         correction_limit: usize,
+        shuangpin: bool,
     ) -> Vec<crate::engine::Candidate> {
         unsafe extern "C" fn emit(
             out: *mut std::ffi::c_void,
@@ -567,6 +574,7 @@ impl crate::engine::CandidateProvider for NativeProvider {
             | ((correction as u32) << 1)
             | ((completion as u32) << 2)
             | ((initials as u32) << 3)
+            | ((shuangpin as u32) << 4)
             | ((correction_limit.min(12) as u32) << 8);
         unsafe {
             (self.query)(
@@ -622,4 +630,40 @@ pub unsafe extern "C" fn cowtype2_session_custom_prefix(
         };
         h.session.custom_prefix(raw)
     })
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn cowtype2_runtime_string(
+    h: *const RuntimeHandle,
+    key: u32,
+) -> *const c_char {
+    unsafe { h.as_ref() }
+        .filter(|_| key == 0)
+        .map(|h| h.shuangpin_custom.as_ptr())
+        .unwrap_or(ptr::null())
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn cowtype2_engine_shuangpin_semicolon(
+    handle: *mut EngineHandle,
+    enabled: bool,
+) -> bool {
+    let Some(handle) = (unsafe { handle.as_mut() }) else {
+        return false;
+    };
+    let Some(engine) = Arc::get_mut(&mut handle.engine) else {
+        return false;
+    };
+    engine.shuangpin_semicolon = enabled;
+    true
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn cowtype2_session_pending_shuangpin_semicolon(
+    handle: *mut SessionHandle,
+    enabled: bool,
+) {
+    if let Some(handle) = unsafe { handle.as_mut() } {
+        handle.session.set_pending_shuangpin_semicolon(enabled);
+    }
 }

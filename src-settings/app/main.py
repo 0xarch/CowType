@@ -155,12 +155,13 @@ def main():
             privacy = self.group('input', 'group.privacy')
             keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
-            groups = {'AutoSpace': general, 'Emoji': self.emoji_options, 'EmojiFirst': self.emoji_options, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
+            groups = {'AutoSpace': general, 'Shuangpin': pinyin, 'Emoji': self.emoji_options, 'EmojiFirst': self.emoji_options, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
                 'StatisticalModel': pinyin, 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
                 'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
             for key, group in groups.items():
                 row = Adw.SwitchRow(title=tr('setting.' + key))
                 if key == 'AutoSpace': row.set_subtitle(tr('hint.autospace'))
+                if key == 'Shuangpin': row.set_subtitle(tr('hint.shuangpin'))
                 if key == 'Emoji': row.set_subtitle(tr('hint.emoji'))
                 if key == 'EmojiFirst': row.set_subtitle(tr('hint.emoji_first'))
                 if key == 'UnicodePrefix': row.set_subtitle(tr('hint.unicode_prefix'))
@@ -182,6 +183,15 @@ def main():
                 row.connect('notify::value', self.save)
                 group.add(row)
                 self.candidate_limits[key] = row
+            self.shuangpin_profile = Adw.ComboRow(title=tr('setting.ShuangpinProfile'), model=Gtk.StringList.new([tr('shuangpin.' + name) for name in config.SHUANGPIN_PROFILES]))
+            self.shuangpin_profile.set_selected(config.SHUANGPIN_PROFILES.index(self.values['ShuangpinProfile']))
+            self.shuangpin_profile.connect('notify::selected', self.save)
+            pinyin.add(self.shuangpin_profile)
+            self.shuangpin_custom = Adw.EntryRow(title=tr('setting.ShuangpinCustom'))
+            self.shuangpin_custom.set_text(self.values['ShuangpinCustom'])
+            self.shuangpin_custom.set_show_apply_button(True)
+            self.shuangpin_custom.connect('apply', self.save)
+            pinyin.add(self.shuangpin_custom)
             picker = Adw.SwitchRow(title=tr('setting.EmojiSkinTonePicker'), subtitle=tr('hint.emoji_skin_tone_picker'))
             picker.set_active(self.values['EmojiSkinTonePicker'].lower() == 'true')
             picker.connect('notify::active', self.save)
@@ -261,14 +271,14 @@ def main():
             if self.load_error:
                 error_group = self.group('input', None)
                 error_group.add(Adw.ActionRow(title=self.load_error))
-                for row in [*self.controls.values(), *self.candidate_limits.values(), *self.feature_hotkeys.values(), self.page_size, self.hotkey, *self.skin_tone_buttons]: row.set_sensitive(False)
+                for row in [*self.controls.values(), *self.candidate_limits.values(), self.shuangpin_profile, self.shuangpin_custom, *self.feature_hotkeys.values(), self.page_size, self.hotkey, *self.skin_tone_buttons]: row.set_sensitive(False)
             self.ready = True
             self.stack.set_visible_child_name(args.page if args.page in self.pages else 'input')
             self.window.present()
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 22
+                    assert len(self.pages) == 5 and len(self.controls) == 24
                     assert self.controls['SystemDictionary'].get_visible()
                     assert not self.controls['SystemDictionary'].get_active()
                     assert not self.controls['Translate'].get_active()
@@ -420,6 +430,8 @@ def main():
                 GLib.timeout_add(1000, check_visible)
 
         def update_visibility(self):
+            self.shuangpin_profile.set_visible(self.controls['Shuangpin'].get_active())
+            self.shuangpin_custom.set_visible(self.controls['Shuangpin'].get_active() and config.SHUANGPIN_PROFILES[self.shuangpin_profile.get_selected()] == 'Custom')
             enabled = self.controls['Emoji'].get_active()
             self.controls['EmojiFirst'].set_visible(enabled)
             self.controls['EmojiSkinTonePicker'].set_visible(enabled)
@@ -436,6 +448,8 @@ def main():
             try:
                 values = self.values.copy()
                 values['EmojiDefaultSkinTone'] = str(next(i for i, button in enumerate(self.skin_tone_buttons) if button.get_active()))
+                values['ShuangpinProfile'] = config.SHUANGPIN_PROFILES[self.shuangpin_profile.get_selected()]
+                values['ShuangpinCustom'] = self.shuangpin_custom.get_text()
                 values['PageSize'] = str(int(self.page_size.get_value()))
                 values.update({key: str(int(row.get_value())) for key, row in self.candidate_limits.items()})
                 values.update({name: config.SHORTCUTS[name][1][row.get_selected()] for name, row in self.feature_hotkeys.items()})

@@ -49,6 +49,26 @@ impl Engine {
         initials: bool,
         correction_limit: usize,
     ) -> Vec<Candidate> {
+        self.query_configured_input(
+            raw,
+            sentence,
+            correction,
+            completion,
+            initials,
+            correction_limit,
+            false,
+        )
+    }
+    pub fn query_configured_input(
+        &self,
+        raw: &str,
+        sentence: bool,
+        correction: bool,
+        completion: bool,
+        initials: bool,
+        correction_limit: usize,
+        shuangpin: bool,
+    ) -> Vec<Candidate> {
         if let Some(provider) = &self.provider {
             return provider.query(
                 raw,
@@ -57,7 +77,11 @@ impl Engine {
                 completion,
                 initials,
                 correction_limit,
+                shuangpin,
             );
+        }
+        if shuangpin && !self.is_wubi() {
+            return Vec::new();
         }
         let mut candidates = self.query_base(
             raw,

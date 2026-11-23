@@ -1242,5 +1242,46 @@
     ],
     "implementation": "Original CowType bounded duplicate-key deletion and adjacent-swap whole-word lookup. Uses installed public libime syllable conversion, DATrie traversal and PinyinDictionary matchWords APIs; does not copy WowType code, internal data structures, parameters or ranking weights. Primary implementing agent did not view WowType code; a separate static study supplied high-level requirements only. No model, new lexicon index or per-variant sentence decoding.",
     "validation": "Synthetic repeated-key/swap exact-word, consumption, disabled correction and edit/reuse regression; independent fixed-1100-target before/after public-dictionary benchmark with bounded search, VmHWM and latency statistics, no user data or GUI."
+  },
+  "input_controls_and_shuangpin": {
+    "date": "2026-11-23",
+    "license": "GPL-3.0-or-later",
+    "paths": [
+      "src-fcitx5/engine/dbus.h",
+      "src-fcitx5/engine/autospace.h",
+      "src-fcitx5/engine/shuangpin.h",
+      "src-fcitx5/engine/shuangpin-gb.h",
+      "tests/native/dbus.cpp",
+      "tests/native/autospace.cpp",
+      "tests/native/shuangpin.cpp"
+    ],
+    "implementation": "Original CowType focused-context D-Bus endpoint, stateless automatic Han/ASCII spacing adapter, double-pinyin settings and shared libime decoder integration. External implementation review delegated to subagents; the primary implementation agent did not read WowType source. No WowType executable code or mapping tables copied. Builtin profiles remain provided by system libime.",
+    "references": [
+      {
+        "project": "fcitx5-chinese-addons",
+        "revision": "e8d930f402e359cfd76a101ee3e46815d1331d83",
+        "license": "LGPL-2.1-or-later",
+        "use": "Subagent-only study of eight builtin profiles, custom profile support and PinyinContext reuse. No implementation or sample profile copied."
+      },
+      {
+        "project": "libime",
+        "revision": "53df6a248793f9a00c1769e658630de313f3e419",
+        "license": "LGPL-2.1-or-later",
+        "use": "Subagent review of public ShuangpinProfile/PinyinContext APIs and version introduction history."
+      }
+    ],
+    "gb_compatibility_mapping": {
+      "path": "src-fcitx5/engine/shuangpin-gb.h",
+      "sha256": "25a1464f4b427c8c0d0d1fd56d7890d1ecd5d9e98cc1a6f507f4782d532c8936",
+      "bytes": 650,
+      "upstream": "https://github.com/fcitx/libime/blob/34ee1fde75e79ebbf91e6f739f37b14777d634f8/src/libime/pinyin/shuangpindata.h",
+      "revision": "34ee1fde75e79ebbf91e6f739f37b14777d634f8",
+      "author": "CSSlayer (Weng Xuetian)",
+      "license": "LGPL-2.1-or-later",
+      "license_file": "LICENSES/LGPL-2.1-or-later.txt",
+      "notice": "src-fcitx5/engine/SHUANGPIN-NOTICE.md",
+      "transformation": "GB/T 34947-2017 mappings transcribed into libime textual profile syntax for libime before 1.1.15; all-table equivalence checked against the installed builtin profile."
+    },
+    "validation": "Synthetic private-session-bus and isolated-XDG native tests; fixed scheme codes, custom mapping validation, version-compatibility branch probes and original CowType fixtures. No personal data, live graphical session or remote services used."
   }
 }
