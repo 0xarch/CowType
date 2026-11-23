@@ -27,6 +27,9 @@ for name, path in {
 }.items():
     path.mkdir(parents=True, exist_ok=True)
     env[name] = str(path)
+# Native probes must never register the addon on the user's desktop bus.
+if env.pop('COWTYPE_TEST_PRIVATE_BUS', '') != '1':
+    env['DBUS_SESSION_BUS_ADDRESS'] = 'unix:path=' + str(root / 'xdg/no-session-bus')
 env.update(COWTYPE_SYSTEM_PINYIN_DICT='', COWTYPE_STATISTICAL_MODEL_FILE='', COWTYPE_TEST_ROOT=str(root), COWTYPE_DATA_DIR=str(args.data.resolve()),
            COWTYPE_TRANSLATE_HELPER=str(Path(__file__).with_name('fake-translate.py').resolve()),
            SKIP_FCITX_PATH='1', SKIP_FCITX_SYSTEM_PATH='0', SKIP_FCITX_USER_PATH='0',

@@ -32,7 +32,7 @@ bash build-arch.sh
 
 ## 开发：单独构建与测试
 
-需要 Linux、Rust/Cargo、Python 3.9+。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.11、libime >= 1.1.7 、Boost、OpenSSL 与 librsvg（rsvg-convert）；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
+需要 Linux、Rust/Cargo、Python 3.9+。原生开发测试需要 `dbus-run-session`（Debian 系由 `dbus-daemon` 提供）启动隔离总线。原生构建还需 CMake、Ninja、C++20 工具链、Fcitx5 >= 5.1.11、libime >= 1.1.7 、Boost、OpenSSL 与 librsvg（rsvg-convert）；设置运行需要 GTK4、libadwaita 和 PyGObject。语音使用系统 ONNX Runtime 和 parecord，不内置模型。Paraformer 准备脚本要求 Python 3.10+，见组件说明。
 
 首次运行离线命令前，先准备 Cargo 依赖（需要网络）：
 

@@ -8,6 +8,7 @@
 #include "libime.h"
 #include "shortcuts.h"
 #include "translate.h"
+#include "dbus.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
 #include "../compat/addon.h"
@@ -145,6 +146,11 @@ public:
             });
         resourceTimer_->setEnabled(false);
         reloadConfig();
+        try {
+            inputBus_=std::make_unique<cowtype::InputBus>(instance_->eventLoop(),
+                [this] { return controlMode(); },
+                [this](const std::string &mode) { return controlSetMode(mode); }, COWTYPE_VERSION);
+        } catch(const std::exception &) { ctDiagnostic("event=dbus_unavailable"); }
         ctDiagnostic("event=addon_ready version=0.4.3 elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
     }
     const Configuration *getConfig() const override { return &settingsLauncher_; }
@@ -504,6 +510,24 @@ private:
         } else if(!state->unicodeBuffer.empty() && state->unicodeBuffer!="u" && state->unicodeBuffer!="U" && !cowtype::UnicodeCode::digits(state->unicodeBuffer).empty())panel.setAuxDown(Text(ct_tr("unicode.invalid")));
         panel.setCandidateList(std::move(list));ic->updatePreedit();ic->updateUserInterface(UserInterfaceComponent::InputPanel);
     }
+    InputContext *controlContext() {
+        auto *ic=instance_->inputContextManager().lastFocusedInputContext();
+        if(!ic || !ic->hasFocus() || !ic->propertyFor(&factory_)->active)
+            throw dbus::MethodCallError("org.cowtype.Input.Error.Inactive","No focused CowType input context");
+        if(ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable))
+            throw dbus::MethodCallError("org.cowtype.Input.Error.Unavailable","Input context does not allow control");
+        return ic;
+    }
+    std::string controlMode() {
+        auto *ic=controlContext();
+        return cowtype2_session_mode(ic->propertyFor(&factory_)->session.get()) ? "en" : "zh";
+    }
+    std::string controlSetMode(const std::string &mode) {
+        auto *ic=controlContext();
+        const bool english=cowtype2_session_mode(ic->propertyFor(&factory_)->session.get());
+        if(mode=="toggle" || english!=(mode=="en")) invokeShortcut(ic,Shortcuts::Action::Mode);
+        return controlMode();
+    }
     void invokeShortcut(InputContext *ic,Shortcuts::Action action) {
         auto *state=ic->propertyFor(&factory_);
         if(action==Shortcuts::Action::Translate){invokeTranslation(ic);return;}
@@ -672,6 +696,7 @@ private:
     std::array<Resource, 2> resources_;
     std::unique_ptr<HandlerTableEntry<EventHandler>> focus_;
     std::unique_ptr<EventSourceTime> resourceTimer_;
+    std::unique_ptr<cowtype::InputBus> inputBus_;
 };
 void Word::select(InputContext *ic) const { owner_->choose(ic, index_); }
 void Page::prev() { if (previous_) { owner_->page(ic_, false); } }
