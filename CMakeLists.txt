@@ -116,7 +116,7 @@ if(BUILD_TESTING)
     find_program(DBUS_RUN_SESSION dbus-run-session REQUIRED)
     add_executable(cowtype-dbus-probe tests/native/dbus.cpp)
     target_link_libraries(cowtype-dbus-probe PRIVATE Fcitx5::Core cowtype-fcitx-compat Threads::Threads ${CMAKE_DL_LIBS})
-    target_compile_options(cowtype-dbus-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+    target_compile_options(cowtype-dbus-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror -Wno-error=deprecated-declarations)
     add_test(NAME fcitx-dbus-api COMMAND ${DBUS_RUN_SESSION} -- ${Python3_EXECUTABLE}
         "${CMAKE_SOURCE_DIR}/tests/native/isolated.py"
         --root "${CMAKE_BINARY_DIR}/dbus-test" --prefix "${CMAKE_BINARY_DIR}/dbus-test/prefix"
@@ -129,7 +129,7 @@ if(BUILD_TESTING)
     add_executable(cowtype-autospace-probe tests/native/autospace.cpp)
     target_include_directories(cowtype-autospace-probe PRIVATE src-fcitx5/engine)
     target_link_libraries(cowtype-autospace-probe PRIVATE Fcitx5::Core cowtype-fcitx-compat ${CMAKE_DL_LIBS})
-    target_compile_options(cowtype-autospace-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+    target_compile_options(cowtype-autospace-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror -Wno-error=deprecated-declarations)
     add_test(NAME automatic-spacing COMMAND ${Python3_EXECUTABLE}
         "${CMAKE_SOURCE_DIR}/tests/native/isolated.py"
         --root "${CMAKE_BINARY_DIR}/autospace-test" --prefix "${CMAKE_BINARY_DIR}/autospace-test/prefix"

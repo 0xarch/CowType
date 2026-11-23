@@ -40,8 +40,8 @@
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "640b9e300772fc4a7fb0734f03db7049f8a18351059ed4c1b0d7cb6c0787a36e",
-      "bytes": 22395
+      "sha256": "d30b08a9d979750446f68c37598ddd88dcbc53d03dfd63e4f46ce9b7f83807fe",
+      "bytes": 22465
     },
     {
       "path": "Cargo.lock",
