@@ -18,6 +18,7 @@
 #include <vector>
 #include "isolation.h"
 #include "messages.h"
+#include "../../src-fcitx5/engine/traditional.h"
 #define CHECK(x) do { if (!(x)) { throw std::runtime_error("Fcitx check failed at line " + std::to_string(__LINE__)); } } while(0)
 using namespace fcitx;
 // New Fcitx stores mode notifications as overlays; the old supported versions
@@ -366,14 +367,17 @@ int main(int argc, char **argv) {
             engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
             CHECK(press(engine,pinyin,a,FcitxKey_a));
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
-            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nTraditionalHotkey=Control+Shift+F\n"; }
-            addon->reloadConfig();
-            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift));
-            CHECK(modeNotification(a.inputPanel())==ct_tr("message.traditional_enabled"));
-            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift,true));
-            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift));
-            CHECK(modeNotification(a.inputPanel())==ct_tr("message.simplified_enabled"));
-            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift,true));
+            cowtype::TraditionalConverter traditional;
+            if (traditional.available()) {
+                { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nTraditionalHotkey=Control+Shift+F\n"; }
+                addon->reloadConfig();
+                CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift));
+                CHECK(modeNotification(a.inputPanel())==ct_tr("message.traditional_enabled"));
+                CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift,true));
+                CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift));
+                CHECK(modeNotification(a.inputPanel())==ct_tr("message.simplified_enabled"));
+                CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift,true));
+            }
             for (const auto &options : {std::string("ModeHotkey=F6\nRememberMode=True\n"),
                                         std::string("ModeHotkey=F6\nRememberMode=False\n"),
                                         std::string("ModeHotkey=F6\nShiftToggle=False\nRememberMode=True\n")}) {

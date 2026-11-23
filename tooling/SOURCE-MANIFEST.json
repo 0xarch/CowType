@@ -848,8 +848,8 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "75c03010b25cb39fa2d8e1125a2208d8a4486b9ca29fb5d133bc4c45be6fdcfe",
-      "bytes": 42744
+      "sha256": "a9c39c5b9f932fb5e2525f8046952d51f11d0792449128e61aa2024990a84e9a",
+      "bytes": 42937
     },
     {
       "path": "tests/native/internal-code.cpp",
