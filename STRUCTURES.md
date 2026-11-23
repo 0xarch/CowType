@@ -26,3 +26,7 @@
 自定义词库：`src/custom/` 提供完整字母触发索引及后台文件更新，`src-settings/config/custom.py` 原子保存词条，`app/custom.py` 提供自动保存的分页编辑器。独立于系统/万象预编译词库和个人学习。
 
 `src-fcitx5/engine/spelling.h` 提供独立有界的重复键/相邻换位完整词补充，复用 libime 公开音节与 trie 接口，不持久化输入、不建立另一份词库、不引入模型。
+
+平台控制与上屏：`engine/dbus.h` 负责用户会话总线上的版本和中英文模式控制，复用当前焦点输入框的快捷键切换路径；不将输入正文暴露到总线。`engine/autospace.h` 根据可信 surrounding text 计算汉字与英数边界，由插件的统一正文上屏路径应用，不修改核心候选和学习记录；码点输入保留精确输出。
+
+双拼：`engine/shuangpin.h` 管理 libime 内建或用户定义的方案，`LibimeDecoder` 使用同一词库和候选解码器处理双拼原始按键。Rust 会话维护原始键范围及选择，平台设置负责方案选择和路径；方案配置不进入平台无关的词库索引。

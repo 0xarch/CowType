@@ -35,13 +35,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "d09e46ecb1b6e3f8d9b1ce257024af46a3b24aacb4659a49f6811eb0c9413a36",
-      "bytes": 16733
+      "sha256": "533f786190d68ff18e631aa7a94ac5c255b08d2a9c2d36549e158a1f2417c2f5",
+      "bytes": 17395
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "afe2690827123b068115bc9b059ddc55c9a40cf389399bf4cee19b1bf8a42978",
-      "bytes": 17695
+      "sha256": "c5ac6d4f1e3853723ecb5d724ee67ab2605cdf965855ed955882efc1a898f3c1",
+      "bytes": 21763
     },
     {
       "path": "Cargo.lock",
@@ -62,6 +62,11 @@
       "path": "LICENSES/Apache-2.0.txt",
       "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
       "bytes": 11358
+    },
+    {
+      "path": "LICENSES/LGPL-2.1-or-later.txt",
+      "sha256": "1ccf09bf2f598308df4bed9cd8e9657dc5cd0973d2800318f2e241486e2edf3f",
+      "bytes": 25906
     },
     {
       "path": "LICENSES/LICENSE.FunASR",
@@ -88,8 +93,8 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "0edf2848e0723aaac1563ab8f552fd6654af6a35dcbe29849d6ba14e0ce45378",
-      "bytes": 2948
+      "sha256": "396824b2ab44ec998bd773bc41ca9045bb48b882a7b979845883ddb7fa09388a",
+      "bytes": 3636
     },
     {
       "path": "assets/icons/README.md",
@@ -112,9 +117,19 @@
       "bytes": 1911
     },
     {
+      "path": "docs/AUTOSPACE.md",
+      "sha256": "030d0e693bc33b8ffa1272ce3d016365cefeb4a17a3c1bcb3ecb8399309fb205",
+      "bytes": 1326
+    },
+    {
       "path": "docs/BUILD.md",
-      "sha256": "da0d4c314e3cc42c58e29a8797eccb1fbdc03af80257043771ea8bb8b50620cb",
-      "bytes": 10549
+      "sha256": "aac65bb26426341bf22e23d4d77a79644acf69503a33d52f402b4917c0cad74a",
+      "bytes": 10653
+    },
+    {
+      "path": "docs/DBUS.md",
+      "sha256": "c9bae968f33e4db4aceae111c6d1122b6703da7b1ee575ff781a3d24faca318e",
+      "bytes": 2514
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -137,9 +152,14 @@
       "bytes": 237
     },
     {
+      "path": "docs/SHUANGPIN.md",
+      "sha256": "ab921a4db8078c7958f2a4196910aa09f7b4bfd1698705fcd18020dea90a4007",
+      "bytes": 3698
+    },
+    {
       "path": "docs/SOURCES.json",
-      "sha256": "8e446b479fabaf4e9bcc5f8def19e5334adf15899a356865ddf6a58e9d286889",
-      "bytes": 58744
+      "sha256": "7213709afa8c11f03d1d717ef9caf5952490259c2649d7d1bed8ab7510846d4d",
+      "bytes": 61176
     },
     {
       "path": "docs/USAGE.md",
@@ -158,13 +178,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "3fae3d585693c74b6d9472a1691b91cc6b42068241e9c1bfb76391bbce901d74",
-      "bytes": 16998
+      "sha256": "172c7d6c1372fa5e972ba3bf093466425855795f10b11c3b4c64a81f4333db33",
+      "bytes": 18077
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "92282b707ab674f79e1dc558fc3b2b2108ab7e10be74ad30a7efd4ab7a3826af",
-      "bytes": 15346
+      "sha256": "37b093010c42a1f4675815e8f046a17d06f634c00ce42cfb3856134b4e150203",
+      "bytes": 16338
     },
     {
       "path": "packaging/README.md",
@@ -287,9 +307,24 @@
       "bytes": 136
     },
     {
+      "path": "src-fcitx5/engine/SHUANGPIN-NOTICE.md",
+      "sha256": "ed094fba3946db9522851a6076c03e0e2966427ffbf5b6dbc12b132810d26a37",
+      "bytes": 604
+    },
+    {
+      "path": "src-fcitx5/engine/autospace.h",
+      "sha256": "e80b767e2fa75ce7c82b479d3077606e7935e45e0892e633435d787559b26cc7",
+      "bytes": 2032
+    },
+    {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "311849f5a3efa5e3236f5509dffb3662e76de1b719ddc174b3fbdae62b234e0b",
-      "bytes": 45384
+      "sha256": "3508cb30422df02f90772ab7edc77d29bf733d9b6f12d89b24b0f333fd85ab1f",
+      "bytes": 50266
+    },
+    {
+      "path": "src-fcitx5/engine/dbus.h",
+      "sha256": "bd67fe9762f6f45f06e1e6810e14c25d7abdb6a43d0b91d3e7d41c22a74ead0f",
+      "bytes": 2228
     },
     {
       "path": "src-fcitx5/engine/diagnostics.h",
@@ -308,13 +343,23 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "06cfdea53e18d5889be7b14b5806b708c5930bfa3979a5cf6277da44ed8403e1",
-      "bytes": 12575
+      "sha256": "afd7e65e1a04a91ec9ced4f24a2d060436507f5035a05ad2149d188d4622b91c",
+      "bytes": 13328
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
       "sha256": "53257121e66d525dbd21e4be753caa566198ca77b932a14d7991fd8e20aff972",
       "bytes": 4522
+    },
+    {
+      "path": "src-fcitx5/engine/shuangpin-gb.h",
+      "sha256": "25a1464f4b427c8c0d0d1fd56d7890d1ecd5d9e98cc1a6f507f4782d532c8936",
+      "bytes": 650
+    },
+    {
+      "path": "src-fcitx5/engine/shuangpin.h",
+      "sha256": "b598267a796cedfbeaebf3aa8908c8014550468f8c0cc0242e08b2ed4c86c845",
+      "bytes": 4097
     },
     {
       "path": "src-fcitx5/engine/spelling.h",
@@ -348,8 +393,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "2001eab3b6676345ac87febc342beb2ae47c082fd1716185be82977d38965db5",
-      "bytes": 4786
+      "sha256": "477e62fda4f19c8a80fecf9dba5b0a3c947723117b0fe5e5dfa9eda1a64f0bd8",
+      "bytes": 5668
     },
     {
       "path": "src-fcitx5/unicode/README.md",
@@ -403,8 +448,8 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "d6de6f020216ae932e12a2bb92314ab702ce920ceddf7b9664cb725bde9bf783",
-      "bytes": 31722
+      "sha256": "699571d19fe2a12bd83af2a494fc85025c62b23e10c4325a3cd210753211dd36",
+      "bytes": 34868
     },
     {
       "path": "src-settings/app/memory.py",
@@ -428,8 +473,8 @@
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "9a41bb21f02f9ccdf7d9fedb62b791e6ca98b15c5fbe0fcde293ce685cadf92c",
-      "bytes": 5680
+      "sha256": "260996b93cedf53ba3fb97627aec38cc4c8be861dd3b619dba599949a63b12ee",
+      "bytes": 6623
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -588,8 +633,8 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "7c4d746b77c37bea098525ef7439f436153113b14db6f5499655057b5ef87618",
-      "bytes": 17642
+      "sha256": "b0cb5ee6b629986219cb46285f3ebd57f278080aebdf07a98ce90c51e178f9f3",
+      "bytes": 21527
     },
     {
       "path": "src/config/shortcuts.tsv",
@@ -613,18 +658,18 @@
     },
     {
       "path": "src/engine/mod.rs",
-      "sha256": "5826ba6dd7f9fc2b230b90e65d89ae7ddd1a08263d16dc9758b91061198bb9db",
-      "bytes": 14574
+      "sha256": "bc1da485ec3604aa8231aad71a00ace051aa2dd067e507a381c7f20eba61959f",
+      "bytes": 14714
     },
     {
       "path": "src/engine/sentence.rs",
-      "sha256": "82cfc7a01dc474fa160c64d04f25ea430a7302dff14f30a3504520edacca47b0",
-      "bytes": 10872
+      "sha256": "ee4dc7b7ff8b4adfdd54bc2337d8f5a3e61384562b016e2fc988a0e87f4dafc7",
+      "bytes": 12245
     },
     {
       "path": "src/engine/symbols.rs",
-      "sha256": "09f7bb5034b31e70005e52fc737fd84c6085dc18f3703977b17daf044e4c46ee",
-      "bytes": 7543
+      "sha256": "fbd55fa1aee4f89ce8d708e54aed65aa43c305fbfd30059dfed783b60a8152ae",
+      "bytes": 8301
     },
     {
       "path": "src/engine/wubi.rs",
@@ -633,8 +678,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "8be220ac0d4e56e28f9a41fa1e19dece6b91b765088ded5a2a0f6b71c2d16303",
-      "bytes": 20528
+      "sha256": "578df830feb85e2e02fda483464fde3428cc52b276552f7962aef21bd6771ce3",
+      "bytes": 22264
     },
     {
       "path": "src/i18n/mod.rs",
@@ -663,8 +708,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "d6454d0678c6ca9577740b324730cee2325388f1ddc63a52a14667f0a6b31b84",
-      "bytes": 21611
+      "sha256": "637c3dc50d201b286652d613da88935deb200f06bb6d0bda84dfa6b3dd583598",
+      "bytes": 22765
     },
     {
       "path": "src/session/punctuation.rs",
@@ -707,14 +752,19 @@
       "bytes": 143
     },
     {
+      "path": "tests/fixtures/shuangpin.tsv",
+      "sha256": "8f42d9c1d15f5fbf2c6b70d3d22b320fc6f6d605e272b839ecf172a995662f1a",
+      "bytes": 201
+    },
+    {
       "path": "tests/fixtures/wubi.tsv",
       "sha256": "e2c27b6320b9e7d765bb12e09ce46c4dd7fe094d0ff54a8f56e670ecf6ef5cbb",
       "bytes": 151
     },
     {
       "path": "tests/initials_punctuation.rs",
-      "sha256": "d246e3ca24dce3eefe2708ac37efff17f8727948b922930d34626b69466b6eac",
-      "bytes": 6543
+      "sha256": "37f07995d5b71e9cfa4ed6bd9a70b5da761a141f196fbec391eb58539ce78e2c",
+      "bytes": 7226
     },
     {
       "path": "tests/learning_edits.rs",
@@ -727,14 +777,24 @@
       "bytes": 2709
     },
     {
+      "path": "tests/native/autospace.cpp",
+      "sha256": "c3eeb8ed79895e25247214ee8f2b2843cf9edb6e237666caeb248f5f35a43aa5",
+      "bytes": 6555
+    },
+    {
       "path": "tests/native/correction.cpp",
-      "sha256": "139dc4512633ada0d929dedab756612ea2d7e5509cfaf58181ac0de0a7f28632",
-      "bytes": 4002
+      "sha256": "0323765ace1f47ab0d15a02cc2c57431b69ae25b31e5808fb13d0a08862a7df8",
+      "bytes": 4454
     },
     {
       "path": "tests/native/data.c",
       "sha256": "52acbd596d2c135c36874137adbf9820bbbcc53e6080622e77762d68431ed239",
       "bytes": 1289
+    },
+    {
+      "path": "tests/native/dbus.cpp",
+      "sha256": "a93441f59dbfea480f5c71e1941dfa6bff605d37d0fbf726a0e77ce040f06d69",
+      "bytes": 5885
     },
     {
       "path": "tests/native/dictionary-benchmark.cpp",
@@ -783,8 +843,8 @@
     },
     {
       "path": "tests/native/isolated.py",
-      "sha256": "c9af719552d6e842b0779872e28f324afa4e8ac95b29e5d5b690800af86bcd68",
-      "bytes": 1745
+      "sha256": "e15472521ec0295d4e3b0bcb8cd5c57d1d4c748b02a223411d31269ec10631ac",
+      "bytes": 1955
     },
     {
       "path": "tests/native/isolation.h",
@@ -795,6 +855,16 @@
       "path": "tests/native/loading.cpp",
       "sha256": "c0555bb2c30285ed6ef693e37cc3b2e6e78da17b211890929b184a020a2df8fc",
       "bytes": 4800
+    },
+    {
+      "path": "tests/native/shuangpin-reload.cpp",
+      "sha256": "eea7c714ad337648068708ebad400943d7e672523df899a1fbd3adfcf1cf8d3f",
+      "bytes": 5038
+    },
+    {
+      "path": "tests/native/shuangpin.cpp",
+      "sha256": "294f2f694d16643e1682764c13bf61ba1c9189a27b50d1f72e447d77de2f6eda",
+      "bytes": 6036
     },
     {
       "path": "tests/native/spelling.cpp",
@@ -813,8 +883,8 @@
     },
     {
       "path": "tests/sentence_learning.rs",
-      "sha256": "2a493e72760a503e9d303eb8b7a2ae75f4c6b88e54bce7304cdce64e0bb0ae6c",
-      "bytes": 8899
+      "sha256": "24fa4ce3fe42373c045cd6c6609786ba4396e268c8c57c5a2f7c954d52e4bd7a",
+      "bytes": 8989
     },
     {
       "path": "tests/session.rs",
@@ -823,8 +893,8 @@
     },
     {
       "path": "tests/symbols.rs",
-      "sha256": "68a7ff4a4d931445ac103130e685eb5388bb265faea57051050231b8cb721ab8",
-      "bytes": 13285
+      "sha256": "9175f9ca0d7a017f37f138e35d94e0caee4029aaa4184904e5ede5664d44d5c2",
+      "bytes": 13836
     },
     {
       "path": "tests/test_custom.py",
@@ -853,8 +923,8 @@
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "a20255a8ac04dd517bacd683684b7f019640687aa240626b97344d480037161c",
-      "bytes": 8701
+      "sha256": "99e59d5e766659ad1ef2c2f160a468482f746eb5316831df32f5529a34e37ccc",
+      "bytes": 10105
     },
     {
       "path": "tests/test_settings_startup.py",
@@ -873,8 +943,8 @@
     },
     {
       "path": "tests/wubi.rs",
-      "sha256": "5139927ff30f4bf15995f85a786ac7721aadc2c844aa1a686a2adf5314ebe3c6",
-      "bytes": 1686
+      "sha256": "4b6a46cccc62cab313ae8db32b37b58052f68b47897f6aa7e260e716d4977e38",
+      "bytes": 3162
     },
     {
       "path": "tooling/README.md",
@@ -883,8 +953,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "d6d8d336529ab3b2766e549dca30c4955b80acca9d7814acc1b65684a0470b8f",
-      "bytes": 5928
+      "sha256": "524a1c6e132eed95246929fc7b07c2be9920a9625985392eb946192542262f1d",
+      "bytes": 5940
     },
     {
       "path": "tooling/ci-rust.py",
