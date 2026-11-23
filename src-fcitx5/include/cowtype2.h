@@ -60,15 +60,17 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 8 always resident; 9 bracket paging; 10 minus/equal paging;
  * 11 remember language mode;
  * 12 optional local statistical language model (default off);
- * 13 language key; 14 GB18030 key; 15 Unicode key; key indices follow shortcuts.tsv;
+ * 13 language key; 14 GB18030 key; 15 Unicode key;
  * 16 automatic u-prefix Unicode input (default on, independent of option 15);
- * 17 translation enabled (default off); 18 translation key index;
+ * 17 translation enabled (default off);
  * 19 optional system pinyin dictionary (default off, independent of option 12);
  * 20 symbol candidate limit; 21 Emoji candidate limit; 22 correction candidate limit.
  * 23 automatic Chinese/English spacing; 24 shuangpin profile index; 25 shuangpin enabled.
+ * 26 traditional Chinese output is available (runtime OpenCC detected).
  * Candidate limits use 0–12 and default to 4, 4, and 5 respectively. */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
-/* String option 0: custom shuangpin profile path; borrowed until reload/free. */
+/* String options: 0 custom shuangpin profile path; 1-6 Mode, GB18030, Voice,
+ * Unicode, Translate and Traditional shortcut specs. Borrowed until reload/free. */
 const char *cowtype2_runtime_string(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);

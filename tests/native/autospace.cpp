@@ -36,9 +36,9 @@ int main(int argc,char **argv) {
         CHECK(cowtype::autoSpace("👍ABC🙂中文",0)=="👍ABC🙂中文");
         CHECK(cowtype::autoSpace("𠀀A",0)=="𠀀 A");
         CHECK(argc==2 && isolatedPaths());
-        auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v1.ini";
+        auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v2.ini";
         std::filesystem::create_directories(config.parent_path());
-        {std::ofstream out(config);out<<"[CowType]\nVersion=1\nAutoSpace=True\n";}
+        {std::ofstream out(config);out<<"[CowType]\nVersion=2\nAutoSpace=True\nModeHotkey=F6\nUnicodeHotkey=F9\n";}
         char name[]="cowtype-spacing-test",disable[]="--disable=all";char *args[]={name,disable,nullptr};
         Instance instance(2,args);instance.initialize();
         void *module=dlopen(argv[1],RTLD_NOW|RTLD_LOCAL);CHECK(module);
@@ -52,7 +52,7 @@ int main(int argc,char **argv) {
             InputMethodEntry entry("cowtype","CowType","zh_CN","cowtype");
             InputContextEvent activate(&a,EventType::InputContextInputMethodActivated);engine->activate(entry,activate);
             auto press=[&](KeySym key,bool release=false){KeyEvent event(&a,Key(key),release);engine->keyEvent(entry,event);return event.accepted();};
-            auto tap=[&](KeySym key){CHECK(press(key));CHECK(press(key,true));};
+            auto tap=[&](KeySym key){if(!press(key))throw std::runtime_error("shortcut press rejected: "+Key(key).toString());if(!press(key,true))throw std::runtime_error("shortcut release rejected: "+Key(key).toString());};
             tap(FcitxKey_F6); // English mode: only the boundary character is consumed.
             a.surroundingText().setText("中文",2,2);
             CHECK(!press(FcitxKey_Shift_L));CHECK(press(FcitxKey_L));CHECK(a.commits.back()==" L");
@@ -73,9 +73,9 @@ int main(int argc,char **argv) {
             a.setCapabilityFlags(ordinary);a.surroundingText().setText("中文",2,0);CHECK(!press(FcitxKey_e));
             a.surroundingText().invalidate();CHECK(!press(FcitxKey_f));
             a.surroundingText().setText("中文",2,2);
-            {std::ofstream out(config);out<<"[CowType]\nVersion=1\nAutoSpace=False\n";}
+            {std::ofstream out(config);out<<"[CowType]\nVersion=2\nAutoSpace=False\nModeHotkey=F6\nUnicodeHotkey=F9\n";}
             addon->reloadConfig();CHECK(!press(FcitxKey_g));
-            {std::ofstream out(config);out<<"[CowType]\nVersion=1\nAutoSpace=True\n";}
+            {std::ofstream out(config);out<<"[CowType]\nVersion=2\nAutoSpace=True\nModeHotkey=F6\nUnicodeHotkey=F9\n";}
             addon->reloadConfig();tap(FcitxKey_F6);
             a.surroundingText().setText("Linux",5,5);
             for(auto ch:std::string("shan"))CHECK(press(static_cast<KeySym>(ch)));

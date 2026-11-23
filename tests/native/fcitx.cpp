@@ -17,6 +17,7 @@
 #include <thread>
 #include <vector>
 #include "isolation.h"
+#include "messages.h"
 #define CHECK(x) do { if (!(x)) { throw std::runtime_error("Fcitx check failed at line " + std::to_string(__LINE__)); } } while(0)
 using namespace fcitx;
 // New Fcitx stores mode notifications as overlays; the old supported versions
@@ -38,6 +39,10 @@ struct Field : InputContext {
 bool press(InputMethodEngine *engine, const InputMethodEntry &entry, Field &field, KeySym key, bool release=false) {
     KeyEvent event(&field, Key(key), release); engine->keyEvent(entry, event); return event.accepted();
 }
+bool pressChord(InputMethodEngine *engine, const InputMethodEntry &entry, Field &field,
+                KeySym key, KeyStates states, bool release=false) {
+    KeyEvent event(&field, Key(key, states), release); engine->keyEvent(entry, event); return event.accepted();
+}
 void type(InputMethodEngine *engine, const InputMethodEntry &entry, Field &field, const std::string &input) {
     for (char ch : input) { CHECK(press(engine, entry, field, static_cast<KeySym>(ch))); }
 }
@@ -45,7 +50,7 @@ int main(int argc, char **argv) {
     try {
         CHECK(argc == 2);
         CHECK(isolatedPaths());
-        std::filesystem::remove(std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v1.ini");
+        std::filesystem::remove(std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v2.ini");
         const auto customPath=std::filesystem::path(std::getenv("XDG_DATA_HOME"))/"cowtype/custom-v1.tsv";
         std::filesystem::create_directories(customPath.parent_path());
         { std::ofstream custom(customPath); custom << "# cowtype-custom-v1\nctest\t合成低权重\t1\nctest\t合成高权重\\n第二行\t1000\nuab\t字母快捷内容\t100\n"; }
@@ -115,18 +120,20 @@ int main(int argc, char **argv) {
             CHECK(!press(engine, pinyin, a, FcitxKey_a));
             CHECK(a.inputPanel().preedit().empty());
             a.setCapabilityFlags(CapabilityFlag::Preedit);
-            CHECK(press(engine, pinyin, a, FcitxKey_F6));
+            CHECK(!press(engine, pinyin, a, FcitxKey_Shift_L));
+            CHECK(!press(engine, pinyin, a, FcitxKey_Shift_L, true));
             CHECK(modeNotification(a.inputPanel())==engine->subMode(pinyin,a));
             CHECK(!modeNotification(a.inputPanel()).empty());
             CHECK(!press(engine, pinyin, a, FcitxKey_a));
-            CHECK(press(engine, pinyin, a, FcitxKey_F6));
+            CHECK(!press(engine, pinyin, a, FcitxKey_Shift_L));
+            CHECK(!press(engine, pinyin, a, FcitxKey_Shift_L, true));
             CHECK(modeNotification(a.inputPanel())==engine->subMode(pinyin,a));
-            // F6 is the sole default binding; a legacy Shift flag cannot add a second trigger.
-            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            // Shift is the default binding; F6 no longer toggles the mode.
+            CHECK(!press(engine,pinyin,a,FcitxKey_F6));
             CHECK(press(engine,pinyin,a,FcitxKey_a));CHECK(press(engine,pinyin,a,FcitxKey_Escape));
-            auto earlyConfig=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v1.ini";
+            auto earlyConfig=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v2.ini";
             std::filesystem::create_directories(earlyConfig.parent_path());
-            {std::ofstream settings(earlyConfig);settings<<"[CowType]\nVersion=1\nModeHotkey=Shift\n";}
+            {std::ofstream settings(earlyConfig);settings<<"[CowType]\nVersion=2\nModeHotkey=Shift\n";}
             addon->reloadConfig();
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
@@ -134,14 +141,16 @@ int main(int argc, char **argv) {
             CHECK(!press(engine,pinyin,a,FcitxKey_a));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));
             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
-            {std::ofstream settings(earlyConfig);settings<<"[CowType]\nVersion=1\nModeHotkey=F6\nShiftToggle=True\n";}
+            {std::ofstream settings(earlyConfig);settings<<"[CowType]\nVersion=2\nModeHotkey=F6\nShiftToggle=True\n";}
             addon->reloadConfig();
             type(engine,pinyin,a,"kn");
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="可能");
             CHECK(press(engine,pinyin,a,FcitxKey_space));CHECK(a.committed.back()=="可能");
             CHECK(press(engine,pinyin,a,FcitxKey_asciicircum));CHECK(a.committed.back()=="……");
-            const auto configPath = std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v1.ini";
+            const auto configPath = std::filesystem::path(std::getenv("XDG_CONFIG_HOME")) / "cowtype/settings-v2.ini";
             std::filesystem::create_directories(configPath.parent_path());
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nModeHotkey=Shift\nInternalCodeHotkey=F7\nUnicodeHotkey=F9\n"; }
+            addon->reloadConfig();
             // Internal code mode suspends normal composition and is per field.
             a.focusIn();
             // Long operation hints disappear while typing and return when empty.
@@ -223,11 +232,11 @@ int main(int argc, char **argv) {
             type(engine,pinyin,a,"u");CHECK(press(engine,pinyin,a,FcitxKey_Home));
             CHECK(press(engine,pinyin,a,FcitxKey_0));CHECK(a.inputPanel().clientPreedit().toString()=="u");
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
-            CHECK(press(engine,pinyin,a,FcitxKey_F6));CHECK(press(engine,pinyin,a,FcitxKey_F6,true));
+            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
             for(char c:std::string("u0020"))CHECK(!press(engine,pinyin,a,static_cast<KeySym>(c)));
             CHECK(a.inputPanel().clientPreedit().empty());
-            CHECK(press(engine,pinyin,a,FcitxKey_F6));CHECK(press(engine,pinyin,a,FcitxKey_F6,true));
-            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nUnicodeHotkey=None\nEmoji=True\n";}
+            CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_L,true));
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=2\nUnicodeHotkey=None\nEmoji=True\n";}
             addon->reloadConfig();type(engine,pinyin,a,"u0020");CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()==" ");
             type(engine,pinyin,a,"u");
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="🧲");
@@ -247,7 +256,7 @@ int main(int argc, char **argv) {
             CHECK(!press(engine,pinyin,a,FcitxKey_0));CHECK(a.inputPanel().clientPreedit().empty());
             a.setCapabilityFlags(CapabilityFlag::Preedit);
             type(engine,pinyin,a,"u4e2d");
-            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nUnicodePrefix=False\n";}
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=2\nUnicodePrefix=False\nInternalCodeHotkey=F7\nUnicodeHotkey=F9\n";}
             addon->reloadConfig();CHECK(a.inputPanel().clientPreedit().empty());
             type(engine,pinyin,a,"u0");CHECK(a.inputPanel().clientPreedit().toString()=="u");
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
@@ -258,13 +267,13 @@ int main(int argc, char **argv) {
             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));
             CHECK(a.inputPanel().clientPreedit().empty());type(engine,pinyin,a,"4e2d");
             CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="中");
-            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nModeHotkey=Shift\nInternalCodeHotkey=Alt_L\nUnicodeHotkey=Control_R\n";}
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=2\nModeHotkey=Shift\nInternalCodeHotkey=Alt_L\nUnicodeHotkey=Control_R\n";}
             addon->reloadConfig();
             CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L));CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L,true));type(engine,pinyin,a,"b9fa");
             CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="国");
             CHECK(!press(engine,pinyin,a,FcitxKey_Control_R));CHECK(!press(engine,pinyin,a,FcitxKey_Control_R,true));type(engine,pinyin,a,"1f600");
             CHECK(press(engine,pinyin,a,FcitxKey_Return));CHECK(a.committed.back()=="😀");
-            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nModeHotkey=F6\n";}
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=2\nModeHotkey=F6\nInternalCodeHotkey=F7\n";}
             addon->reloadConfig();
             // Click selection and keypad input use the same guarded commit path.
             CHECK(press(engine,pinyin,a,FcitxKey_F7));CHECK(press(engine,pinyin,a,FcitxKey_F7,true));
@@ -294,7 +303,7 @@ int main(int argc, char **argv) {
             CHECK(!press(engine,pinyin,a,FcitxKey_F7));
             CHECK(a.inputPanel().clientPreedit().empty());
             a.setCapabilityFlags(CapabilityFlag::Preedit);
-            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nModeHotkey=F11\nInternalCodeHotkey=F12\n";}
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=2\nModeHotkey=F11\nInternalCodeHotkey=F12\n";}
             addon->reloadConfig();
             CHECK(!press(engine,pinyin,a,FcitxKey_F7));
             CHECK(press(engine,pinyin,a,FcitxKey_F12));CHECK(press(engine,pinyin,a,FcitxKey_F12,true));
@@ -302,10 +311,10 @@ int main(int argc, char **argv) {
             CHECK(press(engine,pinyin,a,FcitxKey_F11));CHECK(press(engine,pinyin,a,FcitxKey_F11,true));
             CHECK(!press(engine,pinyin,a,FcitxKey_a));
             CHECK(press(engine,pinyin,a,FcitxKey_F11));CHECK(press(engine,pinyin,a,FcitxKey_F11,true));
-            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=1\nInternalCodeHotkey=None\n";}
+            {std::ofstream settings(configPath);settings<<"[CowType]\nVersion=2\nInternalCodeHotkey=None\n";}
             addon->reloadConfig();CHECK(!press(engine,pinyin,a,FcitxKey_F7));
             // CLDR candidates travel through the real native decoder/session ABI.
-            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=True\nLearning=False\n"; }
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nEmoji=True\nLearning=False\n"; }
             addon->reloadConfig();
             type(engine,pinyin,a,"shan");
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="山");
@@ -327,7 +336,7 @@ int main(int argc, char **argv) {
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="👍🏿");
             CHECK(press(engine,pinyin,a,FcitxKey_1));
             CHECK(a.committed.size()==beforeTone+1 && a.committed.back()=="👍🏿");
-            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=True\nEmojiSkinTonePicker=False\nEmojiDefaultSkinTone=3\nLearning=False\n"; }
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nEmoji=True\nEmojiSkinTonePicker=False\nEmojiDefaultSkinTone=3\nLearning=False\n"; }
             addon->reloadConfig();type(engine,pinyin,a,"thumbsup");
             CHECK(a.inputPanel().candidateList()->size()==1);
             CHECK(a.inputPanel().candidateList()->candidate(0).text().toString()=="👍🏽");
@@ -348,7 +357,7 @@ int main(int argc, char **argv) {
                 }
             }
             CHECK(selectedArrow && a.committed.back()=="→");
-            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nEmoji=False\nLearning=False\n"; }
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nModeHotkey=F6\nEmoji=False\nLearning=False\n"; }
             addon->reloadConfig(); type(engine,pinyin,a,"shan");
             CHECK(a.inputPanel().candidateList()->candidate(1).text().toString()!="⛰️");
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
@@ -357,10 +366,18 @@ int main(int argc, char **argv) {
             engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
             CHECK(press(engine,pinyin,a,FcitxKey_a));
             CHECK(press(engine,pinyin,a,FcitxKey_Escape));
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nTraditionalHotkey=Control+Shift+F\n"; }
+            addon->reloadConfig();
+            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift));
+            CHECK(modeNotification(a.inputPanel())==ct_tr("message.traditional_enabled"));
+            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift,true));
+            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift));
+            CHECK(modeNotification(a.inputPanel())==ct_tr("message.simplified_enabled"));
+            CHECK(pressChord(engine,pinyin,a,FcitxKey_f,KeyState::Ctrl_Shift,true));
             for (const auto &options : {std::string("ModeHotkey=F6\nRememberMode=True\n"),
                                         std::string("ModeHotkey=F6\nRememberMode=False\n"),
                                         std::string("ModeHotkey=F6\nShiftToggle=False\nRememberMode=True\n")}) {
-                { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\n" << options; }
+                { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\n" << options; }
                 addon->reloadConfig();
                 CHECK(press(engine,pinyin,a,FcitxKey_F6));
                 engine->deactivate(pinyin,switched); engine->activate(pinyin,activate);
@@ -376,7 +393,7 @@ int main(int argc, char **argv) {
                     CHECK(press(engine,pinyin,a,FcitxKey_F6));
                 } else { CHECK(press(engine,pinyin,a,FcitxKey_Escape)); }
             }
-            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nPageSize=7\nPageBrackets=False\nPageMinusEqual=False\nHorizontal=True\nShowPinyin=False\nVoice=True\nVoiceHotkey=F9\n"; }
+            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nPageSize=7\nPageBrackets=False\nPageMinusEqual=False\nHorizontal=True\nShowPinyin=False\nVoice=True\nVoiceHotkey=F9\n"; }
             addon->reloadConfig();
             type(engine, pinyin, a, "shan");
             CHECK(a.inputPanel().candidateList()->size()==7);
@@ -454,7 +471,7 @@ int main(int argc, char **argv) {
                         case 10: destroyedField.reset();break;
                         case 11:
                             CHECK(a.committed.size()==before+2);
-                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nVoice=True\nVoiceHotkey=F9\nVoiceResident=False\n"; }
+                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nVoice=True\nVoiceHotkey=F9\nVoiceResident=False\n"; }
                             addon->reloadConfig();a.focusIn();
                             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));break;
                         case 12: CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));break;
@@ -464,7 +481,7 @@ int main(int argc, char **argv) {
                         case 14: CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));break;
                         case 15:
                             CHECK(a.committed.size()==before+4);
-                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nVoice=True\nVoiceHotkey=Alt_L\nVoiceModifierHold=True\n"; }
+                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nVoice=True\nVoiceHotkey=Alt_L\nVoiceModifierHold=True\n"; }
                             addon->reloadConfig();
                             CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L));break;
                         case 16: CHECK(a.inputPanel().clientPreedit().empty());break;
@@ -488,7 +505,7 @@ int main(int argc, char **argv) {
                             CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L,true));break;
                         case 23:
                             CHECK(a.committed.size()==before+6);
-                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nVoice=True\nVoiceHotkey=Alt_L\nVoiceModifierHold=False\n"; }
+                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nVoice=True\nVoiceHotkey=Alt_L\nVoiceModifierHold=False\n"; }
                             addon->reloadConfig();
                             CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L));break;
                         case 24: break;
@@ -498,7 +515,7 @@ int main(int argc, char **argv) {
                             CHECK(!press(engine,pinyin,a,FcitxKey_Alt_L,true));
                             CHECK(a.committed.size()==before+6);break;
                         case 27:
-                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nVoice=True\nVoiceResident=True\nVoiceAlwaysResident=True\nVoiceHotkey=F9\n"; }
+                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nVoice=True\nVoiceResident=True\nVoiceAlwaysResident=True\nVoiceHotkey=F9\n"; }
                             addon->reloadConfig();break;
                         case 28: {
                             auto prepared=std::filesystem::path(std::getenv("COWTYPE_TEST_ROOT"))/"voice-test-prepared";
@@ -510,7 +527,7 @@ int main(int argc, char **argv) {
                             CHECK(press(engine,pinyin,a,FcitxKey_F9));CHECK(press(engine,pinyin,a,FcitxKey_F9,true));break;
                         case 30:
                             CHECK(a.committed.size()==before+7);
-                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=1\nModeHotkey=F6\nVoice=True\nVoiceHotkey=Shift\nVoiceModifierHold=False\n"; }
+                            { std::ofstream settings(configPath); settings << "[CowType]\nVersion=2\nModeHotkey=F6\nVoice=True\nVoiceHotkey=Shift\nVoiceModifierHold=False\n"; }
                             addon->reloadConfig();
                             CHECK(!press(engine,pinyin,a,FcitxKey_Shift_R));CHECK(!press(engine,pinyin,a,FcitxKey_Shift_R,true));break;
                         case 31:

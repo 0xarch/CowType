@@ -39,7 +39,8 @@ int main() {
     return 0u;
   };
   for (auto action : {Shortcuts::Action::Mode, Shortcuts::Action::InternalCode,
-                      Shortcuts::Action::Voice, Shortcuts::Action::Unicode, Shortcuts::Action::Translate}) {
+                      Shortcuts::Action::Voice, Shortcuts::Action::Unicode,
+                      Shortcuts::Action::Translate, Shortcuts::Action::Traditional}) {
     for (auto sym :
          {FcitxKey_Shift_L, FcitxKey_Shift_R, FcitxKey_Control_L,
           FcitxKey_Alt_L, FcitxKey_Super_R, FcitxKey_ISO_Level3_Shift}) {
@@ -61,6 +62,19 @@ int main() {
     }
   }
   assert(Shortcuts::matches(index("Shift"), FcitxKey_Shift_L));
+  const std::array<std::string_view, 6> specs{
+      "Shift", "Control+Shift+G", "Control+Shift+V", "Control+Shift+U",
+      "Control+Shift+T", "Control+Shift+F"};
+  assert(Shortcuts::matches("F6", FcitxKey_F6, 0));
+  assert(Shortcuts::resolveSpecs(FcitxKey_F6, 0,
+      std::array<std::string_view, 6>{"F6", "F7", "F8", "F9", "F10", "None"}, true, true, true) ==
+      Shortcuts::Action::Mode);
+  assert(Shortcuts::resolveSpecs(FcitxKey_g, 4 | 1, specs, true, true, true) ==
+         Shortcuts::Action::InternalCode);
+  assert(Shortcuts::resolveSpecs(FcitxKey_f, 4 | 1, specs, true, true, true) ==
+         Shortcuts::Action::Traditional);
+  assert(Shortcuts::resolveSpecs(FcitxKey_f, 4 | 1, specs, true, true, false) ==
+         Shortcuts::Action::None);
   assert(Shortcuts::resolve(FcitxKey_F10,0,5,6,7,true,8,9,true)==Shortcuts::Action::Translate);
   assert(Shortcuts::resolve(FcitxKey_F10,0,5,6,7,true,8,9,false)==Shortcuts::Action::None);
   assert(Shortcuts::matches(index("Shift"), FcitxKey_Shift_R));

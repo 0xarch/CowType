@@ -33,8 +33,9 @@ struct Field : InputContext {
 int main(int argc,char **argv){
     try {
         CHECK(argc==2 && isolatedPaths());
-        auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v1.ini";
-        std::filesystem::create_directories(config.parent_path());std::filesystem::remove(config);
+        auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v2.ini";
+        std::filesystem::create_directories(config.parent_path());
+        { std::ofstream out(config); out << "[CowType]\nVersion=2\nModeHotkey=F6\nTranslateHotkey=F10\nUnicodeHotkey=F9\n"; }
         char name[]="cowtype-translate-test",disable[]="--disable=all";char *args[]={name,disable,nullptr};
         Instance instance(2,args);instance.initialize();
         void *module=dlopen(argv[1],RTLD_NOW|RTLD_LOCAL);CHECK(module);
@@ -49,7 +50,7 @@ int main(int argc,char **argv){
             auto press=[&](KeySym key,bool release=false){KeyEvent event(&a,Key(key),release);engine->keyEvent(entry,event);return event.accepted();};
             auto tap=[&](KeySym key){CHECK(press(key));CHECK(press(key,true));};
             auto type=[&](std::string text){for(unsigned char c:text)CHECK(press(static_cast<KeySym>(c)));};
-            auto settings=[&](std::string extra){std::ofstream out(config);out<<"[CowType]\nVersion=1\n"<<extra;out.close();addon->reloadConfig();};
+            auto settings=[&](std::string extra){std::ofstream out(config);out<<"[CowType]\nVersion=2\nModeHotkey=F6\nTranslateHotkey=F10\nUnicodeHotkey=F9\n"<<extra;out.close();addon->reloadConfig();};
             auto result=[&](){auto list=a.inputPanel().candidateList();CHECK(list && list->size()==1);CHECK(list->candidate(0).text().toString()=="合成译文");};
             auto starts=[&](){std::ifstream file(std::filesystem::path(std::getenv("COWTYPE_TEST_ROOT"))/"translate-test-starts");size_t count=0;std::string line;while(std::getline(file,line))++count;return count;};
             size_t beforeSelection=0;

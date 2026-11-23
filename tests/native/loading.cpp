@@ -33,7 +33,7 @@ size_t builds() {
 int main(int argc,char **argv) {
     try {
         if(argc!=2 || !isolatedPaths()) throw std::runtime_error("Missing isolated test paths");
-        const auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v1.ini";
+        const auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v2.ini";
         std::filesystem::remove(config);
         std::filesystem::remove(std::filesystem::path(std::getenv("XDG_STATE_HOME"))/"cowtype/engine.log");
         char name[]="cowtype-loading-test", disabled[]="--disable=all";char *args[]={name,disabled,nullptr};
@@ -60,7 +60,7 @@ int main(int argc,char **argv) {
                             readyMs=(now(CLOCK_MONOTONIC)-began)/1000;
                             const auto before=builds();if(before!=2)throw std::runtime_error("Expected initial pinyin and Wubi builds");
                             std::filesystem::create_directories(config.parent_path());
-                            {std::ofstream settings(config);settings<<"[CowType]\nVersion=1\nPageSize=7\nShowPinyin=False\n";}
+                            {std::ofstream settings(config);settings<<"[CowType]\nVersion=2\nPageSize=7\nShowPinyin=False\n";}
                             addon->reloadConfig();
                             if(builds()!=before)throw std::runtime_error("Settings-only reload rebuilt dictionaries");
                             passed=true;

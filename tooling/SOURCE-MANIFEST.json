@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "reviewed_on": "2026-11-23",
+  "reviewed_on": "2026-11-24",
   "scope": "Project source snapshot; excludes build output, models and user data",
   "files": [
     {
@@ -35,22 +35,22 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "533f786190d68ff18e631aa7a94ac5c255b08d2a9c2d36549e158a1f2417c2f5",
-      "bytes": 17395
+      "sha256": "89b2807540c8c09e94f853a5f8c6f12502eda0dba4bea2d2a357105e5c7028fc",
+      "bytes": 17785
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "c5ac6d4f1e3853723ecb5d724ee67ab2605cdf965855ed955882efc1a898f3c1",
-      "bytes": 21763
+      "sha256": "640b9e300772fc4a7fb0734f03db7049f8a18351059ed4c1b0d7cb6c0787a36e",
+      "bytes": 22395
     },
     {
       "path": "Cargo.lock",
-      "sha256": "5bbb92a01f924b6262a2e82124f31c42730768dbcd2d2f78beb6598d50ae353a",
+      "sha256": "67dd7815ddd46fffbf7598dd6ff36ff198b4e929c493c3e610f6aef15977fafb",
       "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "e0a89bc430d28a965aed2b4b746a0ab56b0416130fa337d6831fcd76add99ffa",
+      "sha256": "09894f431de6ec3d7c13e82bab7c8111e30881a9cebec3c788847b8ab9c7123d",
       "bytes": 322
     },
     {
@@ -178,13 +178,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "172c7d6c1372fa5e972ba3bf093466425855795f10b11c3b4c64a81f4333db33",
-      "bytes": 18077
+      "sha256": "404135b0c36041795626008ef417766e7368677d02d7c2003dbe1358e92fb9d0",
+      "bytes": 19763
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "37b093010c42a1f4675815e8f046a17d06f634c00ce42cfb3856134b4e150203",
-      "bytes": 16338
+      "sha256": "1baa165fe1b17d81c4797de4b0741f72c930ee708342a5f0bed978c369dbd25d",
+      "bytes": 17941
     },
     {
       "path": "packaging/README.md",
@@ -193,7 +193,7 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "692d66944d078990334678eba118d904fca4016497797424c5291175ef928d00",
+      "sha256": "1730b8247889967a4003d82963a77d6e4d4547dc915f6b04936c7bb8a52089ac",
       "bytes": 1611
     },
     {
@@ -318,8 +318,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "3508cb30422df02f90772ab7edc77d29bf733d9b6f12d89b24b0f333fd85ab1f",
-      "bytes": 50266
+      "sha256": "e7d2cf287fbfab6b47993703d7a62012d14816088106f3a42ddbce8e217416fa",
+      "bytes": 53184
     },
     {
       "path": "src-fcitx5/engine/dbus.h",
@@ -348,8 +348,8 @@
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
-      "sha256": "53257121e66d525dbd21e4be753caa566198ca77b932a14d7991fd8e20aff972",
-      "bytes": 4522
+      "sha256": "37e0bba95041f5f522f7b3d7166ad31fef8a0bebd2101aaabc791562137f5d7a",
+      "bytes": 6150
     },
     {
       "path": "src-fcitx5/engine/shuangpin-gb.h",
@@ -365,6 +365,11 @@
       "path": "src-fcitx5/engine/spelling.h",
       "sha256": "1e9f5b2df6c1c7da1d3d26dd664f5c916c42ac85b889dc2ee418e9348b6bb3f8",
       "bytes": 9707
+    },
+    {
+      "path": "src-fcitx5/engine/traditional.h",
+      "sha256": "c51e85cd59a47c6a71b03ed13e3334d9fd6b2d429427f512e2a436bc37cffa9e",
+      "bytes": 2632
     },
     {
       "path": "src-fcitx5/engine/translate.h",
@@ -393,8 +398,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "477e62fda4f19c8a80fecf9dba5b0a3c947723117b0fe5e5dfa9eda1a64f0bd8",
-      "bytes": 5668
+      "sha256": "389d35d97d47c37645e3ad829b9b77b8c5eabf2fe356b1b0958667b13ba43594",
+      "bytes": 5762
     },
     {
       "path": "src-fcitx5/unicode/README.md",
@@ -448,8 +453,8 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "699571d19fe2a12bd83af2a494fc85025c62b23e10c4325a3cd210753211dd36",
-      "bytes": 34868
+      "sha256": "9386e490d1090de2031b6a34580291f3678414d730f200e743e0b968a23e1cf1",
+      "bytes": 41728
     },
     {
       "path": "src-settings/app/memory.py",
@@ -472,9 +477,19 @@
       "bytes": 3564
     },
     {
+      "path": "src-settings/config/migrate.py",
+      "sha256": "a3719040f8f9562908328bd9e6b66f6a17b1b02a577de82e15c9682c6b86ddac",
+      "bytes": 5414
+    },
+    {
       "path": "src-settings/config/settings.py",
-      "sha256": "260996b93cedf53ba3fb97627aec38cc4c8be861dd3b619dba599949a63b12ee",
-      "bytes": 6623
+      "sha256": "a0db87196a456c02d1703e3bad4b236a4441b63aac697d61591db74b6d3ccd08",
+      "bytes": 8214
+    },
+    {
+      "path": "src-settings/desktop/cowtype-config-migrate.in",
+      "sha256": "1e496ff5392f67b1c8cc1659ac80c5add519a075df8f4f61d1dda9ac25c3de73",
+      "bytes": 211
     },
     {
       "path": "src-settings/desktop/cowtype-config.in",
@@ -523,12 +538,12 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "0238ffa7033649f94967fd975dfb7cf22e22b9f2055cc671190f2939ae9c8f68",
+      "sha256": "89c60e71dc904e4a5d43f8fe06a41bb2f8a018409f7ca80c71e3bee1c913610f",
       "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "b1253eb8055c22f0a32ab52015aaf988b3d572458261a9a9c88917b316ac28bc",
+      "sha256": "61aabe36ebc25bc7de51213540f9c8ac1f925d1b67f57d1431cd59a1572aec5e",
       "bytes": 473
     },
     {
@@ -633,13 +648,13 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "b0cb5ee6b629986219cb46285f3ebd57f278080aebdf07a98ce90c51e178f9f3",
-      "bytes": 21527
+      "sha256": "963815282bc9a660b49cd325b5a9d36b1a6d32ba12937cd1d90096a7c16685a6",
+      "bytes": 24825
     },
     {
       "path": "src/config/shortcuts.tsv",
-      "sha256": "2dc59b59d87aeb3adebddd362984517e284bd09d66ced2e6d6bf0b819d64324f",
-      "bytes": 833
+      "sha256": "a538c3d65aec0d768087e06f8612d873a529747ae1b167bf0a612c276dde8958",
+      "bytes": 1008
     },
     {
       "path": "src/custom/mod.rs",
@@ -678,8 +693,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "578df830feb85e2e02fda483464fde3428cc52b276552f7962aef21bd6771ce3",
-      "bytes": 22264
+      "sha256": "a034f8dca94b4e237c7cae0d47b566fe8b93ef4fbea108d18280ffb22b542fe2",
+      "bytes": 22886
     },
     {
       "path": "src/i18n/mod.rs",
@@ -778,8 +793,8 @@
     },
     {
       "path": "tests/native/autospace.cpp",
-      "sha256": "c3eeb8ed79895e25247214ee8f2b2843cf9edb6e237666caeb248f5f35a43aa5",
-      "bytes": 6555
+      "sha256": "75d547532739fb090539ea312e124f4f3dc9ae563bb3c48eccff79a7d723ddad",
+      "bytes": 6798
     },
     {
       "path": "tests/native/correction.cpp",
@@ -833,13 +848,13 @@
     },
     {
       "path": "tests/native/fcitx.cpp",
-      "sha256": "07c6ee6bbb366117a89882ad45085235f77e9597aca5afac0fd0ce230dfdf530",
-      "bytes": 41420
+      "sha256": "75c03010b25cb39fa2d8e1125a2208d8a4486b9ca29fb5d133bc4c45be6fdcfe",
+      "bytes": 42744
     },
     {
       "path": "tests/native/internal-code.cpp",
-      "sha256": "bf836d9ce8e6f0c6f7637813d3b8a67e61f34b5e4ef844189a1a7f8862eb2cdc",
-      "bytes": 4462
+      "sha256": "99ddec0b3e1aca00613884a3a3ca2649c23b9c6c9a9e56d80113c167c598f15c",
+      "bytes": 5273
     },
     {
       "path": "tests/native/isolated.py",
@@ -853,17 +868,17 @@
     },
     {
       "path": "tests/native/loading.cpp",
-      "sha256": "c0555bb2c30285ed6ef693e37cc3b2e6e78da17b211890929b184a020a2df8fc",
+      "sha256": "2bf4b1dd9ec3acfe416d5f67307836b940d48b7d1c75235c17a7a7008e0a159d",
       "bytes": 4800
     },
     {
       "path": "tests/native/shuangpin-reload.cpp",
-      "sha256": "eea7c714ad337648068708ebad400943d7e672523df899a1fbd3adfcf1cf8d3f",
+      "sha256": "34227ae80e78f83b75190f8258c5595fe3dc62f1089cd87b07512ddb8a545de0",
       "bytes": 5038
     },
     {
       "path": "tests/native/shuangpin.cpp",
-      "sha256": "294f2f694d16643e1682764c13bf61ba1c9189a27b50d1f72e447d77de2f6eda",
+      "sha256": "3528a90bb2f70e04e1b45d2da85b7bbb3cf43f6ec5010d373b85d21e27d99c88",
       "bytes": 6036
     },
     {
@@ -872,9 +887,14 @@
       "bytes": 2683
     },
     {
+      "path": "tests/native/traditional.cpp",
+      "sha256": "20efee4e465169ed7628b66e996886da5c32697e32aa5a7c992585327d681fd3",
+      "bytes": 606
+    },
+    {
       "path": "tests/native/translate.cpp",
-      "sha256": "e92c90778e24f613f6d3ffd3c8715124097a531f5a60298cd1b854ef1ae57f46",
-      "bytes": 9339
+      "sha256": "956303f3d5b770723f96df96c39f5df64e959e047dd373c63b139e6184dbccc0",
+      "bytes": 9487
     },
     {
       "path": "tests/native/unicode-code.cpp",
@@ -883,7 +903,7 @@
     },
     {
       "path": "tests/sentence_learning.rs",
-      "sha256": "24fa4ce3fe42373c045cd6c6609786ba4396e268c8c57c5a2f7c954d52e4bd7a",
+      "sha256": "3325385700a786b2619db985159563aa790d78e79d8176b9bb08cc33a9255026",
       "bytes": 8989
     },
     {
@@ -923,8 +943,8 @@
     },
     {
       "path": "tests/test_settings.py",
-      "sha256": "99e59d5e766659ad1ef2c2f160a468482f746eb5316831df32f5529a34e37ccc",
-      "bytes": 10105
+      "sha256": "c1ddd79ffbd0eb7f1461f1e50fc2aec32b67618b485bfab31db8806874098bff",
+      "bytes": 12047
     },
     {
       "path": "tests/test_settings_startup.py",
@@ -983,7 +1003,7 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "78e9a29b28fabf669227adf27aca38ffe09b29e24c0d2cfc8dc571ec2be26709",
+      "sha256": "4387ea064b2f027db74714f87ef26714ddedd4e16c4a87fcf2763bfca3d7b94f",
       "bytes": 5404
     },
     {

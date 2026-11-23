@@ -362,10 +362,21 @@ pub unsafe extern "C" fn cowtype2_session_mode(h: *const SessionHandle) -> u32 {
 pub struct RuntimeHandle {
     settings: crate::config::Settings,
     shuangpin_custom: CString,
+    shortcuts: [CString; 6],
     service: crate::learning::service::Service,
     custom: crate::custom::service::Service,
     service_warning: CString,
     warning: CString,
+}
+fn shortcut_strings(settings: &crate::config::Settings) -> [CString; 6] {
+    [
+        cstring(&settings.mode_hotkey_spec),
+        cstring(&settings.internal_code_hotkey_spec),
+        cstring(&settings.voice_hotkey_spec),
+        cstring(&settings.unicode_hotkey_spec),
+        cstring(&settings.translate_hotkey_spec),
+        cstring(&settings.traditional_hotkey_spec),
+    ]
 }
 #[no_mangle]
 pub extern "C" fn cowtype2_runtime_new() -> *mut RuntimeHandle {
@@ -376,6 +387,7 @@ pub extern "C" fn cowtype2_runtime_new() -> *mut RuntimeHandle {
         };
         Box::into_raw(Box::new(RuntimeHandle {
             shuangpin_custom: cstring(&settings.shuangpin_custom),
+            shortcuts: shortcut_strings(&settings),
             settings,
             service: crate::learning::service::Service::new(crate::learning::path()),
             custom: crate::custom::service::Service::new(crate::custom::path()),
@@ -399,6 +411,7 @@ pub unsafe extern "C" fn cowtype2_runtime_reload(h: *mut RuntimeHandle) -> bool 
         match crate::config::Settings::load(&crate::config::path()) {
             Ok(settings) => {
                 h.shuangpin_custom = cstring(&settings.shuangpin_custom);
+                h.shortcuts = shortcut_strings(&settings);
                 h.settings = settings;
                 h.warning = CString::default();
                 true
@@ -637,10 +650,14 @@ pub unsafe extern "C" fn cowtype2_runtime_string(
     h: *const RuntimeHandle,
     key: u32,
 ) -> *const c_char {
-    unsafe { h.as_ref() }
-        .filter(|_| key == 0)
-        .map(|h| h.shuangpin_custom.as_ptr())
-        .unwrap_or(ptr::null())
+    let Some(h) = (unsafe { h.as_ref() }) else {
+        return ptr::null();
+    };
+    match key {
+        0 => h.shuangpin_custom.as_ptr(),
+        1..=6 => h.shortcuts[(key - 1) as usize].as_ptr(),
+        _ => ptr::null(),
+    }
 }
 
 #[no_mangle]

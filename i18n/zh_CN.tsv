@@ -43,6 +43,31 @@ hint.words.source	固定版本 {revision}；下载约 {size} MiB。
 hotkey.Alt_L	左 Alt
 hotkey.Alt_R	右 Alt
 hotkey.Control_R	右 Ctrl
+hotkey.Control_L	左 Ctrl
+hotkey.Super_L	左 Super
+hotkey.Super_R	右 Super
+hotkey.comma	逗号
+hotkey.period	句点
+hotkey.slash	斜杠
+hotkey.semicolon	分号
+hotkey.equal	等号
+hotkey.minus	减号
+hotkey.plus	加号
+hotkey.bracketleft	左方括号
+hotkey.bracketright	右方括号
+hotkey.backslash	反斜杠
+hotkey.grave	反引号
+hotkey.apostrophe	单引号
+hotkey.quotedbl	双引号
+hotkey.less	小于号
+hotkey.greater	大于号
+hotkey.question	问号
+hotkey.underscore	下划线
+hotkey.KP_Enter	小键盘回车
+hotkey.KP_Add	小键盘加号
+hotkey.KP_Subtract	小键盘减号
+hotkey.KP_Multiply	小键盘乘号
+hotkey.KP_Divide	小键盘除号
 hotkey.F10	F10
 hotkey.F8	F8
 hotkey.F9	F9
@@ -245,6 +270,28 @@ setting.SymbolCandidateLimit	符号候选数量
 setting.EmojiCandidateLimit	Emoji 候选数量
 setting.CorrectionCandidateLimit	纠错候选数量
 error.candidate_limit	候选数量必须在 0–12 之间。
+setting.TraditionalHotkey	切换简繁中文
+message.traditional_enabled	已切换到繁体中文
+message.simplified_enabled	已切换到简体中文
+error.migration_required	检测到旧版配置。请先运行 cowtype-config-migrate，再重新启动设置程序或 Fcitx5。
+setting.shortcuts	功能快捷键
+hint.record_shortcut	选择单键快捷键，或录制组合键。
+hint.press_shortcut	请按下要录制的快捷键
+hotkey.combination	组合键…
+hotkey.combination_function	组合键或功能键
+action.quit	退出
+action.migrate_restart	迁移并重启 Fcitx5
+migration.title	CowType 配置需要迁移
+error.migration_failed	配置迁移失败
+action.record	录制
+keys.group	功能快捷键
+keys.single	单键
+keys.chord	组合键
+keys.disabled	禁用
+keys.record	录制按键
+keys.record_hint	请按下要绑定的按键或组合键
+keys.invalid	此按键或组合键不受支持
+keys.conflict	此组合键已分配给其他功能
 learning.manage	查看与修改记忆
 learning.title	学习记忆
 learning.search	搜索词句或拼音

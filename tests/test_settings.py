@@ -3,6 +3,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -10,6 +11,11 @@ from unittest.mock import patch
 SPEC = importlib.util.spec_from_file_location('settings', Path(__file__).resolve().parents[1] / 'src-settings/config/settings.py')
 settings = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(settings)
+sys.modules['settings'] = settings
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src-settings/config'))
+MIGRATOR_SPEC = importlib.util.spec_from_file_location('migrate', Path(__file__).resolve().parents[1] / 'src-settings/config/migrate.py')
+migrator = importlib.util.module_from_spec(MIGRATOR_SPEC)
+MIGRATOR_SPEC.loader.exec_module(migrator)
 
 class SettingsTests(unittest.TestCase):
     def setUp(self):
@@ -33,52 +39,83 @@ class SettingsTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 settings.validate(dict(values, **change))
     def test_shortcut_conflicts_and_disabled_bindings(self):
-        for changes in [dict(ModeHotkey='F7'), dict(InternalCodeHotkey='F8'), dict(VoiceHotkey='F6'), dict(InternalCodeHotkey='F13')]:
+        for changes in [dict(ModeHotkey='Control+Shift+G'), dict(InternalCodeHotkey='Control+Shift+V'),
+                        dict(VoiceHotkey='F36'), dict(InternalCodeHotkey='F36')]:
             with self.assertRaises(ValueError):
                 settings.validate(dict(settings.DEFAULTS, **changes))
         settings.validate(dict(settings.DEFAULTS, ModeHotkey='None', InternalCodeHotkey='None'))
         settings.validate(dict(settings.DEFAULTS, ModeHotkey='F11', InternalCodeHotkey='F12'))
-    def test_common_shortcuts_and_legacy_shift_migration(self):
-        self.assertEqual(len({choices for _, choices in settings.SHORTCUTS.values()}), 1)
-        for role in settings.SHORTCUTS:
-            for key in ('Shift', 'Alt', 'Control', 'Super', 'Shift_R', 'Control_L', 'None'):
-                settings.validate(dict(settings.DEFAULTS, **{role: key}))
+        self.assertEqual(settings.canonical_shortcut('Control+Shift+g'), 'Control+Shift+G')
+        self.assertEqual(settings.canonical_shortcut('Control+comma'), 'Control+comma')
+        with self.assertRaises(ValueError):
+            settings.validate(dict(settings.DEFAULTS, TraditionalHotkey='Control+Shift+g'))
+    def test_common_shortcuts_and_explicit_migration_boundary(self):
+        for role in settings.HOTKEYS:
+            for key in ('Shift', 'Alt', 'Control', 'Super', 'Shift_R', 'Control_L', 'None', 'Control+Shift+F'):
+                values = dict(settings.DEFAULTS, **{name: 'None' for name in settings.HOTKEYS})
+                values[role] = key
+                if key == 'Control+Shift+F' and role != 'TraditionalHotkey':
+                    values['TraditionalHotkey'] = 'Control+Alt+F'
+                settings.validate(values)
         for generic, side in [('Shift', 'Shift_L'), ('Alt', 'Alt_R'), ('Control', 'Control_R')]:
             with self.assertRaises(ValueError):
                 settings.validate(dict(settings.DEFAULTS, ModeHotkey=generic, VoiceHotkey=side))
-        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nShiftToggle=True\n')
-        self.assertEqual(settings.load()['ModeHotkey'], 'Shift')
-        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nShiftToggle=True\nModeHotkey=F6\n')
-        self.assertEqual(settings.load()['ModeHotkey'], 'F6')
-    def test_unicode_independent_binding_and_legacy_f9_migration(self):
-        self.assertEqual(settings.DEFAULTS['UnicodeHotkey'], 'F9')
-        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nVoiceHotkey=F9\n')
-        values = settings.load()
-        self.assertEqual(values['UnicodeHotkey'], 'None')
-        self.assertEqual(values['VoiceHotkey'], 'F9')
+        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\n')
+        with self.assertRaises(settings.MigrationRequired):
+            settings.load()
+    def test_migrator_backs_up_and_writes_new_format(self):
+        directory = settings.config_home()
+        directory.mkdir(parents=True)
+        source = directory/'settings-v1.ini'
+        original = '[CowType]\nVersion=1\nModeHotkey=F6\nVoiceHotkey=F8\nLearning=False\n'
+        source.write_text(original)
+        migrator.migrate()
+        destination = directory/'settings-v2.ini'
+        self.assertTrue(destination.exists())
+        self.assertFalse(source.exists())
+        backups = list(directory.glob('settings-v1.ini.backup-*'))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(backups[0].read_text(), original)
+        converted = settings.load()
+        self.assertEqual(converted['Version'], '2')
+        self.assertEqual(converted['ModeHotkey'], 'Shift')
+        self.assertEqual(converted['VoiceHotkey'], 'Control+Shift+V')
+        self.assertEqual(converted['Learning'], 'False')
+    def test_migrator_refuses_bad_or_conflicting_input_without_changes(self):
+        directory = settings.config_home()
+        directory.mkdir(parents=True)
+        source = directory/'settings-v1.ini'
+        original = '[CowType]\nVersion=1\nModeHotkey=F6\nVoiceHotkey=Shift\n'
+        source.write_text(original)
         with self.assertRaises(ValueError):
-            settings.validate(dict(values, UnicodeHotkey='F9'))
-        settings.validate(dict(values, UnicodeHotkey='Control_R', InternalCodeHotkey='Alt_L'))
+            migrator.migrate()
+        self.assertEqual(source.read_text(), original)
+        self.assertFalse((directory/'settings-v2.ini').exists())
+        settings.atomic(settings.config_home()/'settings-v2.ini', '[CowType]\nVersion=1\nShiftToggle=True\n')
+        with self.assertRaises(settings.MigrationRequired):
+            settings.load()
+    def test_unicode_binding_is_independent_from_legacy_config(self):
+        self.assertEqual(settings.DEFAULTS['UnicodeHotkey'], 'Control+Shift+U')
+        settings.validate(dict(settings.DEFAULTS, UnicodeHotkey='None'))
+        settings.validate(dict(settings.DEFAULTS, UnicodeHotkey='Control_R', InternalCodeHotkey='Alt_L'))
     def test_unicode_prefix_defaults_on_and_is_independent(self):
         values = settings.load()
         self.assertEqual(values['UnicodePrefix'], 'True')
         values.update(UnicodeHotkey='None')
         settings.save(values)
         self.assertEqual(settings.load()['UnicodePrefix'], 'True')
-        values.update(UnicodePrefix='False', UnicodeHotkey='F9')
+        values.update(UnicodePrefix='False', UnicodeHotkey='Control+Alt+U')
         settings.save(values)
         self.assertEqual(settings.load()['UnicodePrefix'], 'False')
-        self.assertEqual(settings.load()['UnicodeHotkey'], 'F9')
-    def test_translation_default_and_existing_binding_migration(self):
+        self.assertEqual(settings.load()['UnicodeHotkey'], 'Control+Alt+u')
+    def test_translation_defaults_and_conflict_validation(self):
         self.assertEqual(settings.DEFAULTS['Translate'], 'False')
-        self.assertEqual(settings.DEFAULTS['TranslateHotkey'], 'F10')
-        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\nVoiceHotkey=F10\n')
-        self.assertEqual(settings.load()['TranslateHotkey'], 'None')
+        self.assertEqual(settings.DEFAULTS['TranslateHotkey'], 'Control+Shift+T')
         values=dict(settings.DEFAULTS, Translate='True', TranslateHotkey='Alt')
         settings.save(values)
         self.assertEqual(settings.load(),values)
         with self.assertRaises(ValueError):
-            settings.validate(dict(values, ModeHotkey='Alt_R'))
+            settings.validate(dict(values, ModeHotkey='Alt'))
     def test_system_dictionary_is_optional_and_independent(self):
         self.assertEqual(settings.load()['SystemDictionary'], 'False')
         for enabled in ('True', 'False'):
@@ -132,9 +169,9 @@ class SettingsTests(unittest.TestCase):
         values.update(PageSize='9', Sentence='False', FutureOption='preserved')
         settings.save(values)
         self.assertEqual(settings.load(), values)
-        self.assertEqual((settings.config_home()/'settings-v1.ini').stat().st_mode & 0o777, 0o600)
+        self.assertEqual((settings.config_home()/'settings-v2.ini').stat().st_mode & 0o777, 0o600)
     def test_invalid_config_never_overwritten(self):
-        path = settings.config_home()/'settings-v1.ini'
+        path = settings.config_home()/'settings-v2.ini'
         settings.atomic(path, '[CowType]\nVersion=99\n')
         with self.assertRaises(ValueError): settings.load()
         self.assertIn('99', path.read_text())
@@ -158,13 +195,13 @@ class SettingsTests(unittest.TestCase):
     def test_symlink_rejected(self):
         target = self.root/'private'
         target.write_text('keep')
-        path = settings.config_home()/'settings-v1.ini'
+        path = settings.config_home()/'settings-v2.ini'
         path.parent.mkdir(parents=True)
         path.symlink_to(target)
         with self.assertRaises(ValueError): settings.save(settings.DEFAULTS)
         self.assertEqual(target.read_text(), 'keep')
     def test_remember_mode_defaults_and_roundtrip(self):
-        settings.atomic(settings.config_home()/'settings-v1.ini', '[CowType]\nVersion=1\n')
+        settings.atomic(settings.config_home()/'settings-v2.ini', '[CowType]\nVersion=2\n')
         values = settings.load()
         self.assertEqual(values['RememberMode'], 'False')
         values.update(RememberMode='True', ShiftToggle='False')

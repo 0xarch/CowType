@@ -75,7 +75,7 @@ def main():
         import gi
         gi.require_version('Gtk', '4.0')
         gi.require_version('Adw', '1')
-        from gi.repository import Adw, Gtk, Gio, GLib
+        from gi.repository import Adw, Gtk, Gio, GLib, Gdk
     except (ImportError, ValueError):
         parser.exit(1, en('error.dependencies') + '\n')
     manager, config = manager_module(), settings_module()
@@ -145,6 +145,29 @@ def main():
             try:
                 self.values = config.load()
                 self.load_error = ''
+            except config.MigrationRequired as error:
+                dialog = Adw.AlertDialog(heading=tr('migration.title'), body=str(error))
+                dialog.add_response('quit', tr('action.quit'))
+                dialog.add_response('migrate', tr('action.migrate_restart'))
+                dialog.set_response_appearance('migrate', Adw.ResponseAppearance.SUGGESTED)
+                dialog.set_default_response('migrate')
+                dialog.set_close_response('quit')
+                def migrate_and_quit(_dialog, response):
+                    if response == 'migrate':
+                        script = Path(__file__).resolve().parents[1] / 'config/migrate.py'
+                        try:
+                            result = subprocess.run([sys.executable, str(script)], input='y\n', text=True,
+                                                    capture_output=True, timeout=30, check=False)
+                            if result.returncode:
+                                self.toast(result.stderr.strip() or tr('error.migration_failed'))
+                                return
+                        except (OSError, subprocess.TimeoutExpired) as migration_error:
+                            self.toast(tr('error.migration_failed') + ': ' + str(migration_error))
+                            return
+                    self.quit()
+                dialog.connect('response', migrate_and_quit)
+                dialog.present(self.window)
+                return
             except Exception as error:
                 self.values = config.DEFAULTS.copy()
                 self.load_error = tr('error.load', error=str(error))
@@ -215,15 +238,18 @@ def main():
             self.page_size.connect('notify::value', self.save)
             general.add(self.page_size)
             self.feature_hotkeys = {}
-            for name, (_, choices) in config.SHORTCUTS.items():
-                shortcut = Adw.ComboRow(title=tr('setting.' + name),
-                    model=Gtk.StringList.new([tr('hotkey.' + key) if key not in tuple(f'F{i}' for i in range(1, 13)) else key for key in choices]))
-                shortcut.set_subtitle(tr('hint.shortcuts'))
-                shortcut.set_selected(choices.index(self.values[name]))
-                shortcut.connect('notify::selected', self.save)
-                self.feature_hotkeys[name] = shortcut
-                keys.add(shortcut)
-            self.hotkey = self.feature_hotkeys['VoiceHotkey']
+            self.hotkey_rows = {}
+            for name in config.HOTKEYS:
+                value = self.values[name]
+                label = Adw.ActionRow(title=tr('setting.' + name), subtitle=self.shortcut_label(value), activatable=True)
+                button = Gtk.Button(icon_name='go-next-symbolic', valign=Gtk.Align.CENTER)
+                button.set_tooltip_text(tr('hint.shortcuts'))
+                button.connect('clicked', lambda *_args, key=name: self.edit_shortcut(key))
+                label.add_suffix(button)
+                label.connect('activated', lambda _row, key=name: self.edit_shortcut(key))
+                keys.add(label)
+                self.hotkey_rows[name] = label
+            self.hotkey = self.values['VoiceHotkey']
             hold = Adw.SwitchRow(title=tr('setting.VoiceModifierHold'), subtitle=tr('hint.modifier_hold'))
             hold.set_active(self.values['VoiceModifierHold'].lower() == 'true')
             hold.connect('notify::active', self.save)
@@ -271,7 +297,7 @@ def main():
             if self.load_error:
                 error_group = self.group('input', None)
                 error_group.add(Adw.ActionRow(title=self.load_error))
-                for row in [*self.controls.values(), *self.candidate_limits.values(), self.shuangpin_profile, self.shuangpin_custom, *self.feature_hotkeys.values(), self.page_size, self.hotkey, *self.skin_tone_buttons]: row.set_sensitive(False)
+                for row in [*self.controls.values(), *self.candidate_limits.values(), self.shuangpin_profile, self.shuangpin_custom, *self.hotkey_rows.values(), self.page_size, *self.skin_tone_buttons]: row.set_sensitive(False)
             self.ready = True
             self.stack.set_visible_child_name(args.page if args.page in self.pages else 'input')
             self.window.present()
@@ -330,9 +356,9 @@ def main():
                     self.ready = True
                     assert self.controls['StatisticalModel'].get_visible()
                     assert not self.controls['StatisticalModel'].get_active()
-                    assert len(self.feature_hotkeys) == 5
-                    assert self.feature_hotkeys['InternalCodeHotkey'].get_selected() == 6
-                    assert self.hotkey.get_model().get_n_items() == len(config.VOICE_HOTKEYS)
+                    assert len(self.hotkey_rows) == 6
+                    assert self.hotkey_rows['InternalCodeHotkey'].get_subtitle() == 'Ctrl + Shift + G'
+                    assert self.hotkey_rows['ModeHotkey'].get_subtitle() == tr('hotkey.Shift')
                     assert self.get_windows() == [self.window]
                     assert self.window.get_mapped() and self.stack.get_mapped()
                     assert isinstance(self.overlay, Adw.ToastOverlay)
@@ -360,10 +386,10 @@ def main():
                     self.translation_bilibili_model.set_selected(2)
                     self.translation_target.set_selected(0)
                     assert self.controls['RememberMode'].get_visible()
-                    self.hotkey.set_selected(config.VOICE_HOTKEYS.index('Alt_L'))
+                    self.values['VoiceHotkey'] = 'Alt_L'
                     self.update_visibility()
                     assert self.controls['VoiceModifierHold'].get_visible()
-                    self.hotkey.set_selected(config.VOICE_HOTKEYS.index('F8'))
+                    self.values['VoiceHotkey'] = 'Control+Shift+V'
                     self.controls['VoiceResident'].set_active(False)
                     self.update_visibility()
                     assert not self.controls['VoiceAlwaysResident'].get_visible()
@@ -439,7 +465,9 @@ def main():
             self.candidate_limits['EmojiCandidateLimit'].set_visible(enabled)
             self.skin_tone_row.set_visible(enabled)
             self.candidate_limits['CorrectionCandidateLimit'].set_visible(self.controls['Correction'].get_active())
-            self.controls['VoiceModifierHold'].set_visible(config.VOICE_HOTKEYS[self.hotkey.get_selected()] not in ('None', *tuple(f'F{i}' for i in range(1, 13))))
+            self.controls['VoiceModifierHold'].set_visible(self.values['VoiceHotkey'] in
+                ('Shift', 'Shift_L', 'Shift_R', 'Control', 'Control_L', 'Control_R',
+                 'Alt', 'Alt_L', 'Alt_R', 'Super', 'Super_L', 'Super_R', 'ISO_Level3_Shift'))
             self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
 
         def save(self, *_):
@@ -452,13 +480,115 @@ def main():
                 values['ShuangpinCustom'] = self.shuangpin_custom.get_text()
                 values['PageSize'] = str(int(self.page_size.get_value()))
                 values.update({key: str(int(row.get_value())) for key, row in self.candidate_limits.items()})
-                values.update({name: config.SHORTCUTS[name][1][row.get_selected()] for name, row in self.feature_hotkeys.items()})
                 values.update({key: str(row.get_active()) for key, row in self.controls.items()})
                 config.save(values)
                 self.values = values
+                self.hotkey = values['VoiceHotkey']
+                for name, row in self.hotkey_rows.items():
+                    row.set_subtitle(self.shortcut_label(values[name]))
                 self.toast(tr('status.saved' if reload_fcitx() else 'status.saved.offline'))
             except Exception as error:
                 self.failure(error)
+
+        def shortcut_label(self, value):
+            if value in ('None', 'Shift', 'Control', 'Alt', 'Super', 'Shift_L', 'Shift_R',
+                         'Control_L', 'Control_R', 'Alt_L', 'Alt_R', 'Super_L', 'Super_R',
+                         'ISO_Level3_Shift'):
+                return tr('hotkey.' + value)
+            parts = value.split('+')
+            labels = [{'Control': 'Ctrl', 'Alt': 'Alt', 'Shift': 'Shift', 'Super': 'Super'}[part]
+                      if part in ('Control', 'Alt', 'Shift', 'Super') else
+                      tr('hotkey.' + part) if part in config.NAMED_KEYS else part for part in parts]
+            return ' + '.join(labels)
+
+        def edit_shortcut(self, name):
+            choices = ('None', 'Shift', 'Shift_L', 'Shift_R', 'Control', 'Control_L', 'Control_R',
+                       'Alt', 'Alt_L', 'Alt_R', 'Super', 'Super_L', 'Super_R', 'ISO_Level3_Shift',
+                       'Combination')
+            current = self.values[name]
+            selected = current if current in choices[:-1] else 'Combination'
+            dialog = Gtk.Window(title=tr('setting.' + name), transient_for=self.window,
+                                modal=True, destroy_with_parent=True, default_width=520)
+            page = Adw.PreferencesPage()
+            group = Adw.PreferencesGroup(description=tr('hint.shortcuts'))
+            page.add(group)
+            radios = {}
+            first = None
+            for choice in choices:
+                label = tr('hotkey.combination_function') if choice == 'Combination' else tr('hotkey.' + choice)
+                button = Gtk.CheckButton(label=label)
+                if first:
+                    button.set_group(first)
+                else:
+                    first = button
+                radios[choice] = button
+                group.add(Adw.ActionRow(child=button))
+            record_row = Adw.ActionRow(title=tr('keys.record'))
+            value_entry = Gtk.Entry(editable=False, hexpand=True,
+                                    placeholder_text=tr('hint.record_shortcut'))
+            value_entry.set_text(current if selected == 'Combination' else '')
+            record_button = Gtk.Button(label=tr('action.record'), icon_name='input-keyboard-symbolic')
+            record_button.set_tooltip_text(tr('keys.record_hint'))
+            record_row.add_suffix(value_entry)
+            record_row.add_suffix(record_button)
+            group.add(record_row)
+            dialog.set_child(page)
+
+            def persist(value):
+                self.values[name] = value
+                self.save()
+
+            def choose(widget, choice):
+                if not widget.get_active():
+                    return
+                record_row.set_visible(choice == 'Combination')
+                if choice != 'Combination':
+                    persist(choice)
+                elif value_entry.get_text():
+                    persist(value_entry.get_text())
+
+            for choice, button in radios.items():
+                button.connect('toggled', choose, choice)
+            radios[selected].set_active(True)
+            record_row.set_visible(selected == 'Combination')
+
+            def start_record(_button):
+                controller = Gtk.EventControllerKey()
+                controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+                value_entry.set_placeholder_text(tr('hint.press_shortcut'))
+
+                def captured(_controller, keyval, _keycode, state):
+                    key = Gdk.keyval_name(keyval) or ''
+                    key = {'KP_Enter': 'KP_Enter'}.get(key, key)
+                    if key in ('Shift_L', 'Shift_R', 'Control_L', 'Control_R',
+                               'Alt_L', 'Alt_R', 'Super_L', 'Super_R'):
+                        return True
+                    modifiers = []
+                    for mask, label in ((Gdk.ModifierType.CONTROL_MASK, 'Control'),
+                                        (Gdk.ModifierType.ALT_MASK, 'Alt'),
+                                        (Gdk.ModifierType.SHIFT_MASK, 'Shift'),
+                                        (Gdk.ModifierType.SUPER_MASK, 'Super')):
+                        if state & mask:
+                            modifiers.append(label)
+                    spec = '+'.join([*(item for item in ('Control', 'Alt', 'Shift', 'Super') if item in modifiers), key])
+                    try:
+                        spec = config.canonical_shortcut(spec)
+                    except ValueError:
+                        value_entry.set_placeholder_text(tr('keys.invalid'))
+                        return True
+                    value_entry.set_placeholder_text(tr('hint.record_shortcut'))
+                    value_entry.set_text(spec)
+                    radios['Combination'].set_active(True)
+                    persist(spec)
+                    value_entry.remove_controller(controller)
+                    return True
+
+                controller.connect('key-pressed', captured)
+                value_entry.add_controller(controller)
+                value_entry.grab_focus()
+
+            record_button.connect('clicked', start_record)
+            dialog.present()
 
         def question(self, title, body, confirm, callback, destructive=False):
             dialog = Adw.AlertDialog(heading=tr(title), body=tr(body))
@@ -572,7 +702,7 @@ def main():
 
         def about(self, *_):
             dialog = Adw.AboutDialog(application_name=tr('app.name'), application_icon='cowtype',
-                version='0.4.3', license_type=Gtk.License.GPL_3_0, comments=tr('about.comments'),
+                version='0.5.0', license_type=Gtk.License.GPL_3_0, comments=tr('about.comments'),
                 website='https://github.com/0xarch/CowType', issue_url='https://github.com/0xarch/CowType/issues')
             dialog.present(self.window)
 

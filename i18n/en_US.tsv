@@ -43,6 +43,31 @@ hint.words.source	Pinned revision {revision}; download size is about {size} MiB.
 hotkey.Alt_L	Left Alt
 hotkey.Alt_R	Right Alt
 hotkey.Control_R	Right Ctrl
+hotkey.Control_L	Left Ctrl
+hotkey.Super_L	Left Super
+hotkey.Super_R	Right Super
+hotkey.comma	Comma
+hotkey.period	Period
+hotkey.slash	Slash
+hotkey.semicolon	Semicolon
+hotkey.equal	Equals
+hotkey.minus	Minus
+hotkey.plus	Plus
+hotkey.bracketleft	Left bracket
+hotkey.bracketright	Right bracket
+hotkey.backslash	Backslash
+hotkey.grave	Grave
+hotkey.apostrophe	Apostrophe
+hotkey.quotedbl	Quote
+hotkey.less	Less than
+hotkey.greater	Greater than
+hotkey.question	Question mark
+hotkey.underscore	Underscore
+hotkey.KP_Enter	Keypad Enter
+hotkey.KP_Add	Keypad plus
+hotkey.KP_Subtract	Keypad minus
+hotkey.KP_Multiply	Keypad multiply
+hotkey.KP_Divide	Keypad divide
 hotkey.F10	F10
 hotkey.F8	F8
 hotkey.F9	F9
@@ -245,6 +270,28 @@ setting.SymbolCandidateLimit	Symbol candidate count
 setting.EmojiCandidateLimit	Emoji candidate count
 setting.CorrectionCandidateLimit	Correction candidate count
 error.candidate_limit	Candidate count must be between 0 and 12.
+setting.TraditionalHotkey	Toggle Simplified/Traditional Chinese
+message.traditional_enabled	Traditional Chinese enabled
+message.simplified_enabled	Simplified Chinese enabled
+error.migration_required	An older configuration was found. Run cowtype-config-migrate, then restart Settings or Fcitx5.
+setting.shortcuts	Feature shortcuts
+hint.record_shortcut	Choose a shortcut type or record a key combination.
+hint.press_shortcut	Press the shortcut to record
+hotkey.combination	Combination…
+hotkey.combination_function	Combination or function key
+action.quit	Quit
+action.migrate_restart	Migrate and restart Fcitx5
+migration.title	CowType settings need migration
+error.migration_failed	Could not migrate settings
+action.record	Record
+keys.group	Feature shortcuts
+keys.single	Single key
+keys.chord	Key combination
+keys.disabled	Disabled
+keys.record	Record shortcut
+keys.record_hint	Press the key or key combination to assign
+keys.invalid	This key or combination is not supported
+keys.conflict	This shortcut is already assigned to another feature
 learning.manage	View and edit memory
 learning.title	Learning Memory
 learning.search	Search words or pinyin

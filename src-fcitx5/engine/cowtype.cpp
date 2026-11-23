@@ -10,6 +10,7 @@
 #include "shortcuts.h"
 #include "translate.h"
 #include "autospace.h"
+#include "traditional.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
 #include "../compat/addon.h"
@@ -61,6 +62,7 @@ struct State : InputContextProperty {
     bool internalCode = false;
     bool unicodeCode = false;
     bool unicodePrefix = false;
+    bool traditional = false;
     std::string unicodeBuffer;
     void clearUnicode() { unicodeCode=false;unicodePrefix=false;unicodeBuffer.clear(); }
     std::string internalBuffer;
@@ -153,7 +155,15 @@ public:
                 [this] { return controlMode(); },
                 [this](const std::string &mode) { return controlSetMode(mode); }, COWTYPE_VERSION);
         } catch(const std::exception &) { ctDiagnostic("event=dbus_unavailable"); }
-        ctDiagnostic("event=addon_ready version=0.4.3 elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
+        traditionalOutput_=instance_->connect<Instance::OutputFilter>(
+            [this](InputContext *ic,Text &text) {
+                if(ic->propertyFor(&factory_)->traditional) convertOutputText(text,true);
+            });
+        traditionalCommit_=instance_->connect<Instance::CommitFilter>(
+            [this](InputContext *ic,std::string &text) {
+                if(ic->propertyFor(&factory_)->traditional) text=traditional_.convert(text,true);
+            });
+        ctDiagnostic("event=addon_ready version=" COWTYPE_VERSION " elapsed_ms="+std::to_string((now(CLOCK_MONOTONIC)-initializedAt_)/1000));
     }
     const Configuration *getConfig() const override { return &settingsLauncher_; }
     void reloadConfig() override {
@@ -218,6 +228,7 @@ public:
         if(ic.propertyFor(&factory_)->translating)return ct_tr("translate.mode");
         if(ic.propertyFor(&factory_)->unicodeCode) return ct_tr("unicode.mode");
         if(ic.propertyFor(&factory_)->internalCode) return ct_tr("gb18030.mode");
+        if(ic.propertyFor(&factory_)->traditional) return ct_tr("message.traditional_enabled");
         return cowtype2_session_mode(ic.propertyFor(&factory_)->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6");
     }
     void keyEvent(const InputMethodEntry &entry, KeyEvent &event) override {
@@ -242,10 +253,21 @@ public:
         uint32_t code = 0xffffffff;
         auto sym = event.key().sym();
         auto *state=ic->propertyFor(&factory_);
+        if (const char *warning = cowtype2_runtime_warning(runtime_.get());
+            warning && std::string_view(warning).find("cowtype-config-migrate") != std::string_view::npos) {
+            render(ic, false);
+            return;
+        }
         const auto modifiers=event.key().states().toInteger() | event.rawKey().states().toInteger();
         const auto time=fcitx::now(CLOCK_MONOTONIC);
 
-        const auto action=Shortcuts::resolve(sym,modifiers,cowtype2_runtime_option(runtime_.get(),13),cowtype2_runtime_option(runtime_.get(),14),cowtype2_runtime_option(runtime_.get(),5),cowtype2_runtime_option(runtime_.get(),3),cowtype2_runtime_option(runtime_.get(),15),cowtype2_runtime_option(runtime_.get(),18),cowtype2_runtime_option(runtime_.get(),17));
+        const std::array<std::string_view,6> hotkeys{
+            cowtype2_runtime_string(runtime_.get(),1), cowtype2_runtime_string(runtime_.get(),2),
+            cowtype2_runtime_string(runtime_.get(),3), cowtype2_runtime_string(runtime_.get(),4),
+            cowtype2_runtime_string(runtime_.get(),5), cowtype2_runtime_string(runtime_.get(),6)};
+        const auto action=Shortcuts::resolveSpecs(sym,modifiers,hotkeys,
+            cowtype2_runtime_option(runtime_.get(),3),cowtype2_runtime_option(runtime_.get(),17),
+            traditional_.available());
         auto shortcut=state->shortcuts.handle(sym,modifiers,event.isRelease(),time,action,cowtype2_runtime_option(runtime_.get(),6));
         if(shortcut.interrupted || (event.isRelease() && shortcut.handled))state->voiceHold.reset();
         if(shortcut.cancelVoice && voice_.owns(ic)){cancelVoice(ic);render(ic,false);}
@@ -344,6 +366,32 @@ public:
         cowtype2_session_key(ic->propertyFor(&factory_)->session.get(), next ? CT2_PAGE_DOWN : CT2_PAGE_UP, 0, false, 0xffffffff); render(ic, true);
     }
 private:
+    void convertOutputText(Text &text,bool traditional) {
+        if(text.empty() || !traditional_.available()) return;
+        const auto original=text.toString();
+        const auto oldLength=fcitx::utf8::lengthValidated(original);
+        if(oldLength==fcitx::utf8::INVALID_LENGTH) return;
+        auto converted=traditional_.convert(original,traditional);
+        const auto newLength=fcitx::utf8::lengthValidated(converted);
+        if(newLength==fcitx::utf8::INVALID_LENGTH || converted==original) return;
+        Text output;
+        size_t offset=0,remaining=newLength;
+        for(size_t i=0;i<text.size();++i) {
+            auto length=fcitx::utf8::lengthValidated(text.stringAt(i));
+            if(length==fcitx::utf8::INVALID_LENGTH) return;
+            length=std::min(remaining,length);
+            remaining-=length;
+            const auto bytes=fcitx::utf8::ncharByteLength(converted.begin()+offset,length);
+            output.append(converted.substr(offset,bytes),text.formatAt(i));
+            offset+=bytes;
+        }
+        if(text.cursor()>0) {
+            auto cursor=fcitx::utf8::lengthValidated(original.substr(0,text.cursor()));
+            cursor=std::min(cursor,newLength);
+            output.setCursor(fcitx::utf8::ncharByteLength(output.toString().begin(),cursor));
+        } else output.setCursor(text.cursor());
+        text=std::move(output);
+    }
     void commitText(InputContext *ic,const std::string &text,bool allowSpacing=true) {
         const bool spacing=cowtype2_runtime_option(runtime_.get(),23);
         if(spacing && allowSpacing && cowtype::spacingContext(ic))
@@ -585,8 +633,14 @@ private:
             state->internalCode=false;state->unicodeCode=!state->unicodeCode;
         } else if(action==Shortcuts::Action::Mode) {
             state->internalCode=false;state->unicodeCode=false;cowtype2_session_key(state->session.get(),CT2_TOGGLE,0,false,0xffffffff);
+        } else if(action==Shortcuts::Action::Traditional) {
+            state->traditional=!state->traditional;
         }
         render(ic,action==Shortcuts::Action::Mode);
+        if(action==Shortcuts::Action::Traditional) {
+            instance_->showCustomInputMethodInformation(ic,
+                ct_tr(state->traditional?"message.traditional_enabled":"message.simplified_enabled"));
+        }
         if(action==Shortcuts::Action::Mode) {
             instance_->showCustomInputMethodInformation(ic,
                 cowtype2_session_mode(state->session.get()) ? ct_tr("message.348ea84c6046") : ct_tr("message.72726d8818f6"));
@@ -741,7 +795,7 @@ private:
         else if(const char *warning=cowtype2_runtime_warning(runtime_.get());warning && *warning){panel.setAuxDown(Text(warning));}
         ic->updatePreedit(); ic->updateUserInterface(UserInterfaceComponent::InputPanel);
     }
-    uint64_t initializedAt_=[]{const auto began=now(CLOCK_MONOTONIC);ctDiagnostic("event=addon_start version=0.4.3");return began;}();
+    uint64_t initializedAt_=[]{const auto began=now(CLOCK_MONOTONIC);ctDiagnostic("event=addon_start version=" COWTYPE_VERSION);return began;}();
     std::unique_ptr<Cowtype2Runtime,decltype(&cowtype2_runtime_free)> runtime_{cowtype2_runtime_new(),cowtype2_runtime_free};
     SettingsLauncher settingsLauncher_;
     unsigned configGeneration_=0;
@@ -753,6 +807,8 @@ private:
     std::unique_ptr<HandlerTableEntry<EventHandler>> focus_;
     std::unique_ptr<EventSourceTime> resourceTimer_;
     std::unique_ptr<cowtype::InputBus> inputBus_;
+    cowtype::TraditionalConverter traditional_;
+    ScopedConnection traditionalOutput_,traditionalCommit_;
 };
 void Word::select(InputContext *ic) const { owner_->choose(ic, index_); }
 void Page::prev() { if (previous_) { owner_->page(ic_, false); } }

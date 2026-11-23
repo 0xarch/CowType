@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 #include "shortcuts_registry.h"
+#include <algorithm>
 #include <array>
 #include <cstdint>
+#include <string>
+#include <string_view>
+#include <utility>
 #include <fcitx-utils/key.h>
 
 // One physical-key matcher and gesture state machine for every feature.
 class Shortcuts {
 public:
-  enum class Action { None, Mode, InternalCode, Voice, Unicode, Translate };
+  enum class Action { None, Mode, InternalCode, Voice, Unicode, Translate, Traditional };
   static unsigned mask(fcitx::KeySym key) {
     switch (key) {
     case FcitxKey_Shift_L:
@@ -59,6 +63,30 @@ public:
               {translate, translateEnabled ? Action::Translate : Action::None}}})
       if (matches(key, sym))
         return action;
+    return Action::None;
+  }
+  static bool matches(std::string_view shortcut, fcitx::KeySym sym,
+                      unsigned modifiers) {
+    if(shortcut.empty() || shortcut=="None") return false;
+    if(shortcut=="Shift" || shortcut=="Control" || shortcut=="Alt" || shortcut=="Super")
+      return matches(static_cast<unsigned>(std::find(ctShortcutNames.begin(),ctShortcutNames.end(),shortcut)-ctShortcutNames.begin()),sym)
+          && !(modifiers & ((1|4|8|64|128)&~mask(sym)));
+    const auto current=fcitx::Key(sym,fcitx::KeyStates(modifiers&(1|4|8|64|128))).normalize();
+    const fcitx::Key configured{std::string(shortcut)};
+    return configured.isValid() && current.check(configured.normalize());
+  }
+  static Action resolveSpecs(fcitx::KeySym sym,unsigned modifiers,
+      const std::array<std::string_view,6> &shortcuts,bool voiceEnabled,
+      bool translateEnabled,bool traditionalEnabled) {
+    const std::array<std::pair<std::string_view,Action>,6> actions{{
+      {shortcuts[0],Action::Mode},{shortcuts[1],Action::InternalCode},
+      {voiceEnabled?shortcuts[2]:std::string_view{},voiceEnabled?Action::Voice:Action::None},
+      {shortcuts[3],Action::Unicode},
+      {translateEnabled?shortcuts[4]:std::string_view{},translateEnabled?Action::Translate:Action::None},
+      {traditionalEnabled?shortcuts[5]:std::string_view{},traditionalEnabled?Action::Traditional:Action::None}
+    }};
+    for(const auto &[shortcut,action]:actions)
+      if(action!=Action::None && matches(shortcut,sym,modifiers)) return action;
     return Action::None;
   }
   struct Result {

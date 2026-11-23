@@ -203,9 +203,9 @@ fn only_confirmed_sessions_learn_focus_drop_does_not_and_backspace_undoes() {
 #[test]
 fn settings_validated_and_unknown_file_never_imported() {
     assert!(cowtype::config::Settings::parse("Voice=True").is_err());
-    assert!(cowtype::config::Settings::parse("[CowType]\nVersion=1\nPageSize=10").is_err());
+    assert!(cowtype::config::Settings::parse("[CowType]\nVersion=2\nPageSize=10").is_err());
     let s = cowtype::config::Settings::parse(
-        "[CowType]\nVersion=1\nPageSize=7\nLearning=False\nSentence=False",
+        "[CowType]\nVersion=2\nPageSize=7\nLearning=False\nSentence=False",
     )
     .unwrap();
     assert_eq!(s.page_size, 7);

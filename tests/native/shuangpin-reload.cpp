@@ -29,10 +29,10 @@ struct Field : InputContext {
 int main(int argc,char **argv) {
     try {
         CHECK(argc==2 && isolatedPaths());
-        auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v1.ini";
+        auto config=std::filesystem::path(std::getenv("XDG_CONFIG_HOME"))/"cowtype/settings-v2.ini";
         std::filesystem::create_directories(config.parent_path());
         auto settings=[&](const std::string &profile,bool enabled=true) {
-            std::ofstream out(config);out<<"[CowType]\nVersion=1\nLearning=False\nShuangpin="<<(enabled?"True":"False")<<"\nShuangpinProfile="<<profile<<"\nShuangpinCustom=/nonexistent/cowtype-test.conf\n";
+            std::ofstream out(config);out<<"[CowType]\nVersion=2\nLearning=False\nShuangpin="<<(enabled?"True":"False")<<"\nShuangpinProfile="<<profile<<"\nShuangpinCustom=/nonexistent/cowtype-test.conf\n";
         };
         settings("MS");
         char name[]="cowtype-shuangpin-test",disable[]="--disable=all";char *args[]={name,disable,nullptr};

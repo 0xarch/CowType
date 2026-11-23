@@ -11,21 +11,62 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "i18n"))
 from catalog import tr
 
 SHUANGPIN_PROFILES = ('Ziranma', 'MS', 'Ziguang', 'ABC', 'Zhongwenzhixing', 'PinyinJiajia', 'Xiaohe', 'GB', 'Custom')
-DEFAULTS = dict(Shuangpin='False', ShuangpinProfile='Ziranma', ShuangpinCustom='', AutoSpace='False', Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
+DEFAULTS = dict(Version='2', ModeHotkey='Shift', InternalCodeHotkey='Control+Shift+G',
+                VoiceHotkey='Control+Shift+V', UnicodeHotkey='Control+Shift+U',
+                TranslateHotkey='Control+Shift+T', TraditionalHotkey='Control+Shift+F',
+                Shuangpin='False', ShuangpinProfile='Ziranma', ShuangpinCustom='', AutoSpace='False', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
-                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', SystemDictionary='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', SymbolCandidateLimit='4', EmojiCandidateLimit='4', CorrectionCandidateLimit='5', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
-def shortcut_registry():
-    path = Path(__file__).with_name('shortcuts.tsv')
-    if not path.exists():
-        path = Path(__file__).resolve().parents[2] / 'src/config/shortcuts.tsv'
-    rows = [line.split('\t') for line in path.read_text().splitlines()]
-    return {name: (default, tuple(keys.split(','))) for name, default, keys in rows}
+                Horizontal='False', RememberMode='False', StatisticalModel='False', SystemDictionary='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', SymbolCandidateLimit='4', EmojiCandidateLimit='4', CorrectionCandidateLimit='5', Voice='False', VoiceResident='True', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
+HOTKEYS = ('ModeHotkey', 'InternalCodeHotkey', 'VoiceHotkey', 'UnicodeHotkey', 'TranslateHotkey', 'TraditionalHotkey')
+NAMED_KEYS = ('space', 'Tab', 'Return', 'Escape', 'BackSpace', 'Delete', 'Left', 'Right', 'Up', 'Down',
+              'Home', 'End', 'Insert', 'Page_Up', 'Page_Down', 'comma', 'period', 'slash', 'semicolon',
+              'equal', 'minus', 'plus', 'bracketleft', 'bracketright', 'backslash', 'grave', 'apostrophe',
+              'quotedbl', 'less', 'greater', 'question', 'underscore', 'KP_Enter', 'KP_Add', 'KP_Subtract',
+              'KP_Multiply', 'KP_Divide', *(f'KP_{n}' for n in range(10)))
 
-SHORTCUTS = shortcut_registry()
-FEATURE_HOTKEYS = SHORTCUTS['ModeHotkey'][1]
-VOICE_HOTKEYS = SHORTCUTS['VoiceHotkey'][1]
-for _action, (_default, _choices) in SHORTCUTS.items():
-    DEFAULTS[_action] = _default
+
+class MigrationRequired(ValueError):
+    pass
+
+
+def canonical_shortcut(value):
+    value = value.strip()
+    if value == 'None' or value in ('Shift', 'Control', 'Alt', 'Super', 'Shift_L', 'Shift_R',
+                                    'Control_L', 'Control_R', 'Alt_L', 'Alt_R', 'Super_L',
+                                    'Super_R', 'ISO_Level3_Shift'):
+        return value
+    parts = value.split('+')
+    if len(parts) == 1:
+        key = parts[0]
+        if (key.startswith('F') and key[1:].isdigit() and 1 <= int(key[1:]) <= 35) or key in NAMED_KEYS:
+            return key
+        raise ValueError(tr('error.shortcut.unsupported'))
+    if not 1 < len(parts) <= 5:
+        raise ValueError(tr('error.shortcut.unsupported'))
+    aliases = {'Ctrl': 'Control', 'Control': 'Control', 'Alt': 'Alt', 'Shift': 'Shift',
+               'Super': 'Super', 'Meta': 'Super'}
+    key = parts[-1]
+    if not (len(key) == 1 and key.isascii() and key.isalnum()) and not (
+            key.startswith('F') and key[1:].isdigit() and 1 <= int(key[1:]) <= 35) and key not in NAMED_KEYS:
+        raise ValueError(tr('error.shortcut.unsupported'))
+    modifiers = []
+    for part in parts[:-1]:
+        if part not in aliases or aliases[part] in modifiers:
+            raise ValueError(tr('error.shortcut.unsupported'))
+        modifiers.append(aliases[part])
+    if not modifiers and len(key) == 1 and key.isascii() and key.isalpha():
+        raise ValueError(tr('error.shortcut.unsupported'))
+    if len(key) == 1 and key.isascii() and key.isalpha():
+        key = key.upper() if 'Shift' in modifiers else key.lower()
+    return '+'.join([*(name for name in ('Control', 'Alt', 'Shift', 'Super') if name in modifiers), key])
+
+
+def _shortcut_conflict(left, right):
+    if left == 'None' or right == 'None':
+        return False
+    aliases = {'Shift': {'Shift_L', 'Shift_R'}, 'Control': {'Control_L', 'Control_R'},
+               'Alt': {'Alt_L', 'Alt_R'}, 'Super': {'Super_L', 'Super_R'}}
+    return left == right or right in aliases.get(left, set()) or left in aliases.get(right, set())
 
 def config_home():
     return Path(os.environ.get('XDG_CONFIG_HOME') or Path.home() / '.config') / 'cowtype'
@@ -56,8 +97,8 @@ def atomic(path, text):
             os.unlink(temporary)
 
 def validate(values):
-    if values.get('Version') != '1':
-        raise ValueError(tr("message.de3a048a1ebc"))
+    if values.get('Version') != '2':
+        raise MigrationRequired(tr('error.migration_required'))
     if not 3 <= int(values['PageSize']) <= 9:
         raise ValueError(tr("message.95c892b2b067"))
     if values.get('EmojiDefaultSkinTone') not in tuple(str(n) for n in range(6)):
@@ -70,24 +111,21 @@ def validate(values):
     path = values['ShuangpinCustom']
     if len(path) > 4096 or any(c in path for c in ('\0', '\n', '\r')) or (path and not Path(path).is_absolute()):
         raise ValueError(tr('error.shuangpin_path'))
-    assigned = set()
-    aliases = {'Shift': ('Shift_L', 'Shift_R'), 'Control': ('Control_L', 'Control_R'),
-               'Alt': ('Alt_L', 'Alt_R'), 'Super': ('Super_L', 'Super_R'), 'None': ()}
-    for name, (default, choices) in SHORTCUTS.items():
-        values.setdefault(name, default)
-        if values[name] not in choices:
-            raise ValueError(tr('error.shortcut.unsupported'))
-        physical = set(aliases.get(values[name], (values[name],)))
-        if assigned & physical:
+    for key in HOTKEYS:
+        values[key] = canonical_shortcut(values[key])
+    for i, key in enumerate(HOTKEYS):
+        if any(_shortcut_conflict(values[key], values[other]) for other in HOTKEYS[:i]):
             raise ValueError(tr('error.shortcut.conflict'))
-        assigned.update(physical)
-    for key in DEFAULTS.keys() - {'ShuangpinProfile', 'ShuangpinCustom', 'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *SHORTCUTS}:
+    for key in DEFAULTS.keys() - {'ShuangpinProfile', 'ShuangpinCustom', 'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *HOTKEYS}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values
 
 def load():
-    path = config_home() / 'settings-v1.ini'
+    path = config_home() / 'settings-v2.ini'
+    legacy = config_home() / 'settings-v1.ini'
+    if not path.exists() and legacy.exists():
+        raise MigrationRequired(tr('error.migration_required'))
     values = DEFAULTS.copy()
     if path.exists():
         if path.stat().st_size > 65536:
@@ -97,20 +135,14 @@ def load():
         parser.read_string(path.read_text())
         if parser.sections() != ['CowType']:
             raise ValueError(tr("message.ffc05e0f887f"))
-        if parser['CowType'].get('Version') != '1':
-            raise ValueError(tr("message.de3a048a1ebc"))
+        if parser['CowType'].get('Version') != '2':
+            raise MigrationRequired(tr('error.migration_required'))
         values.update(parser['CowType'])
-        if 'ModeHotkey' not in parser['CowType'] and parser['CowType'].get('ShiftToggle', '').lower() == 'true':
-            values['ModeHotkey'] = 'Shift'
-        if 'UnicodeHotkey' not in parser['CowType'] and values['UnicodeHotkey'] in (values['ModeHotkey'], values['InternalCodeHotkey'], values['VoiceHotkey']):
-            values['UnicodeHotkey'] = 'None'
-        if 'TranslateHotkey' not in parser['CowType'] and values['TranslateHotkey'] in tuple(values[name] for name in SHORTCUTS if name != 'TranslateHotkey'):
-            values['TranslateHotkey'] = 'None'
     return validate(values)
 
 def save(values):
     validate(values)
-    atomic(config_home() / 'settings-v1.ini', '[CowType]\n' + ''.join(f'{k}={v}\n' for k, v in values.items()))
+    atomic(config_home() / 'settings-v2.ini', '[CowType]\n' + ''.join(f'{k}={v}\n' for k, v in values.items()))
 
 def clear_learning():
     atomic(data_home() / 'learning-reset-v1', str(uuid.uuid4()) + '\n')

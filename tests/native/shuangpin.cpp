@@ -33,7 +33,7 @@ int main(int argc,char **argv) {
         assert(!query(decoder,hello[profile].substr(0,3)).empty());
         rows=query(decoder,zero[profile]);
         assert(std::any_of(rows.begin(),rows.end(),[](const auto &c){return c.text=="安" && c.consumed==2;}));
-        {std::ofstream config(root/"cowtype/settings-v1.ini");config<<"[CowType]\nVersion=1\nShuangpin=True\nShuangpinProfile="<<names[profile]<<"\nLearning="<<(profile==0?"True":"False")<<"\n";}
+        {std::ofstream config(root/"cowtype/settings-v2.ini");config<<"[CowType]\nVersion=2\nShuangpin=True\nShuangpinProfile="<<names[profile]<<"\nLearning="<<(profile==0?"True":"False")<<"\n";}
         auto *engine=cowtype2_engine_external_new();
         auto native=std::make_unique<LibimeDecoder>(cowtype::PinyinSources{argv[1],"","","",""},false,profile);
         assert(cowtype2_engine_shuangpin_semicolon(engine,native->shuangpinSemicolon()));
