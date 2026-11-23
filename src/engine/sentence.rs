@@ -38,8 +38,26 @@ impl Engine {
         completion: bool,
         initials: bool,
     ) -> Vec<Candidate> {
+        self.query_configured_with_limit(raw, sentence, correction, completion, initials, 5)
+    }
+    pub fn query_configured_with_limit(
+        &self,
+        raw: &str,
+        sentence: bool,
+        correction: bool,
+        completion: bool,
+        initials: bool,
+        correction_limit: usize,
+    ) -> Vec<Candidate> {
         if let Some(provider) = &self.provider {
-            return provider.query(raw, sentence, correction, completion, initials);
+            return provider.query(
+                raw,
+                sentence,
+                correction,
+                completion,
+                initials,
+                correction_limit,
+            );
         }
         let mut candidates = self.query_base(
             raw,
@@ -129,9 +147,22 @@ impl Engine {
         }
         let mut extra = Vec::new();
         let mut seen = HashSet::new();
+        let mut corrected_count = 0;
+        let mut sentence_count = 0;
         for path in &lattice[input.len()] {
             if path.words < 2 && !path.corrected || !seen.insert(path.text.clone()) {
                 continue;
+            }
+            if path.corrected {
+                if corrected_count >= correction_limit {
+                    continue;
+                }
+                corrected_count += 1;
+            } else {
+                if sentence_count >= 5 {
+                    continue;
+                }
+                sentence_count += 1;
             }
             extra.push(Candidate {
                 text: path.text.clone(),
@@ -145,9 +176,6 @@ impl Engine {
                 },
                 custom: false,
             });
-            if extra.len() == 5 {
-                break;
-            }
         }
         // Whole-sentence paths precede incomplete prefixes; explicit custom expansions stay first.
         let custom = candidates.partition_point(|c| c.custom);

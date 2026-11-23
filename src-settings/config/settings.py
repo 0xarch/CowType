@@ -12,7 +12,7 @@ from catalog import tr
 
 DEFAULTS = dict(Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
-                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', SystemDictionary='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
+                Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', SystemDictionary='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', SymbolCandidateLimit='4', EmojiCandidateLimit='4', CorrectionCandidateLimit='5', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
 def shortcut_registry():
     path = Path(__file__).with_name('shortcuts.tsv')
     if not path.exists():
@@ -61,6 +61,9 @@ def validate(values):
         raise ValueError(tr("message.95c892b2b067"))
     if values.get('EmojiDefaultSkinTone') not in tuple(str(n) for n in range(6)):
         raise ValueError(tr('error.emoji_skin_tone'))
+    for key in ('SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit'):
+        if not values[key].isdigit() or not 0 <= int(values[key]) <= 12:
+            raise ValueError(tr('error.candidate_limit'))
     assigned = set()
     aliases = {'Shift': ('Shift_L', 'Shift_R'), 'Control': ('Control_L', 'Control_R'),
                'Alt': ('Alt_L', 'Alt_R'), 'Super': ('Super_L', 'Super_R'), 'None': ()}
@@ -72,7 +75,7 @@ def validate(values):
         if assigned & physical:
             raise ValueError(tr('error.shortcut.conflict'))
         assigned.update(physical)
-    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'EmojiDefaultSkinTone', *SHORTCUTS}:
+    for key in DEFAULTS.keys() - {'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *SHORTCUTS}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values

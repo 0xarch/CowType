@@ -151,6 +151,7 @@ def main():
             general = self.group('input', 'group.appearance')
             pinyin = self.group('input', 'group.pinyin')
             self.emoji_options = self.group('input', 'group.emoji')
+            self.candidate_limits = {}
             privacy = self.group('input', 'group.privacy')
             keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
@@ -171,6 +172,15 @@ def main():
                 row.connect('notify::active', self.save)
                 group.add(row)
                 self.controls[key] = row
+            for key, group in (('SymbolCandidateLimit', self.emoji_options),
+                               ('EmojiCandidateLimit', self.emoji_options),
+                               ('CorrectionCandidateLimit', pinyin)):
+                row = Adw.SpinRow.new_with_range(0, 12, 1)
+                row.set_title(tr('setting.' + key))
+                row.set_value(int(self.values[key]))
+                row.connect('notify::value', self.save)
+                group.add(row)
+                self.candidate_limits[key] = row
             picker = Adw.SwitchRow(title=tr('setting.EmojiSkinTonePicker'), subtitle=tr('hint.emoji_skin_tone_picker'))
             picker.set_active(self.values['EmojiSkinTonePicker'].lower() == 'true')
             picker.connect('notify::active', self.save)
@@ -250,7 +260,7 @@ def main():
             if self.load_error:
                 error_group = self.group('input', None)
                 error_group.add(Adw.ActionRow(title=self.load_error))
-                for row in [*self.controls.values(), *self.feature_hotkeys.values(), self.page_size, self.hotkey, *self.skin_tone_buttons]: row.set_sensitive(False)
+                for row in [*self.controls.values(), *self.candidate_limits.values(), *self.feature_hotkeys.values(), self.page_size, self.hotkey, *self.skin_tone_buttons]: row.set_sensitive(False)
             self.ready = True
             self.stack.set_visible_child_name(args.page if args.page in self.pages else 'input')
             self.window.present()
@@ -270,6 +280,12 @@ def main():
                     assert self.memory_action.get_visible()
                     assert self.controls['Emoji'].get_visible()
                     assert not self.controls['Emoji'].get_active()
+                    assert int(self.candidate_limits['SymbolCandidateLimit'].get_value()) == 4
+                    assert int(self.candidate_limits['EmojiCandidateLimit'].get_value()) == 4
+                    assert int(self.candidate_limits['CorrectionCandidateLimit'].get_value()) == 5
+                    assert not self.candidate_limits['SymbolCandidateLimit'].get_visible()
+                    assert not self.candidate_limits['EmojiCandidateLimit'].get_visible()
+                    assert self.candidate_limits['CorrectionCandidateLimit'].get_visible()
                     assert self.emoji_options.get_visible()
                     assert self.controls['Emoji'].is_ancestor(self.emoji_options)
                     assert self.controls['EmojiFirst'].is_ancestor(self.emoji_options)
@@ -286,6 +302,8 @@ def main():
                     assert self.emoji_options.get_visible()
                     assert self.controls['EmojiFirst'].get_visible()
                     assert self.controls['EmojiSkinTonePicker'].get_visible()
+                    assert self.candidate_limits['SymbolCandidateLimit'].get_visible()
+                    assert self.candidate_limits['EmojiCandidateLimit'].get_visible()
                     self.controls['EmojiFirst'].set_active(True)
                     self.controls['EmojiFirst'].set_active(False)
                     self.skin_tone_buttons[3].set_active(True)
@@ -404,7 +422,10 @@ def main():
             enabled = self.controls['Emoji'].get_active()
             self.controls['EmojiFirst'].set_visible(enabled)
             self.controls['EmojiSkinTonePicker'].set_visible(enabled)
+            self.candidate_limits['SymbolCandidateLimit'].set_visible(enabled)
+            self.candidate_limits['EmojiCandidateLimit'].set_visible(enabled)
             self.skin_tone_row.set_visible(enabled)
+            self.candidate_limits['CorrectionCandidateLimit'].set_visible(self.controls['Correction'].get_active())
             self.controls['VoiceModifierHold'].set_visible(config.VOICE_HOTKEYS[self.hotkey.get_selected()] not in ('None', *tuple(f'F{i}' for i in range(1, 13))))
             self.controls['VoiceAlwaysResident'].set_visible(self.controls['VoiceResident'].get_active())
 
@@ -415,6 +436,7 @@ def main():
                 values = self.values.copy()
                 values['EmojiDefaultSkinTone'] = str(next(i for i, button in enumerate(self.skin_tone_buttons) if button.get_active()))
                 values['PageSize'] = str(int(self.page_size.get_value()))
+                values.update({key: str(int(row.get_value())) for key, row in self.candidate_limits.items()})
                 values.update({name: config.SHORTCUTS[name][1][row.get_selected()] for name, row in self.feature_hotkeys.items()})
                 values.update({key: str(row.get_active()) for key, row in self.controls.items()})
                 config.save(values)

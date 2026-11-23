@@ -241,6 +241,10 @@ setting.EmojiDefaultSkinTone	默认肤色
 error.emoji_skin_tone	无效的默认表情肤色。
 setting.EmojiFirst	优先匹配 Emoji
 hint.emoji_first	开启后优先匹配 Emoji，关闭后优先匹配普通符号。
+setting.SymbolCandidateLimit	符号候选数量
+setting.EmojiCandidateLimit	Emoji 候选数量
+setting.CorrectionCandidateLimit	纠错候选数量
+error.candidate_limit	候选数量必须在 0–12 之间。
 learning.manage	查看与修改记忆
 learning.title	学习记忆
 learning.search	搜索词句或拼音

@@ -12,8 +12,8 @@ int main(int argc,char **argv) {
     LibimeDecoder decoder(argv[1],"");
     for(const auto &input:{"lu","wei","na","kn"}) {
         std::vector<Result> plain,corrected;
-        decoder.queryImpl(input,13,emit,&plain);
-        decoder.queryImpl(input,15,emit,&corrected);
+        decoder.queryImpl(input,13|(5u<<8),emit,&plain);
+        decoder.queryImpl(input,15|(5u<<8),emit,&corrected);
         assert(!plain.empty() && corrected.size()>=plain.size());
         assert(corrected.front().reading==(std::string(input)=="kn"?"ke neng":input));
         for(size_t i=0;i<plain.size();++i) {
@@ -23,18 +23,18 @@ int main(int argc,char **argv) {
         for(size_t i=plain.size();i<corrected.size();++i) assert(corrected[i].corrected);
     }
     std::vector<Result> typo;
-    decoder.queryImpl("lu",15,emit,&typo);
+    decoder.queryImpl("lu",15|(5u<<8),emit,&typo);
     assert(std::any_of(typo.begin(),typo.end(),[](const auto &c){return c.reading=="li" && c.corrected;}));
     // A complete correction must be reachable before partial-prefix pages.
     std::vector<Result> corrected;
-    decoder.queryImpl("nihoa",15,emit,&corrected);
+    decoder.queryImpl("nihoa",15|(5u<<8),emit,&corrected);
     assert(!corrected.empty() && corrected.front().text=="你好");
     std::vector<Result> noCorrection;
-    decoder.queryImpl("nihoa",13,emit,&noCorrection);
+    decoder.queryImpl("nihoa",13|(5u<<8),emit,&noCorrection);
     assert(std::none_of(noCorrection.begin(),noCorrection.end(),[](const auto &c){return c.corrected;}));
     // Recover exact sentences when typo edges favor a different best path.
     std::vector<Result> sentence;
-    decoder.queryImpl("qingbaochiyunsu",15,emit,&sentence);
+    decoder.queryImpl("qingbaochiyunsu",15|(5u<<8),emit,&sentence);
     assert(!sentence.empty() && sentence.front().text=="请保持匀速" && !sentence.front().corrected);
     // Repair is a separate bounded exact-word branch, independent of initials.
     auto compiled=cowtype::loadPinyin({argv[1],"","","",""});
@@ -46,10 +46,10 @@ int main(int argc,char **argv) {
         assert(cowtype::spellingMatches(*compiled.dictionary,input).empty());
     for(const auto &input:{"nhiao","nihhao"}) {
         std::vector<Result> repaired;
-        decoder.queryImpl(input,15,emit,&repaired);
+        decoder.queryImpl(input,15|(5u<<8),emit,&repaired);
         assert(std::any_of(repaired.begin(),repaired.end(),[&](const auto &c){return c.text=="你好" && c.consumed==std::string(input).size();}));
         std::vector<Result> disabled;
-        decoder.queryImpl(input,13,emit,&disabled);
+        decoder.queryImpl(input,13|(5u<<8),emit,&disabled);
         assert(std::none_of(disabled.begin(),disabled.end(),[](const auto &c){return c.corrected;}));
     }
     // Append, erase, middle replacement, unrelated field, separators, invalid
@@ -58,6 +58,7 @@ int main(int argc,char **argv) {
         "lu","nihao","nihoa","nihao","NI HAO","ni'hao","ni''hao","'ni","ni'",
         "qingbao","qingbaochiyunsu","qingbao","kn","na","wei","nihao","!","nihao"};
     for(unsigned flags:{15u,13u,11u,7u,14u,9u,15u}) {
+        flags|=5u<<8;
         for(const auto &raw:edits) {
             std::vector<Result> reused,fresh;
             decoder.queryImpl(raw,flags,emit,&reused);
@@ -66,5 +67,11 @@ int main(int argc,char **argv) {
             assert(reused==fresh);
         }
     }
+    std::vector<Result> limited;
+    decoder.queryImpl("lu",15|(1u<<8),emit,&limited);
+    assert(std::count_if(limited.begin(),limited.end(),[](const auto &c){return c.corrected;})<=1);
+    std::vector<Result> disabled;
+    decoder.queryImpl("lu",15,emit,&disabled);
+    assert(std::none_of(disabled.begin(),disabled.end(),[](const auto &c){return c.corrected;}));
     std::cout<<"libime: exact readings and mixed initials precede adversarial high-frequency typo candidates\n";
 }

@@ -218,9 +218,14 @@ public:
             return a.recovered>b.recovered;
         });
         std::set<std::pair<std::string,size_t>> seen;
+        const unsigned correctionLimit=(flags>>8)&0x0fu;
+        unsigned correctionCount=0;
         for(const auto &candidate:ranked) {
-            if(seen.emplace(candidate.text,candidate.consumed).second)
+            if(candidate.corrected && correctionCount>=correctionLimit) continue;
+            if(seen.emplace(candidate.text,candidate.consumed).second) {
                 emit(output,candidate.text.c_str(),candidate.reading.c_str(),candidate.consumed,candidate.completion?2u:unsigned(candidate.corrected));
+                if(candidate.corrected) ++correctionCount;
+            }
         }
     }
 };

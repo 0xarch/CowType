@@ -63,7 +63,9 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 13 language key; 14 GB18030 key; 15 Unicode key; key indices follow shortcuts.tsv;
  * 16 automatic u-prefix Unicode input (default on, independent of option 15);
  * 17 translation enabled (default off); 18 translation key index;
- * 19 optional system pinyin dictionary (default off, independent of option 12) */
+ * 19 optional system pinyin dictionary (default off, independent of option 12);
+ * 20 symbol candidate limit; 21 Emoji candidate limit; 22 correction candidate limit.
+ * Candidate limits use 0–12 and default to 4, 4, and 5 respectively. */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);
@@ -71,7 +73,9 @@ bool cowtype2_session_custom_prefix(const Cowtype2Session *, const char *raw);
 bool cowtype2_session_forget(Cowtype2Session *);
 /* Decoder callback context is owned by the engine after successful attachment.
  * Must serialize its shared state; must not throw across the C boundary. */
-/* emit final flag: 0 original reading, 1 correction, 2 completion.
+/* flags low bits: 0 sentence, 1 correction, 2 completion, 3 initials;
+ * correction candidate limit is encoded in bits 8–11 (0–12).
+ * emit final flag: 0 original reading, 1 correction, 2 completion.
  * The session preserves provider order unless explicit learned preference differs. */
 typedef void (*Cowtype2Emit)(void *, const char *, const char *, size_t, uint32_t);
 typedef void (*Cowtype2Query)(void *, const char *, uint32_t, Cowtype2Emit, void *);

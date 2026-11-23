@@ -12,7 +12,6 @@ fn is_emoji(sequence: &str) -> bool {
         .get_or_init(|| EMOJI_SEQUENCES.lines().collect())
         .contains(sequence)
 }
-const MAX_SUGGESTIONS: usize = 12;
 static INDEX: OnceLock<BTreeMap<&'static str, Vec<&'static str>>> = OnceLock::new();
 const TONE_FAMILIES: &str = include_str!("../../src-data-tools/emoji/tone-families.tsv");
 #[derive(Default)]
@@ -103,6 +102,8 @@ pub(crate) fn augment(
     candidates: &mut Vec<Candidate>,
     default_tone: u8,
     emoji_first: bool,
+    symbol_limit: usize,
+    emoji_limit: usize,
 ) {
     let raw_key = normalize(raw);
     let direct = index().get(raw_key.as_str());
@@ -148,10 +149,11 @@ pub(crate) fn augment(
     // (the English keyword "you" could put couple emoji before Chinese arrows).
     let insertion = groups.iter().map(|g| g.0).min().unwrap_or(0);
     let mut additions = Vec::new();
-    let mut count = 0;
+    let capacity = symbol_limit.min(12) + emoji_limit.min(12);
     // Allocate the preferred class first across all matching keywords, before
-    // the global cap. Retain fair turns and source order within each class.
+    // each class cap. Retain fair turns and source order within each class.
     for class in [emoji_first, !emoji_first] {
+        let class_limit = if class { emoji_limit } else { symbol_limit }.min(12);
         let eligible: Vec<_> = groups
             .iter()
             .map(|(position, reading, matches)| {
@@ -166,7 +168,8 @@ pub(crate) fn augment(
             })
             .collect();
         let mut depth = 0;
-        while count < MAX_SUGGESTIONS {
+        let mut class_count = 0;
+        while class_count < class_limit {
             let mut available = false;
             for (_, reading, matches) in &eligible {
                 if let Some(sequence) = matches.get(depth) {
@@ -180,8 +183,8 @@ pub(crate) fn augment(
                             kind: MatchKind::Exact,
                             custom: true,
                         });
-                        count += 1;
-                        if count == MAX_SUGGESTIONS {
+                        class_count += 1;
+                        if class_count == class_limit {
                             break;
                         }
                     }
@@ -193,7 +196,7 @@ pub(crate) fn augment(
             depth += 1;
         }
     }
-    let mut result = Vec::with_capacity(candidates.len() + count);
+    let mut result = Vec::with_capacity(candidates.len() + capacity);
     if insertion == 0 {
         result.append(&mut additions);
     }
@@ -204,4 +207,23 @@ pub(crate) fn augment(
         }
     }
     *candidates = result;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn symbol_and_emoji_limits_are_independent() {
+        let mut candidates = Vec::new();
+        augment("right", &mut candidates, 0, false, 3, 2);
+        let symbols = candidates.iter().filter(|c| !is_emoji(&c.text)).count();
+        let emoji = candidates.iter().filter(|c| is_emoji(&c.text)).count();
+        assert_eq!(symbols, 3);
+        assert_eq!(emoji, 2);
+
+        let mut candidates = Vec::new();
+        augment("right", &mut candidates, 0, false, 0, 0);
+        assert!(candidates.is_empty());
+    }
 }

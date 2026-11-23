@@ -241,6 +241,10 @@ setting.EmojiDefaultSkinTone	Default skin tone
 error.emoji_skin_tone	Invalid default emoji skin tone.
 setting.EmojiFirst	Prefer Emoji
 hint.emoji_first	Prefer emoji when enabled, or ordinary symbols when disabled.
+setting.SymbolCandidateLimit	Symbol candidate count
+setting.EmojiCandidateLimit	Emoji candidate count
+setting.CorrectionCandidateLimit	Correction candidate count
+error.candidate_limit	Candidate count must be between 0 and 12.
 learning.manage	View and edit memory
 learning.title	Learning Memory
 learning.search	Search words or pinyin

@@ -434,6 +434,9 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         17 => s.translate as u32,
         18 => s.translate_hotkey,
         19 => s.system_dictionary as u32,
+        20 => s.symbol_candidate_limit as u32,
+        21 => s.emoji_candidate_limit as u32,
+        22 => s.correction_candidate_limit as u32,
         _ => 0,
     }
 }
@@ -474,6 +477,9 @@ pub unsafe extern "C" fn cowtype2_session_configure(
         c.learning = r.settings.learning;
         c.emoji = r.settings.emoji;
         c.emoji_first = r.settings.emoji_first;
+        c.symbol_candidate_limit = r.settings.symbol_candidate_limit;
+        c.emoji_candidate_limit = r.settings.emoji_candidate_limit;
+        c.correction_candidate_limit = r.settings.correction_candidate_limit;
         c.emoji_skin_tone_picker = r.settings.emoji_skin_tone_picker;
         c.emoji_default_skin_tone = r.settings.emoji_default_skin_tone;
         h.session.configure(c);
@@ -527,6 +533,7 @@ impl crate::engine::CandidateProvider for NativeProvider {
         correction: bool,
         completion: bool,
         initials: bool,
+        correction_limit: usize,
     ) -> Vec<crate::engine::Candidate> {
         unsafe extern "C" fn emit(
             out: *mut std::ffi::c_void,
@@ -558,7 +565,8 @@ impl crate::engine::CandidateProvider for NativeProvider {
         let flags = sentence as u32
             | ((correction as u32) << 1)
             | ((completion as u32) << 2)
-            | ((initials as u32) << 3);
+            | ((initials as u32) << 3)
+            | ((correction_limit.min(12) as u32) << 8);
         unsafe {
             (self.query)(
                 self.context,

@@ -70,6 +70,9 @@ pub struct SessionConfig {
     pub learning: bool,
     pub emoji: bool,
     pub emoji_first: bool,
+    pub symbol_candidate_limit: usize,
+    pub emoji_candidate_limit: usize,
+    pub correction_candidate_limit: usize,
     pub emoji_skin_tone_picker: bool,
     pub emoji_default_skin_tone: u8,
 }
@@ -85,6 +88,9 @@ impl Default for SessionConfig {
             learning: false,
             emoji: false,
             emoji_first: false,
+            symbol_candidate_limit: 4,
+            emoji_candidate_limit: 4,
+            correction_candidate_limit: 5,
             emoji_skin_tone_picker: true,
             emoji_default_skin_tone: 0,
         }
@@ -515,12 +521,13 @@ impl Session {
             .engine
             .as_ref()
             .map(|e| {
-                e.query_configured(
+                e.query_configured_with_limit(
                     &self.remaining,
                     self.config.sentence,
                     self.config.correction,
                     self.config.completion,
                     self.config.initials,
+                    self.config.correction_candidate_limit,
                 )
             })
             .unwrap_or_default();
@@ -547,6 +554,8 @@ impl Session {
                 &mut self.candidates,
                 self.config.emoji_default_skin_tone,
                 self.config.emoji_first,
+                self.config.symbol_candidate_limit,
+                self.config.emoji_candidate_limit,
             );
         }
         if let Some(custom) = &self.custom {

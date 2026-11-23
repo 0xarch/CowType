@@ -10,6 +10,8 @@ use std::sync::{Arc, Mutex};
 fn config(enabled: bool) -> SessionConfig {
     let mut result = SessionConfig::default();
     result.emoji = enabled;
+    result.symbol_candidate_limit = 12;
+    result.emoji_candidate_limit = 12;
     result.emoji_skin_tone_picker = false;
     result
 }
@@ -74,7 +76,7 @@ fn cldr_english_names_sequences_and_symbols_remain_intact() {
         let mut s = session(true);
         type_text(&mut s, keyword);
         let rows = candidates(&mut s);
-        assert!(rows.len() <= 12);
+        assert!(rows.len() <= 24);
         let position = rows.iter().position(|c| c.text == symbol).unwrap();
         assert_eq!(s.choose(position).commit.as_deref(), Some(symbol));
     }
@@ -94,7 +96,7 @@ fn cldr_prefixes_typos_and_duplicates_do_not_produce_extra_suggestions() {
     let rows = candidates(&mut s);
     let unique: std::collections::HashSet<_> = rows.iter().map(|c| &c.text).collect();
     assert_eq!(rows.len(), unique.len());
-    assert!(rows.len() <= 12);
+    assert!(rows.len() <= 24);
 }
 #[test]
 fn symbols_are_not_learned_as_personal_words_and_wubi_uses_decoded_keywords() {
@@ -164,7 +166,7 @@ fn skin_tones_use_one_slot_before_the_global_budget() {
             .collect();
         assert!(families.insert(base));
     }
-    assert!(rows.iter().filter(|c| c.custom).count() <= 12);
+    assert!(rows.iter().filter(|c| c.custom).count() <= 24);
 }
 
 #[test]
@@ -277,18 +279,18 @@ fn emoji_priority_changes_both_budget_and_keyword_order() {
     let mut s = Session::new(None, cfg);
     type_text(&mut s, "right");
     let symbols_first = candidates(&mut s);
-    assert_eq!(symbols_first.len(), 12);
+    assert_eq!(symbols_first.len(), 24);
     assert_eq!(symbols_first[0].text, "»");
     assert!(symbols_first.iter().any(|c| c.text == "→"));
-    assert!(!symbols_first.iter().any(|c| c.text == "➡️"));
+    assert!(symbols_first.iter().any(|c| c.text == "➡️"));
     cfg.emoji_first = true;
     s.configure(cfg);
     assert_eq!(s.input(), "right");
     let emoji_first = candidates(&mut s);
-    assert_eq!(emoji_first.len(), 12);
+    assert_eq!(emoji_first.len(), symbols_first.len());
     assert_eq!(emoji_first[0].text, "↩️");
     assert!(emoji_first.iter().any(|c| c.text == "➡️"));
-    assert!(!emoji_first.iter().any(|c| c.text == "→"));
+    assert!(emoji_first.iter().any(|c| c.text == "→"));
 
     let dictionary = Dictionary::from_tsv("you fang\t右\t10\n".as_bytes())
         .unwrap()
@@ -308,6 +310,25 @@ fn emoji_priority_changes_both_budget_and_keyword_order() {
 }
 
 #[test]
+fn default_symbol_and_emoji_limits_are_four_each() {
+    let mut cfg = SessionConfig::default();
+    cfg.emoji = true;
+    let mut s = Session::new(None, cfg);
+    type_text(&mut s, "right");
+    let rows = candidates(&mut s);
+    assert_eq!(rows.len(), 8);
+    assert_eq!(
+        rows[..4]
+            .iter()
+            .map(|c| c.text.as_str())
+            .collect::<Vec<_>>(),
+        ["»", "’", "‚", "”"]
+    );
+    assert_eq!(cfg.symbol_candidate_limit, 4);
+    assert_eq!(cfg.emoji_candidate_limit, 4);
+}
+
+#[test]
 fn latin_keyword_you_cannot_starve_chinese_direction_symbols_when_disabled() {
     let dictionary = Dictionary::from_tsv("you\t右\t10\n".as_bytes())
         .unwrap()
@@ -318,9 +339,8 @@ fn latin_keyword_you_cannot_starve_chinese_direction_symbols_when_disabled() {
     assert!(candidates(&mut s).iter().any(|c| c.text == "→"));
     cfg.emoji_first = true;
     s.configure(cfg);
-    // The English CLDR keyword "you" has many emoji. Explicitly prioritizing
-    // them may spend the cap before the Chinese word's ordinary arrow.
-    assert!(!candidates(&mut s).iter().any(|c| c.text == "→"));
+    // Per-class limits keep the ordinary arrow available under either order.
+    assert!(candidates(&mut s).iter().any(|c| c.text == "→"));
     cfg.emoji_first = false;
     s.configure(cfg);
     assert!(candidates(&mut s).iter().any(|c| c.text == "→"));
@@ -350,6 +370,6 @@ fn chinese_arrows_precede_english_you_couple_emoji_globally() {
     s.configure(cfg);
     let rows = candidates(&mut s);
     assert!(rows.iter().any(|c| c.text == "👨‍❤️‍👨"));
-    assert!(!rows.iter().any(|c| c.text == "→"));
+    assert!(rows.iter().any(|c| c.text == "→"));
     assert_eq!(s.input(), "you");
 }

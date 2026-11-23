@@ -55,6 +55,7 @@ pub trait CandidateProvider: std::fmt::Debug + Send + Sync {
         correction: bool,
         completion: bool,
         initials: bool,
+        correction_limit: usize,
     ) -> Vec<Candidate>;
 }
 #[derive(Clone, Debug)]

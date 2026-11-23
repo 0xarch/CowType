@@ -20,6 +20,9 @@ pub struct Settings {
     pub system_dictionary: bool,
     pub emoji: bool,
     pub emoji_first: bool,
+    pub symbol_candidate_limit: usize,
+    pub emoji_candidate_limit: usize,
+    pub correction_candidate_limit: usize,
     pub emoji_skin_tone_picker: bool,
     pub emoji_default_skin_tone: u8,
     pub voice: bool,
@@ -54,6 +57,9 @@ impl Default for Settings {
             system_dictionary: false,
             emoji: false,
             emoji_first: false,
+            symbol_candidate_limit: 4,
+            emoji_candidate_limit: 4,
+            correction_candidate_limit: 5,
             emoji_skin_tone_picker: true,
             emoji_default_skin_tone: 0,
             voice: false,
@@ -141,6 +147,21 @@ impl Settings {
                 value.parse().map_err(|_| "invalid emoji skin tone")?;
             if settings.emoji_default_skin_tone > 5 {
                 return Err("invalid emoji skin tone");
+            }
+        }
+        for (name, target) in [
+            ("SymbolCandidateLimit", &mut settings.symbol_candidate_limit),
+            ("EmojiCandidateLimit", &mut settings.emoji_candidate_limit),
+            (
+                "CorrectionCandidateLimit",
+                &mut settings.correction_candidate_limit,
+            ),
+        ] {
+            if let Some(value) = values.get(name) {
+                *target = value.parse().map_err(|_| "invalid candidate limit")?;
+                if *target > 12 {
+                    return Err("candidate limit must be 0–12");
+                }
             }
         }
         for (name, target) in [
@@ -393,6 +414,9 @@ mod hotkey_tests {
     #[test]
     fn cldr_symbols_are_explicit_and_default_off() {
         let defaults = Settings::parse("Version=1\n").unwrap();
+        assert_eq!(defaults.symbol_candidate_limit, 4);
+        assert_eq!(defaults.emoji_candidate_limit, 4);
+        assert_eq!(defaults.correction_candidate_limit, 5);
         assert!(!defaults.emoji_first);
         assert!(
             Settings::parse("Version=1\nEmojiFirst=True\n")
@@ -418,6 +442,25 @@ mod hotkey_tests {
         assert!(!Settings::parse("Version=1\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=True\n").unwrap().emoji);
         assert!(Settings::parse("Version=1\nEmoji=auto\n").is_err());
+    }
+    #[test]
+    fn candidate_limits_are_bounded_and_configurable() {
+        let settings = Settings::parse(
+            "Version=1\nSymbolCandidateLimit=0\nEmojiCandidateLimit=12\nCorrectionCandidateLimit=3\n",
+        )
+        .unwrap();
+        assert_eq!(settings.symbol_candidate_limit, 0);
+        assert_eq!(settings.emoji_candidate_limit, 12);
+        assert_eq!(settings.correction_candidate_limit, 3);
+        for key in [
+            "SymbolCandidateLimit",
+            "EmojiCandidateLimit",
+            "CorrectionCandidateLimit",
+        ] {
+            for value in ["13", "-1", "invalid"] {
+                assert!(Settings::parse(&format!("Version=1\n{key}={value}\n")).is_err());
+            }
+        }
     }
     #[test]
     fn system_dictionary_is_optional_and_defaults_off() {

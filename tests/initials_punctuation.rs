@@ -196,3 +196,23 @@ fn known_mixed_initials_are_not_displaced_by_typo_guesses() {
     assert_eq!(result[0].text, "中国人");
     assert_eq!(result[0].kind, MatchKind::Initials);
 }
+
+#[test]
+fn correction_candidate_limit_applies_to_standalone_engine() {
+    let dictionary = Dictionary::from_tsv(
+        "ba\t吧\t100\nba\t爸\t90\nba\t八\t80\nba\t巴\t70\nba\t拔\t60\nba\t疤\t50\n".as_bytes(),
+    )
+    .unwrap()
+    .value;
+    let e = Engine::new(dictionary);
+    let limited = e.query_configured_with_limit("bba", false, true, false, false, 2);
+    assert!(
+        limited
+            .iter()
+            .filter(|c| c.kind == MatchKind::Correction)
+            .count()
+            <= 2
+    );
+    let disabled = e.query_configured_with_limit("bba", false, true, false, false, 0);
+    assert!(disabled.iter().all(|c| c.kind != MatchKind::Correction));
+}

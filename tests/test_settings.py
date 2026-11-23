@@ -104,6 +104,17 @@ class SettingsTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 settings.validate(dict(values, EmojiDefaultSkinTone=invalid))
 
+    def test_candidate_limits_defaults_validation_and_roundtrip(self):
+        values = settings.load()
+        self.assertEqual((values['SymbolCandidateLimit'], values['EmojiCandidateLimit'], values['CorrectionCandidateLimit']), ('4', '4', '5'))
+        for key in ('SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit'):
+            values[key] = '0'
+            settings.save(values)
+            self.assertEqual(settings.load()[key], '0')
+            for invalid in ('13', '-1', 'many'):
+                with self.assertRaises(ValueError):
+                    settings.validate(dict(values, **{key: invalid}))
+
     def test_roundtrip_unknown_key_private_permissions(self):
         values = settings.load()
         values.update(PageSize='9', Sentence='False', FutureOption='preserved')
