@@ -28,6 +28,10 @@ dependencies)
         find /etc/apt -type f \( -name '*.list' -o -name '*.sources' \) -exec sed -i \
           -e 's|http://archive.build.openkylin.top|https://archive.build.openkylin.top|g' \
           -e 's|http://ppa.build.openkylin.top|https://ppa.build.openkylin.top|g' {} +
+        # Bootstrap missing CA roots from signed APT metadata, then restore
+        # normal HTTPS certificate verification for all later requests.
+        apt-get -o Acquire::https::Verify-Peer=false -o Acquire::Retries=2 -o Acquire::https::Timeout=30 update
+        apt-get -o Acquire::https::Verify-Peer=false install -y --no-install-recommends --reinstall ca-certificates
         apt-get -o Acquire::Retries=2 -o Acquire::https::Timeout=30 update
       else
         apt-get update

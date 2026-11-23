@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "41ee8c3a0013f146c6459f924fa53759b0a6e888bfbb21f9ad7733edee632f45",
-      "bytes": 16723
+      "sha256": "d09e46ecb1b6e3f8d9b1ce257024af46a3b24aacb4659a49f6811eb0c9413a36",
+      "bytes": 16733
     },
     {
       "path": "CMakeLists.txt",
@@ -883,8 +883,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "15b95c966e445fd8f207fb491f3bbdb2d6739f20beca9575853a5619ae7e3937",
-      "bytes": 5552
+      "sha256": "d6d8d336529ab3b2766e549dca30c4955b80acca9d7814acc1b65684a0470b8f",
+      "bytes": 5928
     },
     {
       "path": "tooling/ci-rust.py",
