@@ -63,7 +63,7 @@ int main(int argc,char **argv) {
                 {"SetMode","zh","org.cowtype.Input.Error.Inactive"},
                 {"Mode",nullptr,"org.cowtype.Input.Error.Inactive"}
             };
-            size_t step=0;bool pending=false;std::future<std::string> reply;std::string failure;
+            size_t step=0;bool pending=false;std::future<std::string> reply;std::string failure,compositionBeforeModeChange;
             auto deadline=now(CLOCK_MONOTONIC)+10000000;
             auto timer=instance.eventLoop().addTimeEvent(CLOCK_MONOTONIC,now(CLOCK_MONOTONIC)+1000,1000,
                 [&](EventSourceTime *source,uint64_t){
@@ -73,6 +73,7 @@ int main(int argc,char **argv) {
                             if(step==2){field.focusIn();engine->activate(entry,activate);}
                             if(step==3) {
                                 for(auto sym:{FcitxKey_z,FcitxKey_z}){KeyEvent event(&field,Key(sym),false);engine->keyEvent(entry,event);CHECK(event.accepted());}
+                                compositionBeforeModeChange=field.inputPanel().clientPreedit().toString();
                             }
                             if(step==8)field.setCapabilityFlags(CapabilityFlag::Password);
                             if(step==10){field.setCapabilityFlags(CapabilityFlag::Preedit);InputContextSwitchInputMethodEvent event(InputMethodSwitchedReason::Enumerate,"other",&field);engine->deactivate(entry,event);}
@@ -81,7 +82,7 @@ int main(int argc,char **argv) {
                         } else if(reply.wait_for(std::chrono::seconds(0))==std::future_status::ready) {
                             auto value=reply.get();
                             if(value!=calls[step].expected)throw std::runtime_error("D-Bus unexpected reply at step "+std::to_string(step)+": "+value);
-                            if(step==3){CHECK(field.commits.empty());CHECK(field.inputPanel().clientPreedit().toString()=="zz");}
+                            if(step==3){CHECK(field.commits.empty());CHECK(field.inputPanel().clientPreedit().toString()==compositionBeforeModeChange);}
                             pending=false;++step;
                             if(step<=4)CHECK(field.commits.empty());
                             else {CHECK(field.commits.size()==1);CHECK(field.commits.front()=="zz");}

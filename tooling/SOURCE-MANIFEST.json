@@ -808,8 +808,8 @@
     },
     {
       "path": "tests/native/dbus.cpp",
-      "sha256": "a93441f59dbfea480f5c71e1941dfa6bff605d37d0fbf726a0e77ce040f06d69",
-      "bytes": 5885
+      "sha256": "6cc99611e768477fe2987a1c7b828e23791da0ebf1f5329caf9bf76f575cd07b",
+      "bytes": 6043
     },
     {
       "path": "tests/native/dictionary-benchmark.cpp",
@@ -973,8 +973,8 @@
     },
     {
       "path": "tooling/ci-linux.sh",
-      "sha256": "524a1c6e132eed95246929fc7b07c2be9920a9625985392eb946192542262f1d",
-      "bytes": 5940
+      "sha256": "384cc93b90ea7a3a954a05cc22b30bdbcef3edeb7303400303ca64e0698681bb",
+      "bytes": 5954
     },
     {
       "path": "tooling/ci-rust.py",
