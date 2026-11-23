@@ -542,10 +542,10 @@ impl crate::engine::CandidateProvider for NativeProvider {
                     reading: reading.into(),
                     consumed_bytes: consumed,
                     has_remaining: false,
-                    kind: if corrected != 0 {
-                        crate::engine::MatchKind::Correction
-                    } else {
-                        crate::engine::MatchKind::Exact
+                    kind: match corrected {
+                        1 => crate::engine::MatchKind::Correction,
+                        2 => crate::engine::MatchKind::Completion,
+                        _ => crate::engine::MatchKind::Exact,
                     },
                     custom: false,
                 });

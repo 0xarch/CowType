@@ -534,8 +534,8 @@ impl Session {
                             .then(b.custom.cmp(&a.custom))
                             .then(a.kind.cmp(&b.kind))
                             .then_with(|| {
-                                l.score(&b.reading, &b.text, now)
-                                    .cmp(&l.score(&a.reading, &a.text, now))
+                                l.ranking_score(&b.reading, &b.text, now)
+                                    .cmp(&l.ranking_score(&a.reading, &a.text, now))
                             })
                     });
                 }

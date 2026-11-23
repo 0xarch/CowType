@@ -35,22 +35,22 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "365f131dc1542134e24a5d121c1393877853ea6fdb3696f318c2f13cd32b61ee",
-      "bytes": 14382
+      "sha256": "9475a379aa5c9eb1cd51b824411073b1cc597e40daf5214a3c85589be800d3aa",
+      "bytes": 16559
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "fcc2f2a268d59f7309e6f5d054df50cb0f1c66cf3d9395486c6de13706900627",
-      "bytes": 17308
+      "sha256": "afe2690827123b068115bc9b059ddc55c9a40cf389399bf4cee19b1bf8a42978",
+      "bytes": 17695
     },
     {
       "path": "Cargo.lock",
-      "sha256": "8a279467e6f6ff110b338d99b9d693413bb5e94fcc7603331f0f71bf7b9d656a",
+      "sha256": "5bbb92a01f924b6262a2e82124f31c42730768dbcd2d2f78beb6598d50ae353a",
       "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "47902d35ae63abe3100658c9b68c9ac11b8668e7827834104c89d83c6f6edbb4",
+      "sha256": "e0a89bc430d28a965aed2b4b746a0ab56b0416130fa337d6831fcd76add99ffa",
       "bytes": 322
     },
     {
@@ -118,8 +118,8 @@
     },
     {
       "path": "docs/DICTIONARIES.md",
-      "sha256": "b121351bbeb69bdd332819aa2ba2ae609370b75d4d9a5af76c0cfbd34c239051",
-      "bytes": 10132
+      "sha256": "cef5b40eeee4ac28bc7d31fe02ec3445e7710fb0ca765a43787c023f6a46d1f8",
+      "bytes": 7283
     },
     {
       "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
@@ -173,7 +173,7 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "7a80bb3cf1e5d83e6211f3874033a6d58d191be9121106d65eff947709201c77",
+      "sha256": "692d66944d078990334678eba118d904fca4016497797424c5291175ef928d00",
       "bytes": 1611
     },
     {
@@ -288,7 +288,7 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "f1301546c0a8606823a4af452b565769b7f0436ff8a274ffe909cf7b3f6b776f",
+      "sha256": "311849f5a3efa5e3236f5509dffb3662e76de1b719ddc174b3fbdae62b234e0b",
       "bytes": 45384
     },
     {
@@ -308,8 +308,8 @@
     },
     {
       "path": "src-fcitx5/engine/libime.h",
-      "sha256": "0168ba7445c6ac7431c006fdd49519339b432f2f55dbdc0ea7d87a2ef98f768c",
-      "bytes": 10750
+      "sha256": "06cfdea53e18d5889be7b14b5806b708c5930bfa3979a5cf6277da44ed8403e1",
+      "bytes": 12575
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
@@ -318,8 +318,8 @@
     },
     {
       "path": "src-fcitx5/engine/spelling.h",
-      "sha256": "75383de38b51554a4008c8066a1bcb6199f14c5a34ec201b8585ee84a24002d4",
-      "bytes": 4818
+      "sha256": "1e9f5b2df6c1c7da1d3d26dd664f5c916c42ac85b889dc2ee418e9348b6bb3f8",
+      "bytes": 9707
     },
     {
       "path": "src-fcitx5/engine/translate.h",
@@ -348,8 +348,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "130b2f2f0d74afa63653952d554e9caba1e909d49a6d446aa2c7f8224e76bc0d",
-      "bytes": 4631
+      "sha256": "2001eab3b6676345ac87febc342beb2ae47c082fd1716185be82977d38965db5",
+      "bytes": 4786
     },
     {
       "path": "src-fcitx5/unicode/README.md",
@@ -403,7 +403,7 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "33df683a3cc7a636cb2697d9da1edf99c721328c91e5c8b8225972d9097c11b0",
+      "sha256": "d6de6f020216ae932e12a2bb92314ab702ce920ceddf7b9664cb725bde9bf783",
       "bytes": 31722
     },
     {
@@ -478,12 +478,12 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "b219811fd4ff71b685e6f12124cdc6e140a55fc3db4e3484f41fc92b9503db08",
+      "sha256": "0238ffa7033649f94967fd975dfb7cf22e22b9f2055cc671190f2939ae9c8f68",
       "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "00e885416e0704fceec446addc15faabd685deba26422b036a26338fe688bcff",
+      "sha256": "b1253eb8055c22f0a32ab52015aaf988b3d572458261a9a9c88917b316ac28bc",
       "bytes": 473
     },
     {
@@ -633,8 +633,8 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "19a714a4543719447c195cd58c657eb96bc0b647694d0fb4243567b67bb14146",
-      "bytes": 20480
+      "sha256": "8be220ac0d4e56e28f9a41fa1e19dece6b91b765088ded5a2a0f6b71c2d16303",
+      "bytes": 20528
     },
     {
       "path": "src/i18n/mod.rs",
@@ -648,8 +648,8 @@
     },
     {
       "path": "src/learning/mod.rs",
-      "sha256": "5e8d4d1f28312d9b83482646ab70b5bc8a82445da4e210cda5e3e375d7ceb77a",
-      "bytes": 7776
+      "sha256": "212e25d104df15ff378b882f5f3292d6da7fcc884d5c1e7cf07406bd2a6c1fe9",
+      "bytes": 8007
     },
     {
       "path": "src/learning/service.rs",
@@ -663,8 +663,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "c110495030e1cfa77abe6a3a1b5b286b0c85e47ead1e626319c670d05a46fce5",
-      "bytes": 21595
+      "sha256": "d6454d0678c6ca9577740b324730cee2325388f1ddc63a52a14667f0a6b31b84",
+      "bytes": 21611
     },
     {
       "path": "src/session/punctuation.rs",
@@ -797,6 +797,11 @@
       "bytes": 4800
     },
     {
+      "path": "tests/native/spelling.cpp",
+      "sha256": "9fbe075654a439d1d36d7d05ac24bc26b8cea6a29a5739bfd3859cdb19b0e81a",
+      "bytes": 2683
+    },
+    {
       "path": "tests/native/translate.cpp",
       "sha256": "e92c90778e24f613f6d3ffd3c8715124097a531f5a60298cd1b854ef1ae57f46",
       "bytes": 9339
@@ -808,8 +813,8 @@
     },
     {
       "path": "tests/sentence_learning.rs",
-      "sha256": "2a2aa5706d0abc0e56dcd424f648352f13496f8b8b8bc803549d9c85eb4e592e",
-      "bytes": 6240
+      "sha256": "2a493e72760a503e9d303eb8b7a2ae75f4c6b88e54bce7304cdce64e0bb0ae6c",
+      "bytes": 8899
     },
     {
       "path": "tests/session.rs",
@@ -908,7 +913,7 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "efa1a58fa22af4a104f10329f0507e9426d83f994a895824a3f0c9482843ce23",
+      "sha256": "78e9a29b28fabf669227adf27aca38ffe09b29e24c0d2cfc8dc571ec2be26709",
       "bytes": 5404
     },
     {

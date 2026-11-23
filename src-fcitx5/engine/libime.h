@@ -99,11 +99,6 @@ public:
         };
         auto &primary=workspace(flags&2);
         const auto &primaryCandidates=primary.candidates();
-        const bool exactWord=std::any_of(primaryCandidates.begin(),primaryCandidates.end(),[&](const auto &candidate) {
-            return candidate.size()==1 && !candidate.sentence().empty() && !hasCorrection(candidate) &&
-                candidate.sentence().back()->to()->index()==raw.size() &&
-                primary.candidateFullPinyin(candidate).find('\'')!=std::string::npos;
-        });
         // Typo edges can prune a literal sentence even when the surviving
         // multiword path has no correction marker. Preserve the plain sentence
         // search for composed best paths, as well as explicit corrections.
@@ -131,7 +126,35 @@ public:
             }
             return result;
         };
-        struct Ranked {std::string text,reading;size_t consumed;bool corrected,literal,recovered;unsigned source;};
+        struct Ranked {
+            std::string text,reading;
+            size_t consumed;
+            bool corrected,literal,recovered;
+            unsigned source;
+            bool protectedReading=false, supplemental=false, completion=false;
+            float quality=0;
+        };
+        // Validate actual syllable boundaries rather than treating every
+        // non-correction path (including arbitrary mixed fallback) as intentional.
+        auto typedReading=[&](const std::string &reading,size_t consumed,bool allowInitials=true) {
+            auto input=raw.substr(0,consumed);
+            input.erase(std::remove(input.begin(),input.end(),'\''),input.end());
+            std::istringstream syllables(reading);
+            std::vector<size_t> positions{0};
+            std::string syllable;
+            while(std::getline(syllables,syllable,'\'')) {
+                std::vector<size_t> next;
+                for(auto position:positions) {
+                    if(input.compare(position,syllable.size(),syllable)==0) next.push_back(position+syllable.size());
+                    if(allowInitials && (flags&8) && position<input.size() && input[position]==syllable[0]) next.push_back(position+1);
+                }
+                std::sort(next.begin(),next.end());
+                next.erase(std::unique(next.begin(),next.end()),next.end());
+                positions=std::move(next);
+                if(positions.empty()) return false;
+            }
+            return std::find(positions.begin(),positions.end(),input.size())!=positions.end();
+        };
         std::vector<Ranked> ranked;
         for(unsigned pass=0;pass<(recover?2u:1u);++pass) {
             auto &context=pass?workspace(false):primary;
@@ -155,32 +178,49 @@ public:
                     prefix.erase(std::remove(prefix.begin(),prefix.end(),'\''),prefix.end());
                     if(full!=prefix && !((flags&4) && full.starts_with(prefix))) continue;
                 }
+                const bool protectedReading=!corrected && typedReading(reading,consumed);
                 std::replace(reading.begin(),reading.end(),'\'',' ');
-                ranked.push_back({candidate.toString(),std::move(reading),consumed,corrected,literal,bool(pass),tier(candidate)});
+                ranked.push_back({candidate.toString(),std::move(reading),consumed,corrected,literal,bool(pass),tier(candidate),protectedReading});
             }
         }
-        // A reliable full dictionary word needs no repair. Otherwise add a
-        // small, separately budgeted exact-word branch without deleting native
-        // candidates or running another sentence decoder for every variant.
-        if((flags&2) && !exactWord) {
-            for(auto &match:cowtype::spellingMatches(*dictionary_,raw))
-                ranked.push_back({std::move(match.text),std::move(match.reading),raw.size(),true,false,false,match.source});
+        // Supplementary word search gets its own budget. Exact words and
+        // genuine initials stay ahead; speculative native sentence paths do not
+        // automatically suppress a reliable repaired whole word.
+        const bool exactReading=std::any_of(ranked.begin(),ranked.end(),[&](const auto &c) {
+            return c.consumed==raw.size() && !c.corrected && typedReading(c.reading,c.consumed,false);
+        });
+        const bool searchCorrections=(flags&2) && !exactReading;
+        const bool searchCompletions=(flags&4) && !exactReading;
+        if(searchCorrections || searchCompletions) {
+            for(auto &match:cowtype::spellingMatches(*dictionary_,raw,searchCompletions)) {
+                if(match.edits && !searchCorrections) continue;
+                if(match.completion && !searchCompletions) continue;
+                ranked.push_back({std::move(match.text),std::move(match.reading),raw.size(),match.edits>0,false,false,match.source,
+                    false,true,match.completion,match.weight-match.penalty});
+            }
         }
-        // Full non-corrections protect intentional readings/initials; complete
-        // corrections precede partial words instead of trailing thousands of them.
+        auto category=[&](const Ranked &c) {
+            if(c.consumed!=raw.size()) return 3u;
+            if(c.protectedReading) return 0u;
+            if(c.supplemental) return 1u;
+            return 2u;
+        };
         std::stable_sort(ranked.begin(),ranked.end(),[&](const auto &a,const auto &b) {
-            if((a.consumed==raw.size())!=(b.consumed==raw.size())) return a.consumed==raw.size();
+            const auto ac=category(a),bc=category(b);
+            if(ac!=bc) return ac<bc;
+            if(ac==1) {
+                if(a.quality!=b.quality) return a.quality>b.quality;
+                return a.source<b.source;
+            }
             if(a.corrected!=b.corrected) return a.corrected<b.corrected;
             if(a.literal!=b.literal) return a.literal>b.literal;
             if(a.source!=b.source) return a.source<b.source;
-            // Equal literal/source candidates retain the plain search's order:
-            // extra typo edges must not change intentional word segmentation.
             return a.recovered>b.recovered;
         });
         std::set<std::pair<std::string,size_t>> seen;
         for(const auto &candidate:ranked) {
             if(seen.emplace(candidate.text,candidate.consumed).second)
-                emit(output,candidate.text.c_str(),candidate.reading.c_str(),candidate.consumed,candidate.corrected);
+                emit(output,candidate.text.c_str(),candidate.reading.c_str(),candidate.consumed,candidate.completion?2u:unsigned(candidate.corrected));
         }
     }
 };

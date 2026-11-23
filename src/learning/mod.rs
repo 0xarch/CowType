@@ -60,6 +60,10 @@ impl Learning {
             .map(|r| r.count >> ((time.saturating_sub(r.last) / (30 * 86400)).min(31) as u32))
             .unwrap_or(0)
     }
+    /// A single confirmation records an event but is not enough to reorder candidates.
+    pub fn ranking_score(&self, reading: &str, text: &str, time: u64) -> u32 {
+        self.score(reading, text, time).saturating_sub(1)
+    }
     pub fn confirm(&mut self, reading: &str, text: &str, time: u64) -> Option<Undo> {
         if !valid(reading, text)
             || self.records.len() >= 20000

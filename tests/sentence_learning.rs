@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use cowtype::{
     dictionary::Dictionary,
-    engine::{Engine, MatchKind},
+    engine::{Candidate, CandidateProvider, Engine, MatchKind},
     learning::Learning,
     session::{Event, Key, ResetReason, Session, SessionConfig},
 };
@@ -66,14 +66,92 @@ fn preferences_decay_undo_conflicts_and_no_ascii_history() {
     assert!(l.confirm("abc", "abc", 1).is_none());
     let u = l.confirm("shan", "杉", 100).unwrap();
     assert_eq!(l.score("shan", "杉", 100), 1);
+    assert_eq!(l.ranking_score("shan", "杉", 100), 0);
     assert_eq!(l.score("shan", "杉", 100 + 30 * 86400), 0);
     assert!(l.undo(&[u]));
     assert_eq!(l.score("shan", "杉", 100), 0);
     let u = l.confirm("shan", "杉", 100).unwrap();
     l.confirm("shan", "杉", 100);
+    assert_eq!(l.ranking_score("shan", "杉", 100), 1);
     assert!(!l.undo(&[u]));
     assert!(l.forget("shan", "杉"));
     assert!(!l.forget("shan", "杉"));
+}
+
+#[test]
+fn one_mistaken_confirmation_does_not_override_dictionary_order() {
+    let learned = Arc::new(Mutex::new(Learning::default()));
+    let mut config = SessionConfig::default();
+    config.learning = true;
+    let dictionary_engine = Arc::new(engine());
+    learned
+        .lock()
+        .unwrap()
+        .confirm("shan", "杉", cowtype::learning::now());
+    let mut session = Session::new(Some(dictionary_engine), config);
+    session.set_learning(Some(learned.clone()));
+    for ch in "shan".chars() {
+        session.key(Event::press(Key::Character(ch)));
+    }
+    assert_eq!(session.frame().candidates[0].text, "山");
+    learned
+        .lock()
+        .unwrap()
+        .confirm("shan", "杉", cowtype::learning::now());
+    let mut session = Session::new(Some(Arc::new(engine())), config);
+    session.set_learning(Some(learned));
+    for ch in "shan".chars() {
+        session.key(Event::press(Key::Character(ch)));
+    }
+    assert_eq!(session.frame().candidates[0].text, "杉");
+}
+
+#[derive(Debug)]
+struct ReversedProvider;
+impl CandidateProvider for ReversedProvider {
+    fn query(&self, raw: &str, _: bool, _: bool, _: bool, _: bool) -> Vec<Candidate> {
+        vec![
+            Candidate {
+                text: "那".into(),
+                reading: "na".into(),
+                consumed_bytes: raw.len(),
+                has_remaining: false,
+                kind: MatchKind::Correction,
+                custom: false,
+            },
+            Candidate {
+                text: "把".into(),
+                reading: "ba".into(),
+                consumed_bytes: raw.len(),
+                has_remaining: false,
+                kind: MatchKind::Exact,
+                custom: false,
+            },
+        ]
+    }
+}
+
+#[test]
+fn learned_correction_cannot_jump_ahead_of_exact_provider_reading() {
+    let learned = Arc::new(Mutex::new(Learning::default()));
+    learned
+        .lock()
+        .unwrap()
+        .confirm("na", "那", cowtype::learning::now());
+    let mut engine = Engine::new(
+        Dictionary::from_tsv("ba\t把\t1\n".as_bytes())
+            .unwrap()
+            .value,
+    );
+    engine.set_provider(Arc::new(ReversedProvider));
+    let mut config = SessionConfig::default();
+    config.learning = true;
+    let mut session = Session::new(Some(Arc::new(engine)), config);
+    session.set_learning(Some(learned));
+    for ch in "ba".chars() {
+        session.key(Event::press(Key::Character(ch)));
+    }
+    assert_eq!(session.frame().candidates[0].text, "把");
 }
 #[test]
 fn only_confirmed_sessions_learn_focus_drop_does_not_and_backspace_undoes() {
@@ -89,7 +167,7 @@ fn only_confirmed_sessions_learn_focus_drop_does_not_and_backspace_undoes() {
     for ch in "shan".chars() {
         s.key(Event::press(Key::Character(ch)));
     }
-    assert_eq!(s.frame().candidates[0].text, "杉");
+    assert_eq!(s.frame().candidates[0].text, "山");
     s.reset(ResetReason::FocusLost);
     assert_eq!(
         learned

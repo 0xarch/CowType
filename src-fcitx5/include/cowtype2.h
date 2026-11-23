@@ -71,6 +71,8 @@ bool cowtype2_session_custom_prefix(const Cowtype2Session *, const char *raw);
 bool cowtype2_session_forget(Cowtype2Session *);
 /* Decoder callback context is owned by the engine after successful attachment.
  * Must serialize its shared state; must not throw across the C boundary. */
+/* emit final flag: 0 original reading, 1 correction, 2 completion.
+ * The session preserves provider order unless explicit learned preference differs. */
 typedef void (*Cowtype2Emit)(void *, const char *, const char *, size_t, uint32_t);
 typedef void (*Cowtype2Query)(void *, const char *, uint32_t, Cowtype2Emit, void *);
 bool cowtype2_engine_set_decoder(Cowtype2Engine *, void *, Cowtype2Query, void (*)(void *));
