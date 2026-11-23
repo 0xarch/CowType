@@ -97,7 +97,7 @@ GitHub Actions 已验证以下 Linux 目标的容器构建、安装包和插件�
 
 | 发行版 | 架构 | 安装包 |
 |---|---|---|
-| Arch Linux | x86_64 | `.pkg.tar.zst` |
+| Arch Linux / CachyOS / EndeavourOS | x86_64 | `.pkg.tar.zst` |
 | Fedora 45 | x86_64、ARM64 | `.rpm` |
 | openSUSE Tumbleweed | x86_64 | `.rpm` |
 | openSUSE Leap 16.0 | x86_64 | `.rpm` |
@@ -118,7 +118,7 @@ GitHub Actions 已验证以下 Linux 目标的容器构建、安装包和插件�
 
 ### Arch Linux
 
-Arch Linux 用户可以直接从本仓库快速构建最新代码。
+Arch Linux 及其衍生版用户可以直接从本仓库快速构建最新代码。
 
 先安装依赖，再下载项目并运行根目录脚本：
 
