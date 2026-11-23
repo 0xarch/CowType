@@ -115,6 +115,14 @@ if(BUILD_TESTING)
     target_link_libraries(cowtype-fcitx-compat-probe PRIVATE cowtype-fcitx-compat)
     target_compile_options(cowtype-fcitx-compat-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
     add_test(NAME fcitx-api-compatibility COMMAND cowtype-fcitx-compat-probe)
+    add_executable(cowtype-autospace-probe tests/native/autospace.cpp)
+    target_include_directories(cowtype-autospace-probe PRIVATE src-fcitx5/engine)
+    target_link_libraries(cowtype-autospace-probe PRIVATE Fcitx5::Core cowtype-fcitx-compat ${CMAKE_DL_LIBS})
+    target_compile_options(cowtype-autospace-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+    add_test(NAME automatic-spacing COMMAND ${Python3_EXECUTABLE}
+        "${CMAKE_SOURCE_DIR}/tests/native/isolated.py"
+        --root "${CMAKE_BINARY_DIR}/autospace-test" --prefix "${CMAKE_BINARY_DIR}/autospace-test/prefix"
+        --data "${CMAKE_BINARY_DIR}/test-data" $<TARGET_FILE:cowtype-autospace-probe> $<TARGET_FILE:cowtype-fcitx5>)
     add_executable(cowtype-unicode-probe tests/native/unicode-code.cpp)
     target_compile_options(cowtype-unicode-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
     add_test(NAME unicode-code-input COMMAND cowtype-unicode-probe)

@@ -6,6 +6,7 @@ use std::{
 };
 #[derive(Clone, Debug)]
 pub struct Settings {
+    pub auto_space: bool,
     pub page_size: usize,
     pub punctuation: bool,
     pub sentence: bool,
@@ -43,6 +44,7 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Self {
+            auto_space: false,
             page_size: 5,
             punctuation: true,
             sentence: true,
@@ -252,6 +254,7 @@ impl Settings {
             }
         }
         for (name, target) in [
+            ("AutoSpace", &mut settings.auto_space),
             ("Punctuation", &mut settings.punctuation),
             ("Sentence", &mut settings.sentence),
             ("Correction", &mut settings.correction),

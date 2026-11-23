@@ -287,3 +287,5 @@ custom.weight	Weight
 group.system_dictionary	System dictionary
 setting.SystemDictionary	Use the system Fcitx/libime pinyin dictionary
 hint.system_dictionary	Off by default. Merges and prioritizes the system dictionary when enabled, which can change candidate ranking and increase query cost. Independent of the local statistical model.
+setting.AutoSpace	Automatically space Chinese and English
+hint.autospace	Add spaces between Chinese characters and Latin letters or digits in ordinary text fields that provide cursor context.

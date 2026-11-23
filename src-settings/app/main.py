@@ -155,11 +155,12 @@ def main():
             privacy = self.group('input', 'group.privacy')
             keys = self.group('keys', 'page.keys')
             voice = self.group('voice', 'group.voice')
-            groups = {'Emoji': self.emoji_options, 'EmojiFirst': self.emoji_options, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
+            groups = {'AutoSpace': general, 'Emoji': self.emoji_options, 'EmojiFirst': self.emoji_options, 'UnicodePrefix': general, 'Punctuation': general, 'Horizontal': general, 'RememberMode': keys,
                 'StatisticalModel': pinyin, 'Sentence': pinyin, 'Correction': pinyin, 'Completion': pinyin, 'Initials': pinyin, 'ShowPinyin': general,
                 'Learning': privacy, 'Voice': voice, 'VoiceResident': voice, 'VoiceAlwaysResident': voice, 'PageBrackets': keys, 'PageMinusEqual': keys}
             for key, group in groups.items():
                 row = Adw.SwitchRow(title=tr('setting.' + key))
+                if key == 'AutoSpace': row.set_subtitle(tr('hint.autospace'))
                 if key == 'Emoji': row.set_subtitle(tr('hint.emoji'))
                 if key == 'EmojiFirst': row.set_subtitle(tr('hint.emoji_first'))
                 if key == 'UnicodePrefix': row.set_subtitle(tr('hint.unicode_prefix'))
@@ -174,7 +175,7 @@ def main():
                 self.controls[key] = row
             for key, group in (('SymbolCandidateLimit', self.emoji_options),
                                ('EmojiCandidateLimit', self.emoji_options),
-                               ('CorrectionCandidateLimit', pinyin)):
+                               ('CorrectionCandidateLimit', general)):
                 row = Adw.SpinRow.new_with_range(0, 12, 1)
                 row.set_title(tr('setting.' + key))
                 row.set_value(int(self.values[key]))

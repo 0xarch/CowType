@@ -8,6 +8,7 @@
 #include "libime.h"
 #include "shortcuts.h"
 #include "translate.h"
+#include "autospace.h"
 #include "dbus.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
@@ -108,7 +109,7 @@ class Cowtype final : public InputMethodEngineV2 {
 public:
     explicit Cowtype(Instance *instance) : instance_(instance), factory_([](InputContext &) { return new State; }), voice_(instance->eventLoop(), [this](InputContext *ic,char kind,const std::string &text) {
         auto *state=ic->propertyFor(&factory_);
-        if(kind=='F'){state->voicePartial.clear();state->voiceStatus=text.empty()?ct_tr("message.9f30c9b3ac26"):"";if(!text.empty() && ic->hasFocus() && !ic->capabilityFlags().testAny(CapabilityFlag::PasswordOrSensitive)){ic->commitString(text);}}
+        if(kind=='F'){state->voicePartial.clear();state->voiceStatus=text.empty()?ct_tr("message.9f30c9b3ac26"):"";if(!text.empty() && ic->hasFocus() && !ic->capabilityFlags().testAny(CapabilityFlag::PasswordOrSensitive)){commitText(ic,text);}}
         else if(kind=='E'){state->voicePartial.clear();state->voiceStatus=text;}
         else if(kind=='P'){state->voicePartial=text;}
         else if(kind=='R'){state->voiceLevel.clear();state->voiceStatus=state->voiceLevel.push("0");}
@@ -213,6 +214,15 @@ public:
     void keyEvent(const InputMethodEntry &entry, KeyEvent &event) override {
         CtSlowEvent latency;
         auto *ic = event.inputContext();
+        struct SnapshotGuard {
+            InputContext *ic;
+            KeyEvent &event;
+            bool enabled;
+            ~SnapshotGuard() {
+                if(enabled && !event.isRelease() && !event.accepted() && !event.key().isModifier())
+                    ic->surroundingText().invalidate();
+            }
+        } snapshot{ic,event,bool(cowtype2_runtime_option(runtime_.get(),23))};
         if (ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive) | CapabilityFlag::Disable)) {
             cancelVoice(ic);cancelTranslation(ic);
             ic->propertyFor(&factory_)->internalCode=false;ic->propertyFor(&factory_)->internalBuffer.clear();
@@ -310,13 +320,30 @@ public:
         }
         auto *session = ic->propertyFor(&factory_)->session.get();
         bool handled = cowtype2_session_key(session, code, event.key().states().toInteger(), event.isRelease(), previous);
-        render(ic, true); if (handled) { event.filterAndAccept(); }
+        render(ic, true);
+        // English mode and idle digits normally pass through. Only consume a
+        // printable character when an actual Han/Latin boundary needs a space.
+        if(!handled && !event.isRelease() && !(modifiers&(4|8|64|128)) &&
+           cowtype::latinNumber(code) && cowtype2_runtime_option(runtime_.get(),23) &&
+           cowtype::spacingContext(ic) && cowtype::han(cowtype::previousCharacter(ic))) {
+            commitText(ic,std::string(1,static_cast<char>(code)));handled=true;
+        }
+        if (handled) { event.filterAndAccept(); }
     }
     void choose(InputContext *ic, size_t index) { cowtype2_session_select(ic->propertyFor(&factory_)->session.get(), index); render(ic, true); }
     void page(InputContext *ic, bool next) {
         cowtype2_session_key(ic->propertyFor(&factory_)->session.get(), next ? CT2_PAGE_DOWN : CT2_PAGE_UP, 0, false, 0xffffffff); render(ic, true);
     }
 private:
+    void commitText(InputContext *ic,const std::string &text,bool allowSpacing=true) {
+        const bool spacing=cowtype2_runtime_option(runtime_.get(),23);
+        if(spacing && allowSpacing && cowtype::spacingContext(ic))
+            ic->commitString(cowtype::autoSpace(text,cowtype::previousCharacter(ic)));
+        else ic->commitString(text);
+        // A commit does not update Fcitx's cached surrounding snapshot. Reusing
+        // it before the client reports fresh text would insert repeated spaces.
+        if(spacing) ic->surroundingText().invalidate();
+    }
     void cancelTranslation(InputContext *ic) {
         translator_.cancel(ic);auto *s=ic->propertyFor(&factory_);
         s->translating=s->translateDraft=false;
@@ -363,7 +390,7 @@ private:
         auto text=s->translateResult;cancelTranslation(ic);cowtype2_session_reset(s->session.get(),false);
         // Frontends replace their current selection on commit; do not delete
         // arbitrary surrounding text or write translated text to learning.
-        ic->commitString(text);render(ic,false);
+        commitText(ic,text);render(ic,false);
     }
     bool translationKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
         auto *s=ic->propertyFor(&factory_);auto sym=event.key().sym();
@@ -421,7 +448,7 @@ private:
         if(!state->internalCode || !ic->hasFocus() || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable)) return;
         auto candidates=cowtype::InternalCode::candidates(state->internalBuffer);
         if(index>=candidates.size())return;
-        ic->commitString(candidates[index].text);
+        commitText(ic,candidates[index].text,false);
         state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();state->internalCursor=0;
         render(ic,false);
     }
@@ -467,7 +494,7 @@ private:
         if(!state->unicodeCode || !ic->hasFocus() || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable))return;
         auto candidates=cowtype::UnicodeCode::candidates(state->unicodeBuffer);
         if(candidates.empty())return;
-        ic->commitString(candidates[0].text);state->clearUnicode();render(ic,false);
+        commitText(ic,candidates[0].text,false);state->clearUnicode();render(ic,false);
     }
     void unicodeKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
         auto *state=ic->propertyFor(&factory_);
@@ -648,7 +675,7 @@ private:
         if (!session) { return; }
         if (consumeCommit) { const char *commit = cowtype2_session_commit(session); if (commit && *commit) {
             if(state->translating){state->translateInput+=commit;if(state->translateInput.size()>32768)state->translateStatus=ct_tr("translate.error.input");}
-            else ic->commitString(commit);
+            else commitText(ic,commit);
         } }
         auto &panel = ic->inputPanel(); panel.reset();
         Text preedit;

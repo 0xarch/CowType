@@ -437,6 +437,7 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         20 => s.symbol_candidate_limit as u32,
         21 => s.emoji_candidate_limit as u32,
         22 => s.correction_candidate_limit as u32,
+        23 => s.auto_space as u32,
         _ => 0,
     }
 }

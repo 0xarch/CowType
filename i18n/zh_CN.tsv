@@ -287,3 +287,5 @@ custom.weight	权重
 group.system_dictionary	系统词库
 setting.SystemDictionary	使用系统 Fcitx/libime 拼音词库
 hint.system_dictionary	默认关闭。启用后合并系统词库并优先其来源，可能改变候选排序并增加查询开销；与本地统计模型开关相互独立。
+setting.AutoSpace	中英文自动加空格
+hint.autospace	在汉字与英文字母或数字之间添加空格；仅处理支持读取光标上下文的普通文本输入框。

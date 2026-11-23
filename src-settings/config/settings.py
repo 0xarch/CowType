@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "i18n"))
 from catalog import tr
 
-DEFAULTS = dict(Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
+DEFAULTS = dict(AutoSpace='False', Version='1', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
                 Correction='True', Completion='True', Initials='True', Learning='True',
                 Horizontal='False', ShiftToggle='True', RememberMode='False', StatisticalModel='False', SystemDictionary='False', Emoji='False', EmojiFirst='False', EmojiSkinTonePicker='True', EmojiDefaultSkinTone='0', SymbolCandidateLimit='4', EmojiCandidateLimit='4', CorrectionCandidateLimit='5', Voice='False', VoiceResident='True', VoiceHotkey='F8', ModeHotkey='F6', InternalCodeHotkey='F7', VoiceModifierHold='False', ShowPinyin='True', VoiceAlwaysResident='False', PageBrackets='True', PageMinusEqual='True')
 def shortcut_registry():

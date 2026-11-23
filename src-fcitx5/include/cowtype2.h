@@ -65,7 +65,8 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 17 translation enabled (default off); 18 translation key index;
  * 19 optional system pinyin dictionary (default off, independent of option 12);
  * 20 symbol candidate limit; 21 Emoji candidate limit; 22 correction candidate limit.
- * Candidate limits use 0–12 and default to 4, 4, and 5 respectively. */
+ * Candidate limits use 0–12 and default to 4, 4, and 5 respectively.
+ * 23 automatic Han/ASCII spacing (default off). */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 const char *cowtype2_runtime_warning(Cowtype2Runtime *);
 void cowtype2_session_configure(Cowtype2Session *, const Cowtype2Runtime *);
