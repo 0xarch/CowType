@@ -20,7 +20,7 @@ CowType(牛子输入法) 是基于 Fcitx5 的自由多功能 Linux 拼音输入�
 4. 支持超长句输入和行内修改、部分上屏
 5. 支持邻键纠错(如v<->b, i<->u等)、顺序纠错(缺失、重复等)
 6. 支持动态学习高频词语并优先展示
-7. 基于 OpenCC 的繁体输入支持
+7. 可选的基于 OpenCC 的繁体输入支持
 8. 基于全量 Unicode CLDR 的表情和符号关键词匹配
 9. 更顺手的句子-长词组-词组-单字排列方式
 10. 通过可选统计模型提高长句预测准确性
@@ -146,6 +146,7 @@ bash build-arch.sh
 
 - [Fcitx5](https://github.com/fcitx/fcitx5)：本项目依赖的输入法框架
 - [libime](https://github.com/fcitx/libime)：本项目依赖的拼音系统
+- [OpenCC](https://github.com/BYVoid/OpenCC)：提供繁体输入支持的可选运行库
 - [雾凇拼音](https://github.com/iDvel/rime-ice)：词库和英文词表
 - [Rime 五笔字型](https://github.com/rime/rime-wubi)：五笔 86 码表
 - [万象拼音](https://github.com/amzxyz/rime_wanxiang)：可选词库
