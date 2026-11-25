@@ -167,6 +167,8 @@ pub struct Session {
     punctuation: Punctuation,
     skin_tone_choice: Option<SkinToneChoice>,
     pending_shuangpin_semicolon: bool,
+    script_trigger: String,
+    script_candidates: Vec<(f64, String)>,
 }
 
 impl Session {
@@ -186,6 +188,8 @@ impl Session {
             punctuation: Punctuation::default(),
             skin_tone_choice: None,
             pending_shuangpin_semicolon: false,
+            script_trigger: String::new(),
+            script_candidates: Vec::new(),
         }
     }
     pub fn set_custom(&mut self, custom: crate::custom::service::Shared) {
@@ -225,6 +229,18 @@ impl Session {
     }
     pub fn remaining(&self) -> &str {
         &self.remaining
+    }
+    /// Ephemeral host results for exactly this composition; never learned.
+    pub fn set_scripts(&mut self, trigger: &str, candidates: Vec<(f64, String)>) {
+        self.script_trigger = trigger.to_owned();
+        self.script_candidates = candidates
+            .into_iter()
+            .filter(|(rank, text)| {
+                rank.is_finite() && !text.is_empty() && text.len() <= 4096 && !text.contains('\0')
+            })
+            .take(12)
+            .collect();
+        self.refresh();
     }
     pub fn selected_text(&self) -> String {
         self.selections.iter().map(|s| s.text.as_str()).collect()
@@ -307,6 +323,10 @@ impl Session {
             && self.config.emoji
             && self.config.emoji_skin_tone_picker
             && candidate.custom
+            && !self
+                .script_candidates
+                .iter()
+                .any(|(_, text)| *text == candidate.text)
             && !self
                 .custom
                 .as_ref()
@@ -590,6 +610,37 @@ impl Session {
                     self.candidates = explicit;
                 }
             }
+        }
+        if self.script_trigger == self.remaining
+            && self.selections.is_empty()
+            && self.mode == Mode::Chinese
+        {
+            let mut ranked: Vec<_> = self
+                .candidates
+                .drain(..)
+                .enumerate()
+                .map(|(i, c)| ((i + 1) as f64, 1u8, c))
+                .collect();
+            for (priority, text) in &self.script_candidates {
+                ranked.retain(|(_, _, c)| c.text != *text || c.has_remaining);
+                ranked.push((
+                    *priority,
+                    0,
+                    Candidate {
+                        text: text.clone(),
+                        reading: String::new(),
+                        consumed_bytes: self.remaining.len(),
+                        has_remaining: false,
+                        kind: crate::engine::MatchKind::Exact,
+                        custom: true,
+                    },
+                ));
+            }
+            ranked.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)));
+            self.candidates = ranked.into_iter().map(|(_, _, c)| c).collect();
+        } else {
+            self.script_trigger.clear();
+            self.script_candidates.clear();
         }
         self.selected_candidate = 0;
     }

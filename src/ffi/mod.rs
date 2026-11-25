@@ -286,6 +286,40 @@ pub unsafe extern "C" fn cowtype2_session_preedit(h: *const SessionHandle) -> *c
         .unwrap_or(ptr::null())
 }
 #[no_mangle]
+pub unsafe extern "C" fn cowtype2_session_scripts(
+    h: *mut SessionHandle,
+    trigger: *const c_char,
+    texts: *const *const c_char,
+    priorities: *const f64,
+    count: usize,
+) -> bool {
+    protect(false, || {
+        let Some(h) = (unsafe { h.as_mut() }) else {
+            return false;
+        };
+        let Ok(trigger) = (unsafe { string(trigger) }) else {
+            return false;
+        };
+        if count > 12 || (count > 0 && (texts.is_null() || priorities.is_null())) {
+            return false;
+        }
+        let mut values = Vec::new();
+        for i in 0..count {
+            let Ok(text) = (unsafe { string(*texts.add(i)) }) else {
+                return false;
+            };
+            let priority = unsafe { *priorities.add(i) };
+            if !priority.is_finite() || text.is_empty() || text.len() > 4096 {
+                return false;
+            }
+            values.push((priority, text.to_owned()));
+        }
+        h.session.set_scripts(trigger, values);
+        h.update(h.session.frame());
+        true
+    })
+}
+#[no_mangle]
 pub unsafe extern "C" fn cowtype2_session_preview(h: *const SessionHandle) -> *const c_char {
     unsafe { h.as_ref() }
         .map(|h| h.preview.as_ptr())
@@ -458,6 +492,7 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         24 => s.shuangpin_profile,
         25 => s.shuangpin as u32,
         26 => opencc::available() as u32,
+        27 => s.script_mode,
         _ => 0,
     }
 }

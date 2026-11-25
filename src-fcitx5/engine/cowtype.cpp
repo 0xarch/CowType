@@ -11,6 +11,7 @@
 #include "translate.h"
 #include "autospace.h"
 #include "traditional.h"
+#include "scripts.h"
 #include "../gb18030/decoder.h"
 #include "../unicode/decoder.h"
 #include "../compat/addon.h"
@@ -71,6 +72,13 @@ struct State : InputContextProperty {
     std::string voiceStatus, voicePartial;
     bool translating=false, translateDraft=false;
     std::string translateInput, translateResult, translateStatus;
+    std::string scriptTrigger;
+    std::vector<std::string> scriptCandidates;
+    size_t scriptCursor=0;
+    bool scriptFailed=false;
+    std::string scriptReason;
+    bool scriptDismissed=false;
+    bool scriptMerged=false;
 };
 class InternalWord final : public CandidateWord {
     std::function<void(InputContext *)> select_;
@@ -171,9 +179,12 @@ public:
         if(auto *ic=voice_.owner()){cancelVoice(ic);render(ic,false);}voice_.cancelAll();
         translator_.cancel();
         cowtype2_runtime_reload(runtime_.get());++configGeneration_;
+        scripts_.reload();
         instance_->inputContextManager().foreach([this](InputContext *ic) {
             auto *state=ic->propertyFor(&factory_);
             const bool wasTranslating=state->translating;
+            state->scriptTrigger.clear();state->scriptCandidates.clear();state->scriptCursor=0;
+            cowtype2_session_scripts(state->session.get(),"",nullptr,nullptr,0);state->scriptMerged=false;
             cancelTranslation(ic);state->shortcuts.reset();state->voiceHold.reset();
             if(state->internalCode || state->unicodeCode || wasTranslating){state->internalCode=false;state->internalBuffer.clear();state->clearUnicode();render(ic,false);}
             return true;
@@ -289,6 +300,7 @@ public:
         if(state->translating && translationKey(ic,event,modifiers))return;
         if(state->unicodeCode){unicodeKey(ic,event,modifiers);return;}
         if(state->internalCode){internalKey(ic,event,modifiers);return;}
+        if(!state->translating && scriptKey(ic,event,modifiers))return;
         if(voice_.owns(ic) && !event.isRelease()){
             cancelVoice(ic);render(ic,false);
             if(sym==FcitxKey_Escape){event.filterAndAccept();return;}
@@ -324,6 +336,7 @@ public:
             const std::string_view preedit=cowtype2_session_preedit(state->session.get());
             if((preedit=="u" || preedit=="U") && cowtype2_session_cursor(state->session.get())==1
                && cowtype::UnicodeCode::accepts(preedit,char(code))
+               && !(cowtype2_runtime_option(runtime_.get(),27) && scripts_.prefix(std::string(preedit)+char(code)))
                && !cowtype2_session_custom_prefix(state->session.get(),(std::string(preedit)+char(code)).c_str())) {
                 state->unicodeBuffer=preedit;
                 cowtype2_session_reset(state->session.get(),false);
@@ -363,9 +376,45 @@ public:
     }
     void choose(InputContext *ic, size_t index) { cowtype2_session_select(ic->propertyFor(&factory_)->session.get(), index); render(ic, true); }
     void page(InputContext *ic, bool next) {
+        auto *state=ic->propertyFor(&factory_);
+        if(!state->scriptCandidates.empty() && !state->scriptDismissed) {
+            const size_t size=cowtype2_runtime_option(runtime_.get(),0), start=state->scriptCursor/size*size;
+            if(next && start+size<state->scriptCandidates.size())state->scriptCursor=start+size;
+            if(!next)state->scriptCursor=start>=size?start-size:0;
+            render(ic,false);return;
+        }
         cowtype2_session_key(ic->propertyFor(&factory_)->session.get(), next ? CT2_PAGE_DOWN : CT2_PAGE_UP, 0, false, 0xffffffff); render(ic, true);
     }
 private:
+    void chooseScript(InputContext *ic,size_t index) {
+        auto *s=ic->propertyFor(&factory_);
+        if(index>=s->scriptCandidates.size() || !ic->hasFocus() || ic->capabilityFlags().testAny(CapabilityFlags(CapabilityFlag::PasswordOrSensitive)|CapabilityFlag::Disable))return;
+        const auto text=s->scriptCandidates[index];
+        cowtype2_session_reset(s->session.get(),false);
+        s->scriptTrigger.clear();s->scriptCandidates.clear();
+        commitText(ic,text);render(ic,false);
+    }
+    bool scriptKey(InputContext *ic,KeyEvent &event,uint32_t modifiers) {
+        auto *s=ic->propertyFor(&factory_);
+        if(s->scriptCandidates.empty() || event.isRelease() || (modifiers&(4|8|64|128)))return false;
+        const auto sym=event.key().sym();const size_t size=s->scriptCandidates.size();
+        if(sym==FcitxKey_Tab) {
+            s->scriptDismissed=!s->scriptDismissed;render(ic,false);event.filterAndAccept();return true;
+        }
+        if(s->scriptDismissed)return false;
+        const size_t pageSize=cowtype2_runtime_option(runtime_.get(),0);
+        const bool plain=!(modifiers&1);
+        const bool brackets=plain && cowtype2_runtime_option(runtime_.get(),9);
+        const bool symbols=plain && cowtype2_runtime_option(runtime_.get(),10);
+        if(sym==FcitxKey_space || sym==FcitxKey_Return || sym==FcitxKey_KP_Enter)chooseScript(ic,s->scriptCursor);
+        else if(sym>=FcitxKey_1 && sym<FcitxKey_1+pageSize)chooseScript(ic,s->scriptCursor/pageSize*pageSize+sym-FcitxKey_1);
+        else if(sym==FcitxKey_Up)s->scriptCursor=(s->scriptCursor+size-1)%size;
+        else if(sym==FcitxKey_Down)s->scriptCursor=(s->scriptCursor+1)%size;
+        else if(sym==FcitxKey_Page_Down || (brackets && sym==FcitxKey_bracketright) || (symbols && sym==FcitxKey_equal)){page(ic,true);event.filterAndAccept();return true;}
+        else if(sym==FcitxKey_Page_Up || (brackets && sym==FcitxKey_bracketleft) || (symbols && sym==FcitxKey_minus)){page(ic,false);event.filterAndAccept();return true;}
+        else return false;
+        render(ic,false);event.filterAndAccept();return true;
+    }
     void convertOutputText(Text &text,bool traditional) {
         if(text.empty() || !traditional_.available()) return;
         const auto original=text.toString();
@@ -780,7 +829,35 @@ private:
             else if (!resource.failure.empty()) { panel.setAuxUp(Text(resource.failure)); }
             else if (const char *warning = cowtype2_engine_warning(resource.engine.get()); warning && *warning) { panel.setAuxUp(Text(warning)); }
         }
-        if (cowtype2_session_count(session)) {
+        const auto scriptMode=cowtype2_runtime_option(runtime_.get(),27);
+        const std::string trigger=cowtype2_session_preedit(session);
+        if(!scriptMode || state->translating || cowtype2_session_mode(session) || ic->capabilityFlags().testAny(CapabilityFlag::PasswordOrSensitive)) {
+            state->scriptTrigger.clear();state->scriptCandidates.clear();state->scriptFailed=false;
+            if(state->scriptMerged) {cowtype2_session_scripts(session,"",nullptr,nullptr,0);state->scriptMerged=false;}
+        } else if(state->scriptTrigger!=trigger) {
+            state->scriptTrigger=trigger;state->scriptCursor=0;state->scriptFailed=false;state->scriptDismissed=false;state->scriptCandidates.clear();
+            std::vector<std::string> merged;std::vector<double> priorities;
+            if(scripts_.matches(trigger)) {
+                for(const auto &candidate:scripts_.query(instance_->addonManager().addon("imeapi",true),ic,trigger,scriptMode,state->scriptFailed,&state->scriptReason)) {
+                    if(candidate.independent) state->scriptCandidates.push_back(candidate.text);
+                    else {merged.push_back(candidate.text);priorities.push_back(candidate.priority);}
+                }
+            }
+            if(!merged.empty() || state->scriptMerged) {
+                std::vector<const char *> texts;for(const auto &text:merged)texts.push_back(text.c_str());
+                cowtype2_session_scripts(session,trigger.c_str(),texts.data(),priorities.data(),texts.size());
+                state->scriptMerged=!merged.empty();
+            }
+        }
+        if(!state->scriptCandidates.empty() && !state->scriptDismissed) {
+            const auto pageSize=cowtype2_runtime_option(runtime_.get(),0);
+            auto list=std::make_unique<Page>(this,ic,state->scriptCursor>=pageSize,(state->scriptCursor/pageSize+1)*pageSize<state->scriptCandidates.size());
+            list->setPageSize(pageSize);list->setLayoutHint(cowtype2_runtime_option(runtime_.get(),1)?CandidateLayoutHint::Horizontal:CandidateLayoutHint::Vertical);
+            std::vector<Key> keys;for(unsigned n=0;n<pageSize;++n)keys.emplace_back(static_cast<KeySym>(FcitxKey_1+n));list->setSelectionKey(keys);
+            const auto start=state->scriptCursor/pageSize*pageSize;
+            for(size_t i=start;i<std::min(state->scriptCandidates.size(),start+pageSize);++i)list->append<InternalWord>(state->scriptCandidates[i],ct_tr("scripts.candidate"),[this,i](InputContext *context){chooseScript(context,i);});
+            list->setGlobalCursorIndex(state->scriptCursor-start);panel.setCandidateList(std::move(list));
+        } else if (cowtype2_session_count(session)) {
             auto list = std::make_unique<Page>(this, ic, cowtype2_session_has_page(session, false), cowtype2_session_has_page(session, true));
             const auto pageSize=cowtype2_runtime_option(runtime_.get(),0);
             list->setPageSize(pageSize); list->setLayoutHint(cowtype2_runtime_option(runtime_.get(),1)?CandidateLayoutHint::Horizontal:CandidateLayoutHint::Vertical);
@@ -791,6 +868,15 @@ private:
             list->setGlobalCursorIndex(cowtype2_session_candidate_cursor(session)); panel.setCandidateList(std::move(list));
         }
         if(state->translating){panel.setAuxDown(Text(state->translateStatus.empty()?ct_tr(preedit.empty()?"translate.input_hint":"translate.send_hint"):state->translateStatus));}
+        else if(state->scriptFailed){
+            const auto tab=state->scriptReason.find('\t');
+            std::string reason=ct_tr("scripts.reason."+state->scriptReason.substr(0,tab));
+            if(tab!=std::string::npos)reason+=" ("+std::string(ct_tr("scripts.line"))+" "+state->scriptReason.substr(tab+1)+")";
+            std::string message=ct_tr("scripts.failed");const auto placeholder=message.find("{reason}");
+            if(placeholder!=std::string::npos)message.replace(placeholder,8,reason);
+            panel.setAuxDown(Text(message));
+        }
+        else if(!state->scriptCandidates.empty()){panel.setAuxDown(Text(ct_tr(state->scriptDismissed?"scripts.show_scripts":"scripts.show_words")));}
         else if(!state->voiceStatus.empty()){panel.setAuxDown(Text(state->voiceStatus));}
         else if(const char *warning=cowtype2_runtime_warning(runtime_.get());warning && *warning){panel.setAuxDown(Text(warning));}
         ic->updatePreedit(); ic->updateUserInterface(UserInterfaceComponent::InputPanel);
@@ -808,6 +894,7 @@ private:
     std::unique_ptr<EventSourceTime> resourceTimer_;
     std::unique_ptr<cowtype::InputBus> inputBus_;
     cowtype::TraditionalConverter traditional_;
+    cowtype::Scripts scripts_;
     ScopedConnection traditionalOutput_,traditionalCommit_;
 };
 void Word::select(InputContext *ic) const { owner_->choose(ic, index_); }

@@ -74,6 +74,7 @@ def main():
             emoji_font = 'google-noto-coloremoji-fonts' if suse else 'google-noto-color-emoji-fonts'
             for key, value in {'VERSION': version, 'DISTRO': args.distro, 'STAGE': str(stage), 'LIBDIR': args.libdir,
                                'UI_REQUIRES': ui_requires, 'EMOJI_FONT': emoji_font,
+                               'SOURCEVIEW_PACKAGE': 'typelib-1_0-GtkSource-5' if suse else 'gtksourceview5',
                                'SECRET_PACKAGE': 'typelib-1_0-Secret-1' if suse else 'libsecret'}.items():
                 spec = spec.replace('@' + key + '@', value)
             specfile = work / 'SPECS/cowtype.spec'

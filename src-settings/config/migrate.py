@@ -3,6 +3,8 @@
 """Explicitly migrate CowType settings v1 to v2."""
 from datetime import datetime, timezone
 import configparser
+import json
+import importlib.util
 import os
 from pathlib import Path
 import subprocess
@@ -52,6 +54,15 @@ def migrate():
     source = directory / 'settings-v1.ini'
     destination = directory / 'settings-v2.ini'
     _check_paths(source, destination)
+    script_records = directory / 'scripts/records.json'
+    if script_records.exists():
+        _check_paths(script_records, script_records)
+        if script_records.stat().st_size > 12_000_000:
+            raise ValueError('Script records file is too large')
+        data = json.loads(script_records.read_text(encoding='utf-8'))
+        if isinstance(data, list):
+            migrate_scripts(directory, data)
+            if destination.exists() or not source.exists(): return
     if destination.exists():
         raise ValueError('CowType v2 settings already exist; no files were changed')
     if not source.exists():
@@ -117,6 +128,32 @@ def migrate():
     print(f'Original settings moved to {backup}')
     for warning in warnings:
         print(f'Warning: {warning}', file=sys.stderr)
+
+
+def migrate_scripts(directory, records):
+    """Preserve old string-returning scripts in independent mode; never run code."""
+    spec = importlib.util.spec_from_file_location('cowtype_script_migration', Path(__file__).with_name('scripts.py'))
+    store = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(store)
+    converted = []
+    for record in records:
+        if not isinstance(record, dict) or set(record) != {'id', 'name', 'trigger', 'source', 'enabled'}:
+            raise ValueError('Invalid legacy script record')
+        converted.append(dict(record, independent=True))
+    store.validate(converted)
+    source = directory / 'scripts/records.json'
+    index = source.with_name('index.tsv')
+    _check_paths(source, index)
+    original = source.parent
+    backup = _backup_path(original)
+    os.replace(original, backup)
+    try:
+        store.save(directory, settings.atomic, converted)
+    except Exception:
+        if original.exists(): os.replace(original, _backup_path(original))
+        os.replace(backup, original)
+        raise
+    print(f'Migrated scripts; original directory moved to {backup}')
 
 
 def restart_fcitx():

@@ -345,3 +345,43 @@ fn synthetic_event_sequences_keep_all_frame_cursors_in_bounds() {
         assert!(session.frame().commit.is_none());
     }
 }
+
+#[test]
+fn ephemeral_script_ranks_merge_paginate_commit_and_expire() {
+    let mut s = session();
+    type_text(&mut s, "shan");
+    let first = s.frame().candidates[0].text.clone();
+    s.set_scripts(
+        "shan",
+        vec![
+            (5.0, "日期".into()),
+            (1.0, "置顶".into()),
+            (6.0, "时间".into()),
+        ],
+    );
+    let page = s.frame();
+    assert_eq!(page.candidates[0].text, "置顶");
+    assert!(page.candidates[0].custom);
+    assert_eq!(page.candidates[1].text, first);
+    assert!(page.has_next_page);
+    key(&mut s, Key::PageDown);
+    let second = s.frame();
+    assert_eq!(second.candidates[2].text, "日期");
+    assert_eq!(
+        key(&mut s, Key::Character('3')).commit.as_deref(),
+        Some("日期")
+    );
+    type_text(&mut s, "shan");
+    assert_eq!(s.frame().candidates[0].text, first);
+    s.set_scripts("shan", vec![(0.0, "脚本".into())]);
+    assert_eq!(
+        key(&mut s, Key::Character(',')).commit.as_deref(),
+        Some("脚本，")
+    );
+    type_text(&mut s, "shan");
+    s.set_scripts("shan", vec![(0.0, "脚本".into())]);
+    key(&mut s, Key::Backspace);
+    assert!(!s.frame().candidates.iter().any(|c| c.text == "脚本"));
+    s.set_scripts("different", vec![(0.0, "错误触发".into())]);
+    assert!(!s.frame().candidates.iter().any(|c| c.text == "错误触发"));
+}

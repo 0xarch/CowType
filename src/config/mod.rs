@@ -61,6 +61,7 @@ pub struct Settings {
     pub voice_always_resident: bool,
     pub page_brackets: bool,
     pub page_minus_equal: bool,
+    pub script_mode: u32,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -109,6 +110,7 @@ impl Default for Settings {
             voice_always_resident: false,
             page_brackets: true,
             page_minus_equal: true,
+            script_mode: 0,
         }
     }
 }
@@ -350,6 +352,14 @@ impl Settings {
                 }
             }
         }
+        if let Some(value) = values.get("ScriptMode") {
+            settings.script_mode = match *value {
+                "Off" => 0,
+                "Strict" => 1,
+                "Full" => 2,
+                _ => return Err("invalid script mode"),
+            };
+        }
         for (name, target, legacy_target) in [
             (
                 "ModeHotkey",
@@ -442,6 +452,21 @@ impl Settings {
         Ok(settings)
     }
     pub fn load(path: &Path) -> Result<Self, String> {
+        let scripts = path.with_file_name("scripts");
+        if scripts.join("records.json").exists() {
+            use std::io::Read;
+            let mut header = String::new();
+            let valid = std::fs::File::open(scripts.join("index.tsv"))
+                .and_then(|file| file.take(22).read_to_string(&mut header))
+                .is_ok()
+                && header.starts_with("# cowtype-scripts-v2\n");
+            if !valid {
+                return Err(
+                    "script format is outdated; run cowtype-config-migrate and restart CowType"
+                        .into(),
+                );
+            }
+        }
         match std::fs::read_to_string(path) {
             Ok(text) if text.len() <= 65536 => Self::parse(&text).map_err(str::to_owned),
             Ok(_) => Err("settings file too large".into()),

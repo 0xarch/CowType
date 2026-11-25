@@ -52,6 +52,8 @@ python3 -m unittest discover -s src-model-tools/text-models -p 'test_*.py'
 
 `--offline` 需要依赖已缓存；首次配置时按锁文件获取依赖。核心库没有第三方 Rust crate，语音是单独的 Cargo 工程。所有修改使用项目目录内产物，测试不得读写用户配置或调用真实设备。
 
+Lua 脚本通过 Fcitx5 的可选 imeapi 模块运行；运行时安装 fcitx5-lua（Debian 系为 fcitx5-module-lua），无需将 Lua 链接到 CowType。代码编辑器可选 GtkSourceView 5：Arch 安装 gtksourceview5，Debian 系安装 gir1.2-gtksource-5，Fedora 安装 gtksourceview5，openSUSE 安装 typelib-1_0-GtkSource-5；缺少时回退到普通 GTK 编辑器。安装 Lua 组件后重启 Fcitx5，以加载随包提供的扩展。CMake 检测到已安装的 Lua runtime 时，CTest 在 `/tmp` 的隔离 Fcitx/XDG 目录执行真实 Lua 接口与候选测试；未安装时跳过该项。脚本功能与权限边界见[脚本说明](SCRIPTS.md)。
+
 互译客户端使用 Python 标准库，无额外 HTTP 库或 Rust 依赖；可选桌面密钥环需要 libsecret 的 Secret 1 GI typelib 和用户自行提供的 Secret Service。Arch/Debian/Fedora/openSUSE 包名与配置步骤见[互译组件](../src-translate/README.md)。普通 CI 只使用合成 HTTP 服务和假翻译进程，不读取 `COWTYPE_TRANSLATE_KEY` 或调用外部翻译接口。
 
 首次准备默认词典需要网络：

@@ -15,10 +15,11 @@ from catalog import tr, en
 from translation import build as build_translation
 from memory import show as show_memory
 from custom import show as show_custom
+from scripts import build as build_scripts
 
 PAGES = [('input', 'preferences-system-symbolic'), ('keys', 'input-keyboard-symbolic'),
          ('voice', 'audio-input-microphone-symbolic'), ('translate', 'accessories-dictionary-symbolic'),
-         ('words', 'view-list-symbolic')]
+         ('words', 'view-list-symbolic'), ('scripts', 'text-x-script-symbolic')]
 
 def manager_module():
     path = Path(__file__).resolve().parents[1] / 'dictionaries/manage.py'
@@ -146,6 +147,9 @@ def main():
                 self.values = config.load()
                 self.load_error = ''
             except config.MigrationRequired as error:
+                # AlertDialog is hosted by this window; it cannot become visible
+                # while the application's early-return branch leaves it unmapped.
+                self.window.present()
                 dialog = Adw.AlertDialog(heading=tr('migration.title'), body=str(error))
                 dialog.add_response('quit', tr('action.quit'))
                 dialog.add_response('migrate', tr('action.migrate_restart'))
@@ -160,9 +164,11 @@ def main():
                                                     capture_output=True, timeout=30, check=False)
                             if result.returncode:
                                 self.toast(result.stderr.strip() or tr('error.migration_failed'))
+                                GLib.idle_add(lambda: dialog.present(self.window))
                                 return
                         except (OSError, subprocess.TimeoutExpired) as migration_error:
                             self.toast(tr('error.migration_failed') + ': ' + str(migration_error))
+                            GLib.idle_add(lambda: dialog.present(self.window))
                             return
                     self.quit()
                 dialog.connect('response', migrate_and_quit)
@@ -278,6 +284,7 @@ def main():
             self.prepare = model_button('action.download', self.download_or_cancel)
             self.preparing = False
             build_translation(self, Adw, Gtk, GLib, tr, reload_fcitx)
+            build_scripts(self, Adw, Gtk, tr, config, reload_fcitx)
             custom_words = self.group('words', 'custom.title', tr('custom.hint'))
             self.custom_action = self.action(custom_words, 'custom.manage', lambda *_: show_custom(self, custom_store_module(), config, Adw, Gtk, GLib, tr))
             system_words = self.group('words', 'group.system_dictionary')
@@ -304,7 +311,7 @@ def main():
             if args.smoke_test:
                 self.smoke_passed = False
                 def check_visible():
-                    assert len(self.pages) == 5 and len(self.controls) == 24
+                    assert len(self.pages) == 6 and len(self.controls) == 24
                     assert self.controls['SystemDictionary'].get_visible()
                     assert not self.controls['SystemDictionary'].get_active()
                     assert not self.controls['Translate'].get_active()

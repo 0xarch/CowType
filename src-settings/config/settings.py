@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "i18n"))
 from catalog import tr
 
 SHUANGPIN_PROFILES = ('Ziranma', 'MS', 'Ziguang', 'ABC', 'Zhongwenzhixing', 'PinyinJiajia', 'Xiaohe', 'GB', 'Custom')
-DEFAULTS = dict(Version='2', ModeHotkey='Shift', InternalCodeHotkey='Control+Shift+G',
+DEFAULTS = dict(Version='2', ScriptMode='Off', ModeHotkey='Shift', InternalCodeHotkey='Control+Shift+G',
                 VoiceHotkey='Control+Shift+V', UnicodeHotkey='Control+Shift+U',
                 TranslateHotkey='Control+Shift+T', TraditionalHotkey='Control+Shift+F',
                 Shuangpin='False', ShuangpinProfile='Ziranma', ShuangpinCustom='', AutoSpace='False', PageSize='5', Translate='False', UnicodePrefix='True', Punctuation='True', Sentence='True',
@@ -97,6 +97,8 @@ def atomic(path, text):
             os.unlink(temporary)
 
 def validate(values):
+    if values.get('ScriptMode') not in ('Off', 'Strict', 'Full'):
+        raise ValueError(tr('scripts.error'))
     if values.get('Version') != '2':
         raise MigrationRequired(tr('error.migration_required'))
     if not 3 <= int(values['PageSize']) <= 9:
@@ -116,12 +118,19 @@ def validate(values):
     for i, key in enumerate(HOTKEYS):
         if any(_shortcut_conflict(values[key], values[other]) for other in HOTKEYS[:i]):
             raise ValueError(tr('error.shortcut.conflict'))
-    for key in DEFAULTS.keys() - {'ShuangpinProfile', 'ShuangpinCustom', 'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *HOTKEYS}:
+    for key in DEFAULTS.keys() - {'ScriptMode', 'ShuangpinProfile', 'ShuangpinCustom', 'Version', 'PageSize', 'EmojiDefaultSkinTone', 'SymbolCandidateLimit', 'EmojiCandidateLimit', 'CorrectionCandidateLimit', *HOTKEYS}:
         if values[key] not in ('True', 'False', 'true', 'false'):
             raise ValueError(tr("message.d5553e1cedd2") + key)
     return values
 
 def load():
+    scripts = config_home() / 'scripts/records.json'
+    if scripts.exists():
+        if any(parent.is_symlink() for parent in (scripts, *scripts.parents)) or scripts.stat().st_size > 12_000_000:
+            raise ValueError(tr('scripts.error'))
+        data = json.loads(scripts.read_text(encoding='utf-8'))
+        if not isinstance(data, dict) or data.get('version') != 2:
+            raise MigrationRequired(tr('scripts.migration'))
     path = config_home() / 'settings-v2.ini'
     legacy = config_home() / 'settings-v1.ini'
     if not path.exists() and legacy.exists():

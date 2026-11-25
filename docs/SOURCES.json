@@ -1283,5 +1283,25 @@
       "transformation": "GB/T 34947-2017 mappings transcribed into libime textual profile syntax for libime before 1.1.15; all-table equivalence checked against the installed builtin profile."
     },
     "validation": "Synthetic private-session-bus and isolated-XDG native tests; fixed scheme codes, custom mapping validation, version-compatibility branch probes and original CowType fixtures. No personal data, live graphical session or remote services used."
+  },
+  "lua_api_reference": {
+    "purpose": "Optional Lua candidate scripts via the public Fcitx addon ABI; independently authored bridge, strict capability environment and examples.",
+    "upstream_url": "https://github.com/fcitx/fcitx5-lua",
+    "version": "5.0.18 (installed module metadata)",
+    "author": "Weng Xuetian (CSSlayer)",
+    "license": "LGPL-2.1-or-later",
+    "reference_interfaces": [
+      "LuaAddon::invokeLuaFunction(InputContext *, const std::string &, const RawConfig &)",
+      "RawConfig scalar argument and string/table result conversion"
+    ],
+    "code_copied": false,
+    "implementation_paths": [
+      "src-scripts/",
+      "src-fcitx5/engine/scripts.h",
+      "src-settings/config/scripts.py",
+      "src-settings/app/scripts.py"
+    ],
+    "implementation_license": "GPL-3.0-or-later",
+    "details": "docs/SCRIPTS.md"
   }
 }

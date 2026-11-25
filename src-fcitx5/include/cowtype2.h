@@ -39,6 +39,10 @@ void cowtype2_session_set_engine(Cowtype2Session *, const Cowtype2Engine *);
 bool cowtype2_session_key(Cowtype2Session *, uint32_t code, uint32_t modifiers, bool release, uint32_t previous);
 bool cowtype2_session_select(Cowtype2Session *, size_t visible_index);
 void cowtype2_session_reset(Cowtype2Session *, bool commit);
+/* Replace ephemeral script candidates for this exact composition. Finite priorities
+ * rank against 1-based ordinary positions; lower first, scripts win equal ranks.
+ * Up to 12 UTF-8 strings, copied during the call; empty count removes supplements. */
+bool cowtype2_session_scripts(Cowtype2Session *, const char *trigger, const char *const *texts, const double *priorities, size_t count);
 const char *cowtype2_session_preedit(const Cowtype2Session *);
 /* Current selected text + highlighted candidate + unconsumed raw suffix.
  * Read-only preview for translation; does not commit or learn. */
@@ -68,6 +72,7 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 23 automatic Chinese/English spacing; 24 shuangpin profile index; 25 shuangpin enabled.
  * 26 traditional Chinese output is available (OpenCC library, symbols and both
  * conversion profiles detected; cached on first query for this process).
+ * 27 Lua script mode (0 off, 1 strict, 2 full).
  * Candidate limits use 0–12 and default to 4, 4, and 5 respectively. */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 /* String options: 0 custom shuangpin profile path; 1-6 Mode, GB18030, Voice,
