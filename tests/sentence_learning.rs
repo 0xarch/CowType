@@ -262,3 +262,160 @@ fn learning_atomic_roundtrip_reset_and_corruption_are_isolated() {
     );
     fs::remove_dir_all(directory).unwrap();
 }
+
+fn type_composition(session: &mut Session, text: &str) {
+    for ch in text.chars() {
+        session.key(Event::press(Key::Character(ch)));
+    }
+}
+
+fn select_word(session: &mut Session, text: &str) -> cowtype::session::Frame {
+    for _ in 0..100 {
+        let frame = session.frame();
+        if let Some(index) = frame.candidates.iter().position(|c| c.text == text) {
+            return session.select(index);
+        }
+        assert!(frame.has_next_page, "Missing synthetic candidate {text}");
+        session.key(Event::press(Key::PageDown));
+    }
+    panic!("Too many synthetic candidate pages");
+}
+
+fn phrase_session(learning: &Arc<Mutex<Learning>>) -> Session {
+    let mut config = SessionConfig::default();
+    config.sentence = false;
+    config.learning = true;
+    let mut session = Session::new(Some(Arc::new(engine())), config);
+    session.set_learning(Some(learning.clone()));
+    session
+}
+
+#[test]
+fn segmented_composition_learns_complete_phrase_once_and_undoes_as_one_commit() {
+    let learned = Arc::new(Mutex::new(Learning::default()));
+    let mut session = phrase_session(&learned);
+    for expected in 1..=2 {
+        type_composition(&mut session, "woxihuanxiezuo");
+        assert!(select_word(&mut session, "我").commit.is_none());
+        assert!(select_word(&mut session, "喜欢").commit.is_none());
+        assert_eq!(
+            select_word(&mut session, "写作").commit.as_deref(),
+            Some("我喜欢写作")
+        );
+        let state = learned.lock().unwrap();
+        let time = cowtype::learning::now();
+        assert_eq!(
+            state.score("wo xi huan xie zuo", "我喜欢写作", time),
+            expected
+        );
+        assert_eq!(state.score("wo", "我", time), expected);
+        assert_eq!(state.score("xi huan", "喜欢", time), expected);
+        assert_eq!(state.score("xie zuo", "写作", time), expected);
+        assert_eq!(
+            state.ranking_score("wo xi huan xie zuo", "我喜欢写作", time),
+            expected - 1
+        );
+    }
+    assert!(!session.key(Event::press(Key::Backspace)).handled);
+    let state = learned.lock().unwrap();
+    let time = cowtype::learning::now();
+    assert_eq!(state.score("wo xi huan xie zuo", "我喜欢写作", time), 1);
+    assert_eq!(state.score("wo", "我", time), 1);
+    assert_eq!(state.score("xi huan", "喜欢", time), 1);
+    assert_eq!(state.score("xie zuo", "写作", time), 1);
+}
+
+#[test]
+fn single_phrase_is_not_double_counted_and_punctuation_adds_complete_candidate_reading() {
+    let learned = Arc::new(Mutex::new(Learning::default()));
+    let mut session = phrase_session(&learned);
+    type_composition(&mut session, "nihao");
+    assert_eq!(
+        select_word(&mut session, "你好").commit.as_deref(),
+        Some("你好")
+    );
+    assert_eq!(
+        learned
+            .lock()
+            .unwrap()
+            .score("ni hao", "你好", cowtype::learning::now()),
+        1
+    );
+
+    type_composition(&mut session, "woxihuan");
+    assert!(select_word(&mut session, "我").commit.is_none());
+    // The remaining complete candidate is confirmed by punctuation without
+    // becoming a Selection first. The added punctuation is not learned.
+    assert_eq!(session.frame().candidates[0].text, "喜欢");
+    assert_eq!(
+        session
+            .key(Event::press(Key::Character(',')))
+            .commit
+            .as_deref(),
+        Some("我喜欢，")
+    );
+    let state = learned.lock().unwrap();
+    assert_eq!(
+        state.score("wo xi huan", "我喜欢", cowtype::learning::now()),
+        1
+    );
+    assert_eq!(
+        state.score("wo xi huan", "我喜欢，", cowtype::learning::now()),
+        0
+    );
+}
+
+#[test]
+fn raw_suffix_cancellation_and_explicit_content_do_not_create_phrase_memory() {
+    let learned = Arc::new(Mutex::new(Learning::default()));
+    let mut session = phrase_session(&learned);
+    type_composition(&mut session, "woxihuan");
+    assert!(select_word(&mut session, "我").commit.is_none());
+    assert_eq!(
+        session.key(Event::press(Key::Enter)).commit.as_deref(),
+        Some("我xihuan")
+    );
+    assert_eq!(
+        learned
+            .lock()
+            .unwrap()
+            .score("wo xi huan", "我喜欢", cowtype::learning::now()),
+        0
+    );
+    type_composition(&mut session, "woxihuan");
+    select_word(&mut session, "我");
+    session.reset(ResetReason::FocusLost);
+    assert_eq!(
+        learned
+            .lock()
+            .unwrap()
+            .score("wo", "我", cowtype::learning::now()),
+        1
+    );
+
+    type_composition(&mut session, "woxihuan");
+    select_word(&mut session, "我");
+    session.set_scripts("xihuan", vec![(0.0, "脚本内容".into())]);
+    // Script supplements only match a wholly unselected composition. Use the
+    // explicit dictionary route to exercise mixed ordinary/explicit selections.
+    let dictionary =
+        cowtype::custom::Dictionary::parse("# cowtype-custom-v1\nxihuan\t显式内容\t100\n").unwrap();
+    session.set_custom(Arc::new(std::sync::RwLock::new(dictionary)));
+    assert_eq!(
+        select_word(&mut session, "显式内容").commit.as_deref(),
+        Some("我显式内容")
+    );
+    let state = learned.lock().unwrap();
+    assert_eq!(
+        state.score("wo xi huan", "我显式内容", cowtype::learning::now()),
+        0
+    );
+    assert!(!state.serialize().contains("显式内容"));
+    drop(state);
+
+    let mut session = phrase_session(&learned);
+    type_composition(&mut session, "riqi");
+    session.set_scripts("riqi", vec![(0.0, "脚本内容".into())]);
+    assert_eq!(session.select(0).commit.as_deref(), Some("脚本内容"));
+    assert!(!learned.lock().unwrap().serialize().contains("脚本内容"));
+}

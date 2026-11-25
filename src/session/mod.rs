@@ -621,9 +621,39 @@ impl Session {
                 }
             }
         }
+        // A composition may have been confirmed in several smaller pieces.
+        // Remember its complete committed wording as well as those pieces, but
+        // never invent a reading for a raw suffix or include explicit content.
+        let complete = extra.map_or(self.remaining.is_empty(), |c| {
+            c.consumed_bytes == self.remaining.len()
+        });
+        if complete
+            && self
+                .selections
+                .iter()
+                .all(|s| !s.custom && crate::dictionary::reading_tokens(&s.reading).is_some())
+            && extra.is_none_or(|c| {
+                !c.custom && crate::dictionary::reading_tokens(&c.reading).is_some()
+            })
+        {
+            let mut readings: Vec<_> = self.selections.iter().map(|s| s.reading.as_str()).collect();
+            let mut text = self.selected_text();
+            if let Some(c) = extra {
+                readings.push(&c.reading);
+                text.push_str(&c.text);
+            }
+            let reading = readings.join(" ");
+            if seen.insert((reading.clone(), text.clone())) {
+                if let Some(u) = l.confirm(&reading, &text, now) {
+                    updates.push(u);
+                }
+            }
+        }
         self.last_undo = updates;
     }
     fn clear(&mut self) {
+        self.script_trigger.clear();
+        self.script_candidates.clear();
         self.skin_tone_choice = None;
         self.remaining.clear();
         self.selections.clear();
