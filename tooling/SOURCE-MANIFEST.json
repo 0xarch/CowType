@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "reviewed_on": "2026-11-24",
+  "reviewed_on": "2026-11-25",
   "scope": "Project source snapshot; excludes build output, models and user data",
   "files": [
     {
@@ -35,22 +35,22 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "89b2807540c8c09e94f853a5f8c6f12502eda0dba4bea2d2a357105e5c7028fc",
-      "bytes": 17785
+      "sha256": "a12a7789704502d54109dc5e6bf6a6e6d1de8a0e54b6bd749c86bbf8d71f3449",
+      "bytes": 19186
     },
     {
       "path": "CMakeLists.txt",
-      "sha256": "d30b08a9d979750446f68c37598ddd88dcbc53d03dfd63e4f46ce9b7f83807fe",
-      "bytes": 22465
+      "sha256": "c5acb6c7d76f37e766a7f320d39d9555d72e1e5087811461ce8ce7c3ae2d16ab",
+      "bytes": 24147
     },
     {
       "path": "Cargo.lock",
-      "sha256": "67dd7815ddd46fffbf7598dd6ff36ff198b4e929c493c3e610f6aef15977fafb",
+      "sha256": "a40eadfa584c3519d81a370dbbc8d49d34d94875a22aab9e258d0732b21b45d5",
       "bytes": 151
     },
     {
       "path": "Cargo.toml",
-      "sha256": "09894f431de6ec3d7c13e82bab7c8111e30881a9cebec3c788847b8ab9c7123d",
+      "sha256": "80fe4e30dc1fba351295457630fbf8a51920c1a11e57397c6632a9ad62329ca3",
       "bytes": 322
     },
     {
@@ -93,8 +93,8 @@
     },
     {
       "path": "STRUCTURES.md",
-      "sha256": "396824b2ab44ec998bd773bc41ca9045bb48b882a7b979845883ddb7fa09388a",
-      "bytes": 3636
+      "sha256": "40101c1f727af9c3ced74f0add83881947e70f3712a10303590f8ce501a09959",
+      "bytes": 3859
     },
     {
       "path": "assets/icons/README.md",
@@ -123,13 +123,13 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "aac65bb26426341bf22e23d4d77a79644acf69503a33d52f402b4917c0cad74a",
-      "bytes": 10653
+      "sha256": "cc02c22bb9c4395b23d8687db9dde8f35fc5bd8e31449d62d94bcd7d3073569b",
+      "bytes": 11317
     },
     {
       "path": "docs/DBUS.md",
-      "sha256": "c9bae968f33e4db4aceae111c6d1122b6703da7b1ee575ff781a3d24faca318e",
-      "bytes": 2514
+      "sha256": "6ebd8f625135fa516852e155c7b798d1236c8135246443c3b4cd53108cd9026a",
+      "bytes": 2429
     },
     {
       "path": "docs/DICTIONARIES.md",
@@ -152,19 +152,24 @@
       "bytes": 237
     },
     {
+      "path": "docs/SCRIPTS.md",
+      "sha256": "4537a010d8181ab601a5562d027cd08e7e17aaad7ffc850dee26287d7faf4411",
+      "bytes": 9514
+    },
+    {
       "path": "docs/SHUANGPIN.md",
       "sha256": "ab921a4db8078c7958f2a4196910aa09f7b4bfd1698705fcd18020dea90a4007",
       "bytes": 3698
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "7213709afa8c11f03d1d717ef9caf5952490259c2649d7d1bed8ab7510846d4d",
-      "bytes": 61176
+      "sha256": "0dc7fcf26ab6eebcf6fe47d7d5b24089b29ee26b30a4539032ffd762e3ded087",
+      "bytes": 62031
     },
     {
       "path": "docs/USAGE.md",
-      "sha256": "b4921bc240119dea70b2386a48391e64d34cf60b428ae50a58cf5acbd25798f5",
-      "bytes": 10636
+      "sha256": "d28d315a79461fc190d57d6ffab9c48ccbcfcacf93eaf3ef219956ed59071d7f",
+      "bytes": 11524
     },
     {
       "path": "docs/WOWTYPE-GRID.md",
@@ -178,13 +183,13 @@
     },
     {
       "path": "i18n/en_US.tsv",
-      "sha256": "404135b0c36041795626008ef417766e7368677d02d7c2003dbe1358e92fb9d0",
-      "bytes": 19763
+      "sha256": "882663394e79736be1ade82cb9ed47335160092d1bd7b5fdec88d08e26c696f7",
+      "bytes": 24755
     },
     {
       "path": "i18n/zh_CN.tsv",
-      "sha256": "1baa165fe1b17d81c4797de4b0741f72c930ee708342a5f0bed978c369dbd25d",
-      "bytes": 17941
+      "sha256": "eca3b807a446741bfad7e673bb61c9ee3581523fa6d829951fb433731a7469e7",
+      "bytes": 22715
     },
     {
       "path": "packaging/README.md",
@@ -193,18 +198,18 @@
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
-      "sha256": "1730b8247889967a4003d82963a77d6e4d4547dc915f6b04936c7bb8a52089ac",
-      "bytes": 1611
+      "sha256": "1e953d5ad818d4b806eef4f65d7d1eaee57f3292a21a8a97486786d96a51e2fe",
+      "bytes": 1696
     },
     {
       "path": "packaging/debian/control.in",
-      "sha256": "9cfe38ed95fa670a0dab44cedd22e7a4028e93061a66711d5825dc0b442210d5",
-      "bytes": 631
+      "sha256": "8c0ff80e53ec303e6f49f2c02a69891338440f3701bcfdb0afa4c3dd6fdb9b23",
+      "bytes": 670
     },
     {
       "path": "packaging/rpm/cowtype.spec.in",
-      "sha256": "0b1e0ff790c0a11731d8cbe1450823cc3be48bb78ac91381ecc2c0a78d32b832",
-      "bytes": 1039
+      "sha256": "6f3bdaf6049b7b16712df44f7977a10babfb9e3c0cfa375d7b2dc48ae0caa7e3",
+      "bytes": 1126
     },
     {
       "path": "src-data-tools/README.md",
@@ -223,8 +228,8 @@
     },
     {
       "path": "src-data-tools/dictionaries/manage.py",
-      "sha256": "2c0d7ec5b468f91b9d23d0388939395832d79531221dd1cf682fdd0104dad706",
-      "bytes": 12893
+      "sha256": "ecf1f90b6ff6ddfe1f10516ee157956a3307f13a4393f382643c8b3145375025",
+      "bytes": 13190
     },
     {
       "path": "src-data-tools/emoji/README.md",
@@ -293,8 +298,8 @@
     },
     {
       "path": "src-fcitx5/config/cowtype-addon.conf.in",
-      "sha256": "ebf9d3a1160ad21eaa3c0a6f9026988590d13b7a83af10e4636eda9fd56e27e6",
-      "bytes": 231
+      "sha256": "557a108cc8a0917f83c65f4e9df54feb9e5d112a7943071afc727f87493309eb",
+      "bytes": 270
     },
     {
       "path": "src-fcitx5/config/cowtype-wubi.conf",
@@ -318,8 +323,8 @@
     },
     {
       "path": "src-fcitx5/engine/cowtype.cpp",
-      "sha256": "e7d2cf287fbfab6b47993703d7a62012d14816088106f3a42ddbce8e217416fa",
-      "bytes": 53184
+      "sha256": "2d9334c220e84ed9e4ef07a4a8a1604970231ae44cac8a29f84205d875081569",
+      "bytes": 59775
     },
     {
       "path": "src-fcitx5/engine/dbus.h",
@@ -345,6 +350,11 @@
       "path": "src-fcitx5/engine/libime.h",
       "sha256": "afd7e65e1a04a91ec9ced4f24a2d060436507f5035a05ad2149d188d4622b91c",
       "bytes": 13328
+    },
+    {
+      "path": "src-fcitx5/engine/scripts.h",
+      "sha256": "892258cca8a9cbb6405d7af968d650fccfb94ce91a9f6ae1415d0c202680b129",
+      "bytes": 6979
     },
     {
       "path": "src-fcitx5/engine/shortcuts.h",
@@ -398,8 +408,8 @@
     },
     {
       "path": "src-fcitx5/include/cowtype2.h",
-      "sha256": "389d35d97d47c37645e3ad829b9b77b8c5eabf2fe356b1b0958667b13ba43594",
-      "bytes": 5762
+      "sha256": "ce17b3ea639b4656a9570bc9b8814d7a468d24c3f3324a8e065f267c427b8a0c",
+      "bytes": 6283
     },
     {
       "path": "src-fcitx5/unicode/README.md",
@@ -428,13 +438,33 @@
     },
     {
       "path": "src-model-tools/text-models/download_text_model.py",
-      "sha256": "0b71dac18974a96c8126394ccee5f5ab7602e7963ef7b6f722ca0789e96e2b4f",
-      "bytes": 8188
+      "sha256": "e9263b01afa9e203dc47142a2c1ed64b521fa0178adfe7c21499baffa092f159",
+      "bytes": 8373
     },
     {
       "path": "src-model-tools/text-models/test_download_text_model.py",
-      "sha256": "3d9bf9d867826fd0d3221f029786f9ad8984627bfcd03162cb0c3a02caaabb61",
-      "bytes": 5571
+      "sha256": "17a02dbc07123a70dc20caa6b3fb3aabf9130a6e68a35e920f276b50cf8d2842",
+      "bytes": 6674
+    },
+    {
+      "path": "src-scripts/cowtype.lua",
+      "sha256": "2a8e4608bf2be536b7a5d3919aa7a437e90fb182247806dd327289280b6e3521",
+      "bytes": 3807
+    },
+    {
+      "path": "src-scripts/examples/date.lua",
+      "sha256": "f37e403a99b0a02ed315d5e445e47e94b0e3761056f13ab2f6e68a6ee8ebe39f",
+      "bytes": 112
+    },
+    {
+      "path": "src-scripts/examples/system.lua",
+      "sha256": "558e8fce4529edb80472e6eeaaa840b9e1da5b5ce94221b5b1d7de3fcd6ebbda",
+      "bytes": 486
+    },
+    {
+      "path": "src-scripts/examples/time.lua",
+      "sha256": "414f8262aabda03e6397db328ff9adbe5cbbc8565b24e196506279b1ae87c79f",
+      "bytes": 102
     },
     {
       "path": "src-settings/README.md",
@@ -453,13 +483,18 @@
     },
     {
       "path": "src-settings/app/main.py",
-      "sha256": "9386e490d1090de2031b6a34580291f3678414d730f200e743e0b968a23e1cf1",
-      "bytes": 41728
+      "sha256": "efa7432eaa596dd6cdabb0086400da2fd5a82ab160c0c8aa676e3cddcc12dd0a",
+      "bytes": 43588
     },
     {
       "path": "src-settings/app/memory.py",
       "sha256": "a54452c5680bee78e8e3eca2798fb4b11e5028289bd893ab7710689664e7d61f",
       "bytes": 7172
+    },
+    {
+      "path": "src-settings/app/scripts.py",
+      "sha256": "cf3b2c2fa819bd4fa913075f8d0f2b453e181b5e9d7d5784bb0b6fc9522232c2",
+      "bytes": 12387
     },
     {
       "path": "src-settings/app/translation.py",
@@ -478,13 +513,18 @@
     },
     {
       "path": "src-settings/config/migrate.py",
-      "sha256": "a3719040f8f9562908328bd9e6b66f6a17b1b02a577de82e15c9682c6b86ddac",
-      "bytes": 5414
+      "sha256": "cb873b4b9d4614bcea9762f46e400da4f2e4e4dece771980581346aeba6b5b2f",
+      "bytes": 7061
+    },
+    {
+      "path": "src-settings/config/scripts.py",
+      "sha256": "07a21d771625d26b3a91cbaac133272a7b7bc6798e428c56957a5a188d79aac0",
+      "bytes": 9725
     },
     {
       "path": "src-settings/config/settings.py",
-      "sha256": "a0db87196a456c02d1703e3bad4b236a4441b63aac697d61591db74b6d3ccd08",
-      "bytes": 8214
+      "sha256": "c0c1c65beeaf5776dfdbd2447c1cb635c349ac3fe227cfa238b6dcd478211fd2",
+      "bytes": 8795
     },
     {
       "path": "src-settings/desktop/cowtype-config-migrate.in",
@@ -503,8 +543,8 @@
     },
     {
       "path": "src-settings/i18n/catalog.py",
-      "sha256": "565fc9f8b0baf88d43dcefca8d758efb2239c513ea864811f4d74e6a86827ec5",
-      "bytes": 888
+      "sha256": "4ffb0988713257fd1756fdf687abf87478dfe9c3180660ad86c1af0ba51a735b",
+      "bytes": 946
     },
     {
       "path": "src-translate/README.md",
@@ -538,12 +578,12 @@
     },
     {
       "path": "src-voice/Cargo.lock",
-      "sha256": "89c60e71dc904e4a5d43f8fe06a41bb2f8a018409f7ca80c71e3bee1c913610f",
+      "sha256": "86de3563308d1c3a156be6ceedc6b77b82c4515965aee2217449f456a776b5d9",
       "bytes": 11496
     },
     {
       "path": "src-voice/Cargo.toml",
-      "sha256": "61aabe36ebc25bc7de51213540f9c8ac1f925d1b67f57d1431cd59a1572aec5e",
+      "sha256": "cb1279d1f1f887808911be838613377d89e3f546fc092ab845570021179c6f1e",
       "bytes": 473
     },
     {
@@ -648,8 +688,8 @@
     },
     {
       "path": "src/config/mod.rs",
-      "sha256": "963815282bc9a660b49cd325b5a9d36b1a6d32ba12937cd1d90096a7c16685a6",
-      "bytes": 24825
+      "sha256": "f167040b518582ab26ff6fef925266e127e15deffdf5a2407137c878e3b8eeed",
+      "bytes": 25795
     },
     {
       "path": "src/config/shortcuts.tsv",
@@ -693,13 +733,18 @@
     },
     {
       "path": "src/ffi/mod.rs",
-      "sha256": "a034f8dca94b4e237c7cae0d47b566fe8b93ef4fbea108d18280ffb22b542fe2",
-      "bytes": 22886
+      "sha256": "1cb9a2c78b86bdd8d10d4d25b67618143e8a6469869fca9c8668b10e4b1dcc62",
+      "bytes": 24043
+    },
+    {
+      "path": "src/ffi/opencc.rs",
+      "sha256": "c240d0644e10636544bfb915f697fba0f8508d5f65d5a4238e52813b9677fd07",
+      "bytes": 2166
     },
     {
       "path": "src/i18n/mod.rs",
-      "sha256": "87654f0b92f5404ae24b98a690041e27192157b3dcc411a95d3866953863eaad",
-      "bytes": 999
+      "sha256": "8829cad1e3d0d0722208c23d83b92e9434ab11a37b4f2abcc6adce8b1251596d",
+      "bytes": 1962
     },
     {
       "path": "src/learning/edits.rs",
@@ -723,8 +768,8 @@
     },
     {
       "path": "src/session/mod.rs",
-      "sha256": "637c3dc50d201b286652d613da88935deb200f06bb6d0bda84dfa6b3dd583598",
-      "bytes": 22765
+      "sha256": "6bd6111080eea7ca3418ccbd11e4fc9eb01976b718cec1aa3ece1023dd4d1f44",
+      "bytes": 26120
     },
     {
       "path": "src/session/punctuation.rs",
@@ -872,6 +917,16 @@
       "bytes": 4800
     },
     {
+      "path": "tests/native/scripts-isolated.py",
+      "sha256": "abfa724fc086c1442e46d062f801ebe8c85f3ec38b99c23ab25f8779f46b3a31",
+      "bytes": 1560
+    },
+    {
+      "path": "tests/native/scripts.cpp",
+      "sha256": "8ffb95f188e74e893262f19261ea0f940a231b055636f4d37dc78266ca2d0df2",
+      "bytes": 9355
+    },
+    {
       "path": "tests/native/shuangpin-reload.cpp",
       "sha256": "34227ae80e78f83b75190f8258c5595fe3dc62f1089cd87b07512ddb8a545de0",
       "bytes": 5038
@@ -888,8 +943,8 @@
     },
     {
       "path": "tests/native/traditional.cpp",
-      "sha256": "20efee4e465169ed7628b66e996886da5c32697e32aa5a7c992585327d681fd3",
-      "bytes": 606
+      "sha256": "08249a0873ea33d04c40e2c6fe30219f2d9ca1f0a4600c33201fab50d6fdbb88",
+      "bytes": 894
     },
     {
       "path": "tests/native/translate.cpp",
@@ -903,13 +958,13 @@
     },
     {
       "path": "tests/sentence_learning.rs",
-      "sha256": "3325385700a786b2619db985159563aa790d78e79d8176b9bb08cc33a9255026",
-      "bytes": 8989
+      "sha256": "715ab338b4118e8765e4bd7f5a95c5aebc93758d41fc217e280c6f83b52ff358",
+      "bytes": 14732
     },
     {
       "path": "tests/session.rs",
-      "sha256": "88f58ed02541e588b703e58cbaff8be4a7960e64c7aeece0a509114b286a017f",
-      "bytes": 11961
+      "sha256": "9caed048677fffb5f2f4816e92015c5835e3ce5dd8f8c93b09ef05bee7757e0e",
+      "bytes": 13326
     },
     {
       "path": "tests/symbols.rs",
@@ -928,8 +983,8 @@
     },
     {
       "path": "tests/test_dictionaries.py",
-      "sha256": "990c8a6295df53bf5b8a0495c59417e6adfbb3ae26e83e9ecdf5cef093d7c1db",
-      "bytes": 6310
+      "sha256": "0e74b1f9df40207918ddfe4a763d698c38bbc29b787e7652efdf818f3dedfa4d",
+      "bytes": 9780
     },
     {
       "path": "tests/test_emoji_data.py",
@@ -940,6 +995,11 @@
       "path": "tests/test_memory.py",
       "sha256": "41ae81bb557bbdbed66d669c0b7186465274fa0dd7b13029e33a74674bf128d5",
       "bytes": 3188
+    },
+    {
+      "path": "tests/test_scripts.py",
+      "sha256": "b56059ed1c1df231c4c6005be4841e9c45cf1c4bfcdd0d1a68055c6afcb019da",
+      "bytes": 8892
     },
     {
       "path": "tests/test_settings.py",
@@ -983,8 +1043,8 @@
     },
     {
       "path": "tooling/compile_i18n.py",
-      "sha256": "eb0836039830130e5c9652724ef3847e3d0a5abb732734b40f5f6b7efefd968e",
-      "bytes": 1039
+      "sha256": "ba734ab5ef64f483aeeb5d6eb293eb219119ed65cfd656bf31bba3ddc2e87fa3",
+      "bytes": 1103
     },
     {
       "path": "tooling/compile_shortcuts.py",
@@ -1003,13 +1063,13 @@
     },
     {
       "path": "tooling/package_arch.py",
-      "sha256": "4387ea064b2f027db74714f87ef26714ddedd4e16c4a87fcf2763bfca3d7b94f",
+      "sha256": "760eea98bacfd6b952facef5edef3d29a986a7d3cd4f9ce92d9189d2ed74a75d",
       "bytes": 5404
     },
     {
       "path": "tooling/package_linux.py",
-      "sha256": "c958c94eac87298d1d84b07534c8d03cd9b4ee22cc790438f8bf97490fb6e529",
-      "bytes": 4738
+      "sha256": "54b5cedacfb3157a305976841028aefebe3b7f770f95981628d8875cfbd8c613",
+      "bytes": 4848
     },
     {
       "path": "tooling/platform-probe.sh",
