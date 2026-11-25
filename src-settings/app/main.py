@@ -509,37 +509,56 @@ def main():
             return ' + '.join(labels)
 
         def edit_shortcut(self, name):
-            choices = ('None', 'Shift', 'Shift_L', 'Shift_R', 'Control', 'Control_L', 'Control_R',
-                       'Alt', 'Alt_L', 'Alt_R', 'Super', 'Super_L', 'Super_R', 'ISO_Level3_Shift',
-                       'Combination')
+            rows = (('Shift', 'Shift_L', 'Shift_R'),
+                    ('Control', 'Control_L', 'Control_R'),
+                    ('Alt', 'Alt_L', 'Alt_R'),
+                    ('Super_L', 'Super_R', 'ISO_Level3_Shift'))
+            choices = ('Combination', 'None', *(choice for row in rows for choice in row))
             current = self.values[name]
-            selected = current if current in choices[:-1] else 'Combination'
-            dialog = Gtk.Window(title=tr('setting.' + name), transient_for=self.window,
-                                modal=True, destroy_with_parent=True, default_width=520)
+            selected = current if current in choices else 'Combination'
+            dialog = Adw.Dialog(title=tr('setting.' + name), content_width=640)
+            toolbar = Adw.ToolbarView()
+            toolbar.add_top_bar(Adw.HeaderBar())
             page = Adw.PreferencesPage()
             group = Adw.PreferencesGroup(description=tr('hint.shortcuts'))
             page.add(group)
             radios = {}
             first = None
-            for choice in choices:
+
+            def radio(choice):
+                nonlocal first
                 label = tr('hotkey.combination_function') if choice == 'Combination' else tr('hotkey.' + choice)
                 button = Gtk.CheckButton(label=label)
-                if first:
-                    button.set_group(first)
-                else:
-                    first = button
+                if first is not None: button.set_group(first)
+                else: first = button
                 radios[choice] = button
-                group.add(Adw.ActionRow(child=button))
-            record_row = Adw.ActionRow(title=tr('keys.record'))
+                return button
+
+            record_row = Adw.ActionRow()
+            record_row.add_prefix(radio('Combination'))
             value_entry = Gtk.Entry(editable=False, hexpand=True,
                                     placeholder_text=tr('hint.record_shortcut'))
             value_entry.set_text(current if selected == 'Combination' else '')
-            record_button = Gtk.Button(label=tr('action.record'), icon_name='input-keyboard-symbolic')
+            record_button = Gtk.Button(label=tr('action.record'), icon_name='input-keyboard-symbolic',
+                                       valign=Gtk.Align.CENTER)
             record_button.set_tooltip_text(tr('keys.record_hint'))
             record_row.add_suffix(value_entry)
             record_row.add_suffix(record_button)
             group.add(record_row)
-            dialog.set_child(page)
+            for choices_row in rows:
+                row = Adw.ActionRow()
+                grid = Gtk.Grid(column_homogeneous=True, column_spacing=12, hexpand=True,
+                                margin_top=12, margin_bottom=12)
+                for column, choice in enumerate(choices_row):
+                    grid.attach(radio(choice), column, 0, 1, 1)
+                row.set_child(grid)
+                group.add(row)
+            disabled = Adw.ActionRow()
+            disabled.add_prefix(radio('None'))
+            group.add(disabled)
+            toolbar.set_content(page)
+            dialog.set_child(toolbar)
+            recording = {'controller': None}
 
             def persist(value):
                 self.values[name] = value
@@ -548,18 +567,25 @@ def main():
             def choose(widget, choice):
                 if not widget.get_active():
                     return
-                record_row.set_visible(choice == 'Combination')
+                value_entry.set_sensitive(choice == 'Combination')
                 if choice != 'Combination':
+                    if recording['controller'] is not None:
+                        value_entry.remove_controller(recording['controller'])
+                        recording['controller'] = None
+                    value_entry.set_placeholder_text(tr('hint.record_shortcut'))
                     persist(choice)
                 elif value_entry.get_text():
                     persist(value_entry.get_text())
 
+            radios[selected].set_active(True)
+            value_entry.set_sensitive(selected == 'Combination')
             for choice, button in radios.items():
                 button.connect('toggled', choose, choice)
-            radios[selected].set_active(True)
-            record_row.set_visible(selected == 'Combination')
 
             def start_record(_button):
+                if recording['controller'] is not None:
+                    value_entry.remove_controller(recording['controller'])
+                radios['Combination'].set_active(True)
                 controller = Gtk.EventControllerKey()
                 controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
                 value_entry.set_placeholder_text(tr('hint.press_shortcut'))
@@ -588,14 +614,16 @@ def main():
                     radios['Combination'].set_active(True)
                     persist(spec)
                     value_entry.remove_controller(controller)
+                    recording['controller'] = None
                     return True
 
+                recording['controller'] = controller
                 controller.connect('key-pressed', captured)
                 value_entry.add_controller(controller)
                 value_entry.grab_focus()
 
             record_button.connect('clicked', start_record)
-            dialog.present()
+            dialog.present(self.window)
 
         def question(self, title, body, confirm, callback, destructive=False):
             dialog = Adw.AlertDialog(heading=tr(title), body=tr(body))
