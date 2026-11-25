@@ -120,11 +120,14 @@ def check_bytes(data, record):
 
 def fetch(profile, cache, cancel=None):
     """Single pinned GitHub archive, select regular whitelisted files without extraction."""
-    cache.mkdir(parents=True, exist_ok=True)
+    safe_parent(cache)
     records = {r['path']: r for r in profile['files']}
     missing = []
     for path, record in records.items():
         dest = cache / path
+        safe_parent(dest.parent)
+        if dest.is_symlink():
+            raise ValueError('source cache file must not be a symlink')
         if dest.is_file() and not dest.is_symlink():
             check_bytes(dest.read_bytes(), record)
         else:
@@ -154,8 +157,11 @@ def fetch(profile, cache, cancel=None):
                 data = archive.extractfile(member).read(member.size + 1)
                 check_bytes(data, records[path])
                 dest = cache / path
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                dest.write_bytes(data)
+                safe_parent(dest.parent)
+                # Exclusive creation also refuses links/files appearing after
+                # the initial cache scan and preserves existing cache contents.
+                with dest.open('xb') as output:
+                    output.write(data)
                 missing.remove(path)
     if missing:
         raise ValueError('missing pinned assets: ' + ', '.join(missing))

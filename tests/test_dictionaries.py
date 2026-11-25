@@ -6,8 +6,10 @@ import io
 import json
 from pathlib import Path
 import tempfile
+import tarfile
 import threading
 import unittest
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('dictionary_manager', Path(__file__).resolve().parents[1] / 'src-data-tools/dictionaries/manage.py')
 manager = importlib.util.module_from_spec(spec)
@@ -15,6 +17,68 @@ spec.loader.exec_module(manager)
 
 
 class DictionaryTests(unittest.TestCase):
+    def test_fetch_rejects_symlinked_cache_paths_before_network(self):
+        for linked in ('cache', 'ancestor', 'nested', 'file'):
+            with self.subTest(linked=linked), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                outside = root / 'outside'
+                outside.mkdir()
+                cache = root / 'cache'
+                if linked == 'cache':
+                    cache.symlink_to(outside, target_is_directory=True)
+                elif linked == 'ancestor':
+                    (root / 'parent').symlink_to(outside, target_is_directory=True)
+                    cache = root / 'parent/cache'
+                else:
+                    cache.mkdir()
+                    if linked == 'nested':
+                        (cache / 'tables').symlink_to(outside, target_is_directory=True)
+                    else:
+                        (cache / 'tables').mkdir()
+                        (cache / 'tables/word').symlink_to(outside / 'word')
+                profile = {'files': [{'path': 'tables/word', 'bytes': 1, 'sha256': manager.digest(b'x')}]}
+                with patch.object(manager.urllib.request, 'urlopen') as network, self.assertRaises(ValueError):
+                    manager.fetch(profile, cache)
+                network.assert_not_called()
+                self.assertEqual(list(outside.iterdir()), [])
+
+    def test_fetch_writes_verified_nested_archive_file(self):
+        archive = io.BytesIO()
+        with tarfile.open(fileobj=archive, mode='w:gz') as output:
+            member = tarfile.TarInfo('revision/tables/word')
+            member.size = 1
+            output.addfile(member, io.BytesIO(b'x'))
+        profile = {'repository': 'synthetic/test', 'revision': '0' * 40,
+                   'files': [{'path': 'tables/word', 'bytes': 1, 'sha256': manager.digest(b'x')}]}
+        with tempfile.TemporaryDirectory() as temp:
+            cache = Path(temp) / 'cache'
+            with patch.object(manager.urllib.request, 'urlopen', return_value=io.BytesIO(archive.getvalue())):
+                manager.fetch(profile, cache)
+            self.assertEqual((cache / 'tables/word').read_bytes(), b'x')
+            with patch.object(manager.urllib.request, 'urlopen') as network:
+                manager.fetch(profile, cache)
+            network.assert_not_called()
+
+    def test_fetch_rechecks_cache_parent_after_download(self):
+        archive = io.BytesIO()
+        with tarfile.open(fileobj=archive, mode='w:gz') as output:
+            member = tarfile.TarInfo('revision/tables/word')
+            member.size = 1
+            output.addfile(member, io.BytesIO(b'x'))
+        profile = {'repository': 'synthetic/test', 'revision': '0' * 40,
+                   'files': [{'path': 'tables/word', 'bytes': 1, 'sha256': manager.digest(b'x')}]}
+        with tempfile.TemporaryDirectory() as temp:
+            cache = Path(temp) / 'cache'
+            outside = Path(temp) / 'outside'
+            outside.mkdir()
+            def downloaded(*args, **kwargs):
+                (cache / 'tables').rmdir()
+                (cache / 'tables').symlink_to(outside, target_is_directory=True)
+                return io.BytesIO(archive.getvalue())
+            with patch.object(manager.urllib.request, 'urlopen', side_effect=downloaded), self.assertRaises(ValueError):
+                manager.fetch(profile, cache)
+            self.assertEqual(list(outside.iterdir()), [])
+
     def test_pinned_profiles_no_models_and_no_implicit_wanxiang(self):
         profiles = manager.registry()
         self.assertEqual({k for k, p in profiles.items() if p['default']}, {'ice', 'wubi'})
