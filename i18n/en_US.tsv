@@ -172,7 +172,7 @@ voice.paraformer.pointer	Model file is empty or a Git LFS pointer; download the 
 voice.paraformer.runtime	Cannot load system ONNX Runtime (1.22 or newer required)
 voice.paraformer.shape	Invalid ONNX output shape or value; model, tokens and cache configuration may not match
 setting.StatisticalModel	Local statistical language model
-hint.statistical_model	Use the libime Chinese model when enabled.
+hint.statistical_model	Use the libime Chinese model.
 warning.dictionary_optional	An optional dictionary or local statistical model is unavailable. Basic input remains available.
 setting.Emoji	Emoji and symbol suggestions
 hint.emoji	Match complete Chinese or English keywords using Unicode CLDR.
@@ -193,15 +193,12 @@ hotkey.Alt	Alt (either side)
 hotkey.Super	Super (either side)
 hotkey.Shift_L	Left Shift
 hotkey.Shift_R	Right Shift
-hotkey.Control_L	Left Ctrl
-hotkey.Super_L	Left Super
-hotkey.Super_R	Right Super
 setting.UnicodeHotkey	Unicode code point input
 unicode.mode	Unicode code point
 unicode.hint	Unicode: 1–6 hex digits, optional U+ prefix; Space/Enter to commit, Escape to exit
 unicode.invalid	Invalid code point, surrogate or control character
-setting.UnicodePrefix	u-prefix Unicode input
-hint.unicode_prefix	In Chinese mode, type u followed by a hex code point (e.g. u0020 for a space).
+setting.UnicodePrefix	Inline Unicode Matching
+hint.unicode_prefix	In Chinese mode, type u followed by a hex code point (e.g. u0020 → space). Not available in double pinyin mode.
 setting.Translate	Enable Translation
 setting.TranslateHotkey	Translation Shortcut
 translate.service	Translation Service
@@ -217,7 +214,7 @@ translate.key.environment	Environment Variable
 translate.error.environment	Neither this process nor the current Fcitx5 provides a valid COWTYPE_TRANSLATE_KEY. Launch from a terminal that exports it, or use the desktop keyring.
 translate.key.secret	Desktop Keyring
 translate.key_value	New API Key (leave blank to keep the stored key)
-translate.config_hint	Bilibili Translation does not require an API key. The environment variable is COWTYPE_TRANSLATE_KEY.
+translate.config_hint	The environment variable is COWTYPE_TRANSLATE_KEY.
 translate.save	Save Translation Settings
 translate.check	Test API (send Hello, world!)
 translate.forget_key	Delete Stored Key for This API
@@ -275,14 +272,14 @@ message.traditional_enabled	Traditional Chinese enabled
 message.simplified_enabled	Simplified Chinese enabled
 error.migration_required	An older configuration was found. Run cowtype-config-migrate, then restart Settings or Fcitx5.
 setting.shortcuts	Feature shortcuts
-hint.record_shortcut	Choose a shortcut type or record a key combination.
+hint.record_shortcut	Choose a single-key shortcut or record a key combination.
 hint.press_shortcut	Press the shortcut to record
 hotkey.combination	Combination…
 hotkey.combination_function	Combination or function key
 action.quit	Quit
-action.migrate_restart	Migrate and restart Fcitx5
+action.migrate_restart	Migrate Automatically
 migration.title	CowType settings need migration
-error.migration_failed	Could not migrate settings
+error.migration_failed	Settings migration failed!
 action.record	Record
 keys.group	Feature shortcuts
 keys.single	Single key
@@ -308,14 +305,14 @@ learning.weight	Preference weight
 learning.save	Save Changes
 learning.applying	Applying changes…
 learning.applied	Memory updated.
-learning.pending	Changes are queued for an updated CowType to apply. Refresh to check the result.
+learning.pending	Changes are queued and waiting to be applied. Refresh to check the result.
 learning.error.conflict	The record changed or the target already exists. Refresh and try again.
 learning.error.data	Memory could not be read or changed. Existing records were preserved.
 learning.error.value	Enter valid pinyin, a word or phrase, and a positive integer weight.
 learning.error.writer	Another instance owns the learning writer. This instance will not overwrite it.
 custom.title	Custom dictionary
 custom.manage	Edit custom dictionary
-custom.hint	Type a complete trigger to match. Valid edits are saved and applied automatically; no manual compilation is needed.
+custom.hint	Type a complete trigger to match. Valid edits are saved and applied automatically.
 custom.search	Search triggers or content
 custom.add	Add entry
 custom.edit	Edit entry
@@ -332,12 +329,12 @@ custom.error.conflict	The entry changed or this trigger and content already exis
 custom.error.limit	The custom dictionary supports up to 10,000 entries and an 8 MiB file.
 custom.weight	Weight
 group.system_dictionary	System dictionary
-setting.SystemDictionary	Use the system Fcitx/libime pinyin dictionary
-hint.system_dictionary	Off by default. Merges and prioritizes the system dictionary when enabled, which can change candidate ranking and increase query cost. Independent of the local statistical model.
+setting.SystemDictionary	Enable System Pinyin Dictionary
+hint.system_dictionary	Merge and prioritize the system dictionary when enabled. This may change candidate ranking and increase query cost.
 setting.AutoSpace	Automatically space Chinese and English
 hint.autospace	Add spaces between Chinese characters and Latin letters or digits in ordinary text fields that provide cursor context.
 setting.Shuangpin	Double pinyin input
-hint.shuangpin	Use two-key syllable codes. Automatic u-prefix Unicode input is disabled while double pinyin is enabled.
+hint.shuangpin	Use two-key syllable codes to enter pinyin.
 setting.ShuangpinProfile	Double pinyin scheme
 setting.ShuangpinCustom	Custom scheme file (absolute path)
 error.shuangpin_profile	Invalid double pinyin scheme.
@@ -351,3 +348,68 @@ shuangpin.PinyinJiajia	Pinyin Jiajia
 shuangpin.Xiaohe	Xiaohe
 shuangpin.GB	GB Standard
 shuangpin.Custom	Custom
+page.scripts	Scripts
+scripts.permissions	Lua Script Permissions
+scripts.mode	Script Capabilities
+scripts.Off	Off
+scripts.Strict	Strict
+scripts.Full	Full
+scripts.hint	Requires fcitx5-lua.\nStrict mode provides only basic operations, strings, tables, UTF-8, and date/time APIs.
+scripts.warning_title	Allow scripts to execute any command?
+scripts.warning	Full mode lets scripts read and write files, access the network, and execute any system command with your user permissions. Enable only trusted scripts. Blocking commands may freeze the input method.
+scripts.enable_full	Enable Full Mode
+scripts.manage	Manage Scripts
+scripts.contract	Exact triggers merge script candidates by priority. Select a candidate to commit it.
+scripts.edit	Edit Script
+scripts.name	Name
+scripts.trigger	Trigger (a–z)
+scripts.editor_hint	The global input contains the complete trigger.\nMerged mode returns {priority, text} or an array of these pairs. Lower candidate position numbers rank first; scripts win ties.\nOnly independent candidate mode accepts plain strings or string arrays.\nStrict mode excludes require, io, debug, dynamic loading, and command execution. In independent candidate mode, Tab switches lists. Each invocation returns up to 12 items of up to 4096 bytes each.
+scripts.delete	Delete Script
+scripts.save	Save Script
+scripts.add	Add Script
+scripts.examples	Built-in Examples
+scripts.example_hint	Add an example, then enable it under Manage Scripts.
+scripts.date	Date
+scripts.time	Time
+scripts.error	Could not save or read scripts. A name is required; triggers use 1–64 lowercase letters; code is limited to 64 KiB and the list to 128 scripts. Paths must not contain symlinks.
+scripts.candidate	Lua Script
+scripts.failed	Lua script failed: {reason}
+scripts.show_scripts	Tab switches to Lua script candidates
+scripts.show_words	Tab switches to ordinary candidates
+scripts.independent	Independent Candidate Mode
+scripts.independent_hint	Show script results separately and use Tab to switch to ordinary candidates. When off, merge results at their returned priorities.
+scripts.explanation	Script Instructions
+scripts.content	Content
+scripts.error.return	Merged mode requires an explicit {numeric priority, text} return or an array of these pairs. Use finite numeric literals for priorities. Enable independent candidate mode to return plain strings or dynamically generated result tables.
+scripts.migration	The script configuration format is outdated. Migrate the configuration to a newer format first.
+scripts.system	System Information
+scripts.line	line
+scripts.check.title	Lua Script Check
+scripts.check.proceed	Continue
+scripts.check.full	Detected capabilities unavailable in Strict mode (static hints may produce false positives):
+scripts.check.capability	Line {line}: {capability}
+scripts.check.line	Check line {line}.
+scripts.check.switch_full	Select Full mode or remove these capabilities before enabling the script.
+scripts.check.save_note	Saving does not execute code or elevate permissions. Enabling checks again.
+scripts.check.unclosed	Unclosed long string or comment. Check the matching ]=] delimiter.
+scripts.check.no_return	No top-level return found. Merged mode requires an explicit table with numeric priorities.
+scripts.reason.backend	imeapi is unavailable. Install fcitx5-lua and restart Fcitx5.
+scripts.reason.protocol	Invalid Lua bridge response. Update CowType and restart Fcitx5.
+scripts.reason.syntax	Lua syntax error. Check brackets, quotes and end statements.
+scripts.reason.limit	Instruction limit exceeded. Check loops or reduce computation.
+scripts.reason.permission	An API is unavailable in Strict mode. Check permissions or select Full mode.
+scripts.reason.runtime	Runtime error. Check undefined variables, types, assertions and command exit status.
+scripts.reason.rank_required	Merged candidates need priorities. Return {number, text} or enable independent mode.
+scripts.reason.return_type	Invalid return type. Return a candidate table, or a string in independent mode.
+scripts.reason.priority	Priorities must be finite numbers, not NaN or infinity.
+scripts.reason.text_type	Candidate text must be a string. Check the second element of each pair.
+scripts.reason.text_size	Candidate text exceeds 4096 bytes. Shorten the result.
+scripts.reason.text_nul	Candidate text contains NUL. Remove binary content.
+scripts.check.return_table	This return is not an explicit candidate table. Use return {5, text} or an array of pairs in merged mode.
+scripts.check.return_pair	Invalid return table or priority. Each item must be {finite numeric literal, text expression}; plain strings cannot be mixed in.
+scripts.check.return_expression	An operation or another return value follows the table. Return the table directly or use independent mode.
+scripts.reason.assertion	Assertion failed. Check assert conditions and command exit status.
+scripts.reason.undefined	A nil value was accessed. Check undefined variables, functions or missing table fields.
+scripts.reason.type	Invalid argument or operand type. Check function arguments and use of strings, numbers and tables.
+scripts.check.save_anyway	Save Anyway
+scripts.check.save_disabled	The current mode lacks required permissions. Saving will disable this script. Select Full mode to check and enable it again.

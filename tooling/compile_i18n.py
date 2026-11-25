@@ -6,7 +6,8 @@ import sys
 from pathlib import Path
 root, target = map(Path, sys.argv[1:])
 def read(name):
-    return dict(l.split('\t', 1) for l in (root / (name + '.tsv')).read_text().splitlines())
+    return {key: text.replace(r'\n', '\n')
+            for key, text in (line.split('\t', 1) for line in (root / (name + '.tsv')).read_text().splitlines())}
 en, zh = read('en_US'), read('zh_CN')
 assert en.keys() == zh.keys()
 q = lambda s: json.dumps(s, ensure_ascii=False)

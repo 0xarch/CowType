@@ -10,7 +10,8 @@ def _root():
 
 
 def _read(name):
-    return dict(line.split('\t', 1) for line in (_root() / (name + '.tsv')).read_text().splitlines())
+    return {key: text.replace(r'\n', '\n')
+            for key, text in (line.split('\t', 1) for line in (_root() / (name + '.tsv')).read_text().splitlines())}
 
 
 EN = _read('en_US')

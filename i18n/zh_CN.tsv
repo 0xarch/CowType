@@ -172,7 +172,7 @@ voice.paraformer.pointer	模型文件为空或仍是 Git LFS 指针，请先下�
 voice.paraformer.runtime	无法加载系统 ONNX Runtime（需要 1.22 或更高版本）
 voice.paraformer.shape	ONNX 输出形状或数值无效，模型、词表和缓存配置可能不匹配
 setting.StatisticalModel	本地统计语言模型
-hint.statistical_model	启用后使用 libime 中文模型。
+hint.statistical_model	启用 libime 中文模型。
 warning.dictionary_optional	可选词库或本地统计模型不可用，基本输入仍可使用。
 setting.Emoji	表情与符号候选
 hint.emoji	使用 Unicode CLDR 匹配完整的中英文关键词。
@@ -193,15 +193,12 @@ hotkey.Alt	Alt（左右均可）
 hotkey.Super	Super（左右均可）
 hotkey.Shift_L	左 Shift
 hotkey.Shift_R	右 Shift
-hotkey.Control_L	左 Ctrl
-hotkey.Super_L	左 Super
-hotkey.Super_R	右 Super
 setting.UnicodeHotkey	Unicode 码点输入
 unicode.mode	Unicode 码点
 unicode.hint	Unicode：输入 1–6 位十六进制（可带 U+）；空格/回车提交，Esc 退出
 unicode.invalid	无效码点、代理项或控制字符
-setting.UnicodePrefix	u 前缀 Unicode 输入
-hint.unicode_prefix	中文模式下输入 u 和十六进制码点（如 u0020 → 空格）。
+setting.UnicodePrefix	行内 Unicode 匹配
+hint.unicode_prefix	中文模式下输入 u 后匹配十六进制码点（如 u0020 → 空格）。双拼下无效。
 setting.Translate	启用互译
 setting.TranslateHotkey	翻译快捷键
 translate.service	翻译服务
@@ -217,7 +214,7 @@ translate.key.environment	环境变量
 translate.error.environment	设置进程和当前 Fcitx5 均未提供有效的 COWTYPE_TRANSLATE_KEY；请从已导出该变量的终端启动，或改用桌面密钥环。
 translate.key.secret	桌面密钥环
 translate.key_value	新 API Key（留空保留已存密钥）
-translate.config_hint	Bilibili 翻译不填写 API Key；环境变量为 COWTYPE_TRANSLATE_KEY。
+translate.config_hint	环境变量为 COWTYPE_TRANSLATE_KEY。
 translate.save	保存翻译配置
 translate.check	测试接口（发送 Hello, world!）
 translate.forget_key	删除此接口的已存 Key
@@ -280,9 +277,9 @@ hint.press_shortcut	请按下要录制的快捷键
 hotkey.combination	组合键…
 hotkey.combination_function	组合键或功能键
 action.quit	退出
-action.migrate_restart	迁移并重启 Fcitx5
+action.migrate_restart	自动迁移
 migration.title	CowType 配置需要迁移
-error.migration_failed	配置迁移失败
+error.migration_failed	配置迁移失败！
 action.record	录制
 keys.group	功能快捷键
 keys.single	单键
@@ -332,12 +329,12 @@ custom.error.conflict	词条已变化或相同触发字母与内容已存在，�
 custom.error.limit	自定义词库最多支持 10,000 条，文件不得超过 8 MiB。
 custom.weight	权重
 group.system_dictionary	系统词库
-setting.SystemDictionary	使用系统 Fcitx/libime 拼音词库
-hint.system_dictionary	默认关闭。启用后合并系统词库并优先其来源，可能改变候选排序并增加查询开销；与本地统计模型开关相互独立。
+setting.SystemDictionary	启用系统拼音词库
+hint.system_dictionary	启用后合并系统词库并优先其来源，可能改变候选排序并增加查询开销。
 setting.AutoSpace	中英文自动加空格
 hint.autospace	在汉字与英文字母或数字之间添加空格；仅处理支持读取光标上下文的普通文本输入框。
 setting.Shuangpin	双拼输入
-hint.shuangpin	使用双键音节方案输入拼音；双拼输入中不触发 u 前缀 Unicode 匹配。
+hint.shuangpin	使用双键音节方案输入拼音。
 setting.ShuangpinProfile	双拼方案
 setting.ShuangpinCustom	自定义方案文件（绝对路径）
 error.shuangpin_profile	无效的双拼方案。
@@ -351,3 +348,68 @@ shuangpin.PinyinJiajia	拼音加加
 shuangpin.Xiaohe	小鹤
 shuangpin.GB	国标
 shuangpin.Custom	自定义
+page.scripts	脚本
+scripts.permissions	Lua 脚本权限
+scripts.mode	脚本能力
+scripts.Off	关闭
+scripts.Strict	严格
+scripts.Full	完全
+scripts.hint	需要 fcitx5-lua。\n严格模式仅提供基础运算、字符串、表、UTF-8 和日期时间接口。
+scripts.warning_title	允许脚本执行任意命令？
+scripts.warning	完全模式允许脚本以当前用户权限读写文件、访问网络及执行任意系统命令。仅启用可信脚本。阻塞命令可能使输入法停止响应。
+scripts.enable_full	启用完全模式
+scripts.manage	脚本管理
+scripts.contract	完整匹配触发字母后按优先级合并脚本候选，选择后上屏。
+scripts.edit	编辑脚本
+scripts.name	名称
+scripts.trigger	触发字母（a–z）
+scripts.editor_hint	全局 input 为完整触发字母。\n合并模式返回 {优先级, 文本} 或对应数组；普通候选位置数字越小越优先，同优先级脚本在前。\n仅独立候选模式允许直接返回字符串或字符串数组。\n严格模式不支持 require、io、debug、动态加载和命令执行。独立候选模式可用 Tab 切换列表。每次最多返回 12 项，每项最多 4096 字节。
+scripts.delete	删除脚本
+scripts.save	保存脚本
+scripts.add	添加脚本
+scripts.examples	内置示例
+scripts.example_hint	点击添加示例后在脚本管理中开启。
+scripts.date	日期
+scripts.time	时间
+scripts.error	无法保存或读取脚本。名称不能为空；触发词为 1–64 个小写字母；代码最多 64 KiB；最多 128 个脚本；路径不能包含符号链接。
+scripts.candidate	Lua 脚本
+scripts.failed	Lua 脚本执行失败：{reason}
+scripts.show_scripts	Tab 切换到 Lua 脚本候选
+scripts.show_words	Tab 切换到普通候选
+scripts.independent	独立候选模式
+scripts.independent_hint	开启后单独显示脚本结果，Tab 切换普通候选；关闭后按返回的优先级合并到普通列表。
+scripts.explanation	脚本说明
+scripts.content	内容
+scripts.error.return	合并模式需要显式返回 {数字优先级, 文本} 或对应数组。优先级使用有限数字常量；若需直接返回字符串或动态结果表请开启独立候选模式。
+scripts.migration	脚本配置格式已过时。请先迁移配置至较新格式。
+scripts.system	系统信息
+scripts.line	行
+scripts.check.title	Lua 脚本检查
+scripts.check.proceed	确认继续
+scripts.check.full	检测到严格模式不提供的功能：
+scripts.check.capability	第 {line} 行：{capability}
+scripts.check.line	请检查第 {line} 行。
+scripts.check.switch_full	请先选择完全权限模式，或移除这些功能，再启用脚本。
+scripts.check.save_note	保存不会执行脚本或自动提升权限；启用时会再次检查。
+scripts.check.unclosed	长字符串或长注释未闭合，请检查对应的 ]=] 分隔符。
+scripts.check.no_return	未找到主脚本的 return；合并模式需要显式返回带数字优先级的表。
+scripts.reason.backend	未加载 imeapi，请安装 fcitx5-lua 并重启 Fcitx5。
+scripts.reason.protocol	Lua 扩展接口或返回数据异常，请更新 CowType 并重启 Fcitx5。
+scripts.reason.syntax	Lua 语法错误，请检查括号、引号及 end。
+scripts.reason.limit	超过指令数上限，请检查无限循环或减少计算量。
+scripts.reason.permission	使用了严格模式未开放的接口，请检查权限或切换完全模式。
+scripts.reason.runtime	运行时异常，请检查未定义变量、类型、assert 和命令退出状态。
+scripts.reason.rank_required	合并候选缺少优先级，请返回 {数字, 文本} 或开启独立模式。
+scripts.reason.return_type	返回类型无效，请返回候选表，独立模式也允许字符串。
+scripts.reason.priority	优先级必须是有限数字，不能是 NaN 或无穷大。
+scripts.reason.text_type	候选内容必须是字符串，请检查返回表的第二项。
+scripts.reason.text_size	候选超过 4096 字节，请缩短返回文本。
+scripts.reason.text_nul	候选包含 NUL 字符，请移除二进制内容。
+scripts.check.return_table	该 return 不是显式候选表；合并模式请使用 return {5, 文本} 或对应数组。
+scripts.check.return_pair	返回表结构或优先级无效；每项必须是 {有限数字常量, 文本表达式}，不能混入纯字符串。
+scripts.check.return_expression	候选表后还有运算或其他返回值，无法静态确认；请直接返回候选表，或使用独立模式。
+scripts.reason.assertion	断言失败，请检查 assert 条件及系统命令的退出状态。
+scripts.reason.undefined	访问了 nil 值，请检查未定义变量、函数或不存在的表字段。
+scripts.reason.type	参数或操作数类型错误，请检查函数参数及字符串、数字、表的使用。
+scripts.check.save_anyway	仍保存
+scripts.check.save_disabled	当前权限不足，仍保存会将此脚本停用。切换完全权限后可重新检查并启用。
