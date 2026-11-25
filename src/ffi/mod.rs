@@ -4,6 +4,7 @@
 //! Borrowed strings last until the next mutation of that same handle. Getters do
 //! not mutate or repeat commits; the host consumes each mutating call's frame once.
 #![allow(clippy::missing_safety_doc)] // The uniform pointer contract is documented above and in the C header.
+mod opencc;
 use crate::{
     dictionary::Dictionary,
     engine::{wubi::WubiTable, Engine},
@@ -456,6 +457,7 @@ pub unsafe extern "C" fn cowtype2_runtime_option(h: *const RuntimeHandle, key: u
         23 => s.auto_space as u32,
         24 => s.shuangpin_profile,
         25 => s.shuangpin as u32,
+        26 => opencc::available() as u32,
         _ => 0,
     }
 }

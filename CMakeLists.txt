@@ -144,9 +144,12 @@ if(BUILD_TESTING)
     target_compile_options(cowtype-internal-code-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
     add_test(NAME gb18030-shortcuts COMMAND cowtype-internal-code-probe)
     add_executable(cowtype-traditional-probe tests/native/traditional.cpp)
-    target_link_libraries(cowtype-traditional-probe PRIVATE ${CMAKE_DL_LIBS})
+    target_link_libraries(cowtype-traditional-probe PRIVATE cowtype-core Threads::Threads ${CMAKE_DL_LIBS} m)
     target_compile_options(cowtype-traditional-probe PRIVATE -UNDEBUG -Wall -Wextra -Werror)
-    add_test(NAME optional-opencc-traditional COMMAND cowtype-traditional-probe)
+    add_test(NAME optional-opencc-traditional COMMAND ${Python3_EXECUTABLE}
+        "${CMAKE_SOURCE_DIR}/tests/native/isolated.py"
+        --root "${CMAKE_BINARY_DIR}/traditional-test" --prefix "${CMAKE_BINARY_DIR}/traditional-test/prefix"
+        --data "${CMAKE_BINARY_DIR}/test-data" $<TARGET_FILE:cowtype-traditional-probe>)
     add_executable(cowtype-dictionary-benchmark tests/native/dictionary-benchmark.cpp)
     target_include_directories(cowtype-dictionary-benchmark PRIVATE src-fcitx5/engine src-fcitx5/include)
     target_link_libraries(cowtype-dictionary-benchmark PRIVATE cowtype-pinyin)

@@ -66,7 +66,8 @@ bool cowtype2_runtime_reload(Cowtype2Runtime *);
  * 19 optional system pinyin dictionary (default off, independent of option 12);
  * 20 symbol candidate limit; 21 Emoji candidate limit; 22 correction candidate limit.
  * 23 automatic Chinese/English spacing; 24 shuangpin profile index; 25 shuangpin enabled.
- * 26 traditional Chinese output is available (runtime OpenCC detected).
+ * 26 traditional Chinese output is available (OpenCC library, symbols and both
+ * conversion profiles detected; cached on first query for this process).
  * Candidate limits use 0–12 and default to 4, 4, and 5 respectively. */
 uint32_t cowtype2_runtime_option(const Cowtype2Runtime *, uint32_t);
 /* String options: 0 custom shuangpin profile path; 1-6 Mode, GB18030, Voice,
