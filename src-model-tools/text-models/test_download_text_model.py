@@ -111,5 +111,25 @@ class ModelPreparationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             m.prepare(self.model, self.output, 1)
 
+    def test_selection_rejects_symlinked_config_components(self):
+        for linked in ('cowtype', 'config', 'ancestor'):
+            with self.subTest(linked=linked), tempfile.TemporaryDirectory(dir=self.root) as temp:
+                base = Path(temp)
+                outside = base / 'outside'
+                outside.mkdir()
+                if linked == 'cowtype':
+                    config = base / 'config'
+                    config.mkdir()
+                    (config / 'cowtype').symlink_to(outside, target_is_directory=True)
+                elif linked == 'config':
+                    config = base / 'config'
+                    config.symlink_to(outside, target_is_directory=True)
+                else:
+                    (base / 'ancestor').symlink_to(outside, target_is_directory=True)
+                    config = base / 'ancestor/config'
+                with patch.dict(os.environ, XDG_CONFIG_HOME=str(config)), self.assertRaisesRegex(ValueError, 'symlinks'):
+                    m.select_model(self.model, self.output)
+                self.assertEqual(list(outside.iterdir()), [])
+
 if __name__ == '__main__':
     unittest.main()

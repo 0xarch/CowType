@@ -109,6 +109,9 @@ def prepare(model, destination, timeout):
 
 def select_model(model, directory):
     root = Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config'))) / 'cowtype'
+    for component in (root, *root.absolute().parents):
+        if component.is_symlink():
+            raise ValueError('Model selection path must not contain symlinks')
     root.mkdir(parents=True, exist_ok=True)
     target = root / 'text-model.json'
     if target.exists() or target.is_symlink():
@@ -119,7 +122,7 @@ def select_model(model, directory):
                  'repository': model['repository'], 'revision': model['revision'],
                  'sha256': entry['sha256']}
     # Exclusive create protects existing user settings; leave no partial file on failure.
-    fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
     try:
         with os.fdopen(fd, 'w') as stream:
             stream.write(json.dumps(selection, ensure_ascii=False, indent=2) + '\n')
