@@ -92,8 +92,7 @@ PKGDEST="$PWD/../../dist" makepkg --cleanbuild --force
 
 ## 多发行版与 GitHub Actions
 
-Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。常规矩阵包含 Arch、Fedora 45、Debian unstable、Tumbleweed、Ubuntu 26.04、Deepin 23/25、Leap 16.0、openKylin 3.0 的 x86_64，以及 Fedora、Debian、Ubuntu、Deepin 25 的 ARM64，共 13 个原生目标。ARM64 使用原生 runner；Deepin 25 LoongArch64 使用独立 QEMU 作业验证。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。新增及暂缓系统的手动试构建流程、容器镜像和完整结果见[平台报告](PLATFORM-TRIALS-2026-11-22.md)。
-
+Arch、Fedora、openSUSE Tumbleweed、Debian 容器构建与打包入口见[打包说明](../packaging/README.md)。常规矩阵包含 Arch、Fedora 45、Debian unstable、Tumbleweed、Ubuntu 26.04、Deepin 23/25、Leap 16.0、openKylin 3.0 的 x86_64，以及 Fedora、Debian、Ubuntu、Deepin 25 的 ARM64，共 13 个原生目标。ARM64 使用原生 runner；Deepin 25 LoongArch64 使用独立 QEMU 作业验证。自动构建保留原生依赖版本检查，开发测试与生产包分开构建。
 ## openSUSE Tumbleweed
 
 已支持 x86_64 原生 RPM；使用 Tumbleweed 当前官方软件源，不能将其视作 Leap 或 Fedora 的兼容包。源码构建可先安装依赖：
@@ -116,7 +115,7 @@ python3 tooling/package_linux.py --source . --format rpm --distro opensusetumble
 
 ## Ubuntu、Deepin、openSUSE Leap 和 openKylin
 
-兼容层引入后，Ubuntu 26.04（Fcitx5 5.1.19）、Deepin 23（5.1.11）、Deepin 25（5.1.12）、Leap 16.0（5.1.13）和 openKylin 3.0（5.1.19）均已通过原生容器构建、打包、安装与插件验证。Ubuntu、Deepin 25 另已通过 ARM64 原生构建。完整镜像、依赖版本、先前失败及修复见[平台报告](PLATFORM-TRIALS-2026-11-22.md)。
+兼容层引入后，Ubuntu 26.04（Fcitx5 5.1.19）、Deepin 23（5.1.11）、Deepin 25（5.1.12）、Leap 16.0（5.1.13）和 openKylin 3.0（5.1.19）均已通过原生容器构建、打包、安装与插件验证。Ubuntu、Deepin 25 另已通过 ARM64 原生构建。
 
 Debian 系依赖命令可参考 `tooling/ci-linux.sh` 的 apt 分支。libime 开发包拆分为 `libimecore-dev` 和 `libimepinyin-dev`，没有本项目可用的统一 `libime-dev`。Leap 使用同脚本的 zypper 分支及原生 typelib 包名。CI 只在一次性容器内安装依赖，不会对开发者桌面自动执行。
 
@@ -140,4 +139,4 @@ Debian 系依赖命令可参考 `tooling/ci-linux.sh` 的 apt 分支。libime �
 
 ## LoongArch64
 
-Deepin 25 镜像 `linuxdeepin/deepin:crimson-loong64` 存在并可运行，原生包管理架构名为 `loong64`。常规 Actions 通过 QEMU 运行原生用户空间、编译器和打包器，使用与其他目标相同的生产/开发构建及安装验证。最终结果和测试边界见[平台报告](PLATFORM-TRIALS-2026-11-22.md)，模拟环境通过不代表实体机或真实麦克风验收。
+Deepin 25 镜像 `linuxdeepin/deepin:crimson-loong64` 存在并可运行，原生包管理架构名为 `loong64`。常规 Actions 通过 QEMU 运行原生用户空间、编译器和打包器，使用与其他目标相同的生产/开发构建及安装验证。

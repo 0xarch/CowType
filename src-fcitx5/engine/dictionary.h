@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// CowType's streaming compiler. Uses libime's public binary format, not WowType
-// snapshots.
 #pragma once
 #include <algorithm>
 #include <array>

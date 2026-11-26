@@ -10,6 +10,8 @@ CowType(牛子输入法) 是基于 Fcitx5 的自由多功能 Linux 拼音输入�
 
 基本输入离线处理，互译仅在主动翻译时将文本发送到所选服务。
 
+[常见问题](./QUESTIONS.md)
+
 </div>
 
 如果您是以下类型用户，都可以优先考虑 CowType：
@@ -172,7 +174,7 @@ bash build-arch.sh
 
 ## 参与
 
-欢迎[提交 Issue](https://github.com/0xarch/CowType/issues)。反馈时附带系统、桌面环境和复现步骤；
+欢迎[提交 Issue](https://github.com/0xarch/CowType/issues)。反馈时请附带系统、桌面环境信息和复现步骤；
 分享日志前请检查是否包含个人信息。
 
 参与开发可从[项目结构](STRUCTURES.md)和[构建与打包说明](docs/BUILD.md)开始。

@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "reviewed_on": "2026-11-25",
+  "reviewed_on": "2026-11-26",
   "scope": "Project source snapshot; excludes build output, models and user data",
   "files": [
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "a12a7789704502d54109dc5e6bf6a6e6d1de8a0e54b6bd749c86bbf8d71f3449",
-      "bytes": 19186
+      "sha256": "0f1fdd620de41bfee298676a80a796400e69c982088605d6c44b0aa78210ba92",
+      "bytes": 18833
     },
     {
       "path": "CMakeLists.txt",
@@ -89,6 +89,9 @@
       "bytes": 2033
     },
     {
+      "path": "QUESTIONS.md"
+    },
+    {
       "path": "README.md"
     },
     {
@@ -123,8 +126,8 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "cc02c22bb9c4395b23d8687db9dde8f35fc5bd8e31449d62d94bcd7d3073569b",
-      "bytes": 11317
+      "sha256": "a50cb1e957208c3eb67f2e0528c557c2d6816f350c9879871339cc8d17e6cfa7",
+      "bytes": 10947
     },
     {
       "path": "docs/DBUS.md",
@@ -135,11 +138,6 @@
       "path": "docs/DICTIONARIES.md",
       "sha256": "cef5b40eeee4ac28bc7d31fe02ec3445e7710fb0ca765a43787c023f6a46d1f8",
       "bytes": 7283
-    },
-    {
-      "path": "docs/PLATFORM-TRIALS-2026-11-22.md",
-      "sha256": "457d04fe00791c41618188df168545310ad55d5ed7ac16d29c01514e87ae0e1f",
-      "bytes": 7565
     },
     {
       "path": "docs/PUBLIC-SOURCES.json",
@@ -163,18 +161,13 @@
     },
     {
       "path": "docs/SOURCES.json",
-      "sha256": "0dc7fcf26ab6eebcf6fe47d7d5b24089b29ee26b30a4539032ffd762e3ded087",
-      "bytes": 62031
+      "sha256": "f3cd93b820a447ab04b65304392c66ef4e249f38f7be0efc29c1724fb718e471",
+      "bytes": 60049
     },
     {
       "path": "docs/USAGE.md",
       "sha256": "d28d315a79461fc190d57d6ffab9c48ccbcfcacf93eaf3ef219956ed59071d7f",
       "bytes": 11524
-    },
-    {
-      "path": "docs/WOWTYPE-GRID.md",
-      "sha256": "03d4f84186844284eab73a36a2aaf1208ed287f3ceea6ce24acbea502e7d5682",
-      "bytes": 4187
     },
     {
       "path": "i18n/README.md",
@@ -193,8 +186,8 @@
     },
     {
       "path": "packaging/README.md",
-      "sha256": "ad0443dc52e17b215923c617a1913343475ee96feba2e784246fb49cbb895edb",
-      "bytes": 5451
+      "sha256": "923562d6c326b6ccbe08d8028657715d88d2f37596f5d31bb09862c7e9e0f7ba",
+      "bytes": 5016
     },
     {
       "path": "packaging/arch/PKGBUILD.in",
@@ -338,8 +331,8 @@
     },
     {
       "path": "src-fcitx5/engine/dictionary.h",
-      "sha256": "87bc2fc75e3449a46f2c4918a1417ff0416c1464fff1032d04e4c0accb73e638",
-      "bytes": 14978
+      "sha256": "c6d255a663659aa0c27c74d72d48562ffa3782b75f43afca059bdb43244b03b3",
+      "bytes": 14883
     },
     {
       "path": "src-fcitx5/engine/level.h",
@@ -1028,8 +1021,8 @@
     },
     {
       "path": "tooling/README.md",
-      "sha256": "596fa2c2947d79d48f1d5d5452d0e51f565d74f5399be63e6ad34c9ac3c2a6a1",
-      "bytes": 2182
+      "sha256": "d9124afe99eaa7a40eeb2f17a02eb2b4a1a4963cd06c7d224dd33e85743d00c7",
+      "bytes": 2108
     },
     {
       "path": "tooling/ci-linux.sh",
@@ -1053,8 +1046,8 @@
     },
     {
       "path": "tooling/development.py",
-      "sha256": "f48c87f22a07ef2260eda8de34478c2365bc846224d12789f031fb0bcddc3175",
-      "bytes": 5167
+      "sha256": "264ce8eb11230b1c469537bc12fcf1383ad3d0b8880b760ae253716956fc682e",
+      "bytes": 5214
     },
     {
       "path": "tooling/icons.cmake",

@@ -20,7 +20,7 @@ arch/PKGBUILD.in 是源码归档模板。脚本生成带真实 SHA-256 的 build
 | openSUSE Leap 16.0 | 原生 | — | — | RPM |
 | openKylin 3.0 | 原生 | — | — | Deb |
 
-共 13 个原生组合和 1 个 QEMU 组合。ARM64 使用 GitHub `ubuntu-24.04-arm` 原生 runner；runner 的 Ubuntu 系统不代表容器产物是 Ubuntu 包。LoongArch64 在 x86_64 runner 上注册 QEMU，再用 `linuxdeepin/deepin:crimson-loong64` 的原生用户空间、编译器与 dpkg 构建。只在全部验证通过后上传 `package-<目标>-<架构>`，具体已通过结果以[构建报告](../docs/PLATFORM-TRIALS-2026-11-22.md)为准。
+共 13 个原生组合和 1 个 QEMU 组合。ARM64 使用 GitHub `ubuntu-24.04-arm` 原生 runner；runner 的 Ubuntu 系统不代表容器产物是 Ubuntu 包。LoongArch64 在 x86_64 runner 上注册 QEMU，再用 `linuxdeepin/deepin:crimson-loong64` 的原生用户空间、编译器与 dpkg 构建。只在全部验证通过后上传 `package-<目标>-<架构>`。
 
 Fcitx5 的兼容基线为 5.1.11；目录 API、词典字段解析和插件工厂差异集中在 `src-fcitx5/compat/`，详见[版本兼容](../docs/BUILD.md#fcitx5-版本兼容)。其他实际依赖要求保持。Deepin 原生 Rust 1.81 过旧时，CI 在容器的 `/opt/cowtype-rust/` 使用经 SHA-256 校验的固定 rustup 1.28.2 准备 Rust 1.88.0 minimal，保留原生 Fcitx5/libime/GTK，不更换系统软件源。
 
@@ -42,6 +42,5 @@ Debian 包内部版本保留 `-1~<目标>`，发布文件名使用 `-1.<目标>`
 
 试构建先检查镜像与架构，再安装原生 Fcitx5 开发包检查兼容基线，通过后复用完整依赖、编译、测试、打包和安装流程。镜像不可用或架构缺失会记录跳过并保留日志；其余阶段失败保持失败状态。LoongArch64 使用 QEMU，ARM64 原生运行。
 
-每项上传 `platform-report-<目标>-<架构>`，包含镜像清单、系统/版本、阶段日志和 result.json；通过项上传 `trial-package-<目标>-<架构>`。汇总即使存在失败也会执行，输出 `platform-results` 和 Actions Summary，只列本次请求的目标。Actions 产物有保留期限，下载需登录；具体错误与修复见[报告](../docs/PLATFORM-TRIALS-2026-11-22.md)。
+每项上传 `platform-report-<目标>-<架构>`，包含镜像清单、系统/版本、阶段日志和 result.json；通过项上传 `trial-package-<目标>-<架构>`。汇总即使存在失败也会执行，输出 `platform-results` 和 Actions Summary，只列本次请求的目标。Actions 产物有保留期限，下载需登录。
 
-架构设计参考 WowType 的容器矩阵、共享 artifact、原生包安装校验和标签发布；CowType 脚本独立编写，未复制其打包实现。目前不包含 Nix 或 macOS。容器测试通过不代表完整桌面、真实麦克风或模型准确率验收。

@@ -795,7 +795,7 @@
       "tests/native/dictionary.cpp",
       "tests/native/dictionary-benchmark.cpp"
     ],
-    "implementation": "Original CowType streaming log-sum compiler with compact ID columns and public libime binary trie APIs; no WowType code or snapshot format copied.",
+    "implementation": "Original CowType streaming log-sum compiler with compact ID columns and public libime binary trie APIs.",
     "dependencies": [
       {
         "name": "OpenSSL Crypto",
@@ -867,7 +867,7 @@
       "packaging/debian/control.in",
       "packaging/rpm/cowtype.spec.in"
     ],
-    "implementation": "Original CowType native packaging and CI. Architectural reference only: per-distribution containers, shared verified data artifacts, package installation checks and tag-gated release. Extended with original openSUSE zypper/RPM dependency mapping and installed-settings verification; Deepin and Leap trials retain the existing Fcitx5 minimum. No copied WowType implementation.",
+    "implementation": "Original CowType native packaging and CI. Architectural reference only: per-distribution containers, shared verified data artifacts, package installation checks and tag-gated release. Extended with original openSUSE zypper/RPM dependency mapping and installed-settings verification; Deepin and Leap trials retain the existing Fcitx5 minimum.",
     "reference": {
       "repository": "https://github.com/Gloridust/WowType",
       "revision": "ebbe4c88d52f7ca6ddf27c4b062f913b79ad269b",
@@ -1149,39 +1149,6 @@
       }
     ]
   },
-  "wowtype_grid_review_2026_11_22": {
-    "documentation": "docs/WOWTYPE-GRID.md",
-    "upstream": "https://github.com/Gloridust/WowType",
-    "revision": "ebbe4c88d52f7ca6ddf27c4b062f913b79ad269b",
-    "scope": "Read-only architectural review of Linux text-row grids, session navigation, paging and row-level mouse selection; macOS custom-cell UI contrasted only. No implementation or data copied into CowType and no grid feature added.",
-    "reviewed_files": [
-      {
-        "path": "fcitx5-addon/src/wowtype_engine.cpp",
-        "bytes": 133924,
-        "sha256": "115bf41bdfc1ddf8579e5ef4d59e399435e630d39929eea4872e6a5ae2710fe3"
-      },
-      {
-        "path": "fcitx5-addon/src/wowtype_engine.h",
-        "bytes": 44683,
-        "sha256": "a8e3959c1103bbfa03edf2889cdec794d4110de38b034ed65dd223d359d889ac"
-      },
-      {
-        "path": "core/src/session.rs",
-        "bytes": 147549,
-        "sha256": "83bc16785bda3a348246060e1caaadc6b82a8382b325fec09a659152d5e73ced"
-      },
-      {
-        "path": "core/include/wowtype_core.h",
-        "bytes": 51519,
-        "sha256": "25eb98c3f41c7e30ba12ba77cba46976b87a54a89243addf00d52c033a6c6ba7"
-      },
-      {
-        "path": "macos/Sources/App/CandidatePanel.swift",
-        "bytes": 23386,
-        "sha256": "1dba52d9c22c303e832bc18fe22b1d7412089e7c6086fdfcf1631a663899a46b"
-      }
-    ]
-  },
   "learning_memory_editor": {
     "date": "2026-11-22",
     "license": "GPL-3.0-or-later",
@@ -1216,7 +1183,7 @@
       "tests/native/correction.cpp",
       "tests/fixtures/correction.tsv"
     ],
-    "implementation": "Original CowType adaptation of installed public libime APIs: isolated stateless query workspaces for typo/plain graphs, append/erase reuse, on-demand literal sentence recovery for corrected or composed best paths which can prune literal alternatives, node source memoization, and complete-consumption candidate ordering. No WowType implementation copied or read by the implementing primary agent; high-level comparison findings only. libime dependency provenance is recorded separately.",
+    "implementation": "Original CowType adaptation of installed public libime APIs: isolated stateless query workspaces for typo/plain graphs, append/erase reuse, on-demand literal sentence recovery for corrected or composed best paths which can prune literal alternatives, node source memoization, and complete-consumption candidate ordering. libime dependency provenance is recorded separately.",
     "validation": "Synthetic fixture regression for literal/initial protection, complete typo ordering, literal sentence recovery and fresh-versus-reused results across edits and options. Independent fixed synthetic offline query benchmarks record the baseline commit and optimized native header digest, without personal history, GUI, microphone or remote service calls."
   },
   "optional_system_pinyin": {
@@ -1240,7 +1207,7 @@
       "src-fcitx5/engine/libime.h",
       "tests/native/correction.cpp"
     ],
-    "implementation": "Original CowType bounded duplicate-key deletion and adjacent-swap whole-word lookup. Uses installed public libime syllable conversion, DATrie traversal and PinyinDictionary matchWords APIs; does not copy WowType code, internal data structures, parameters or ranking weights. Primary implementing agent did not view WowType code; a separate static study supplied high-level requirements only. No model, new lexicon index or per-variant sentence decoding.",
+    "implementation": "Original CowType bounded duplicate-key deletion and adjacent-swap whole-word lookup. Uses installed public libime syllable conversion, DATrie traversal and PinyinDictionary matchWords APIs.",
     "validation": "Synthetic repeated-key/swap exact-word, consumption, disabled correction and edit/reuse regression; independent fixed-1100-target before/after public-dictionary benchmark with bounded search, VmHWM and latency statistics, no user data or GUI."
   },
   "input_controls_and_shuangpin": {
@@ -1255,7 +1222,7 @@
       "tests/native/autospace.cpp",
       "tests/native/shuangpin.cpp"
     ],
-    "implementation": "Original CowType focused-context D-Bus endpoint, stateless automatic Han/ASCII spacing adapter, double-pinyin settings and shared libime decoder integration. External implementation review delegated to subagents; the primary implementation agent did not read WowType source. No WowType executable code or mapping tables copied. Builtin profiles remain provided by system libime.",
+    "implementation": "Original CowType focused-context D-Bus endpoint, stateless automatic Han/ASCII spacing adapter, double-pinyin settings and shared libime decoder integration. Builtin profiles remain provided by system libime.",
     "references": [
       {
         "project": "fcitx5-chinese-addons",

@@ -18,7 +18,7 @@ BUILD_DIRS = {'target', 'build', 'dist', '.venv', '.cargo-home', 'resources'}
 ENV_DIRS = {'.git', '.agents', '.aws', '.codex'}
 ROOT_FILES = {'.gitignore', '.gitattributes', 'AGENTS.md', 'LICENSE', 'NOTICE.md',
               'README.md', 'STRUCTURES.md', 'Cargo.toml', 'Cargo.lock', 'CMakeLists.txt',
-              'CHANGELOG.md', 'build-arch.sh'}
+              'CHANGELOG.md', 'QUESTIONS.md', 'build-arch.sh'}
 ROOT_DIRS = {'LICENSES', 'assets', 'docs', 'i18n', 'packaging', 'tests', 'tooling', '.github'}
 EXCLUDED_SUFFIXES = {'.onnx', '.pt', '.pth', '.bin', '.gguf', '.safetensors',
                      '.so', '.a', '.o', '.wcache', '.log', '.zip', '.tar', '.gz'}
@@ -84,7 +84,7 @@ def snapshot(paths, root):
         row = {'path': relative}
         # The root README is editable without refreshing content hashes. Keep
         # its presence, Markdown links and inclusion in source archives checked.
-        if relative != 'README.md':
+        if relative != 'README.md' and relative != 'QUESTIONS.md':
             row.update(sha256=sha(path), bytes=path.stat().st_size)
         rows.append(row)
     return rows
